@@ -6,13 +6,8 @@ applyTo: "**"
 
 These instructions are always loaded and must be followed:
 
-- `.github/instructions/personal-cfo-instructions.md.instructions.m### 3) Statements
-
-- Table: file name, card, status (completed | failed | processing), upload date, file type (PDF only for v1)
-- Upload PDF linked to a card (validate MIME type `application/pdf` on upload)
-- Re-categorize one/many statements
-- Delete one/many statements → cascade delete their transactions
-- \*\*Retry b## Design Philosophy
+- `.github/instructions/personal-cfo-instructions.md.instructions.md` (this file)
+- `.github/instructions/AGENTS.md` (additional blueprint and design rules kept in lockstep with this file)
 
 **Simplicity, speed, premium feel.**
 
@@ -375,8 +370,16 @@ Validate inputs **before** DB ops:
 - **DB:** snake_case (`user_id`)
 - **TypeScript:** no `any` (`@typescript-eslint/no-explicit-any: error`); prefer `type` over empty interfaces; domain types in `types/*.ts`
 - **React/JSX:** escape apostrophes (`You&apos;re`); no `console.log` (use structured error util); loading/empty/error states for all async UI
-- **Styling:** shadcn/ui only; theme tokens via CSS variables; `cn()` for class merging; accessible contrast; mobile-first (test at 360px)
+- **Styling:** shadcn/ui only; centralized theme with tokens via CSS variables (colors, spacing, typography, radii, shadows); tokens MUST match `ui-references` colors exactly; no hardcoded hex; use `cn()` for class merging; accessible contrast; mobile-first (test at 360px)
 - **UX:** clear IA; helpful empty states; light/dark via tokens (no hardcoded hex)
+
+## Theme & Tokens
+
+- Create and maintain a centralized theme with design tokens defined as CSS variables (colors, spacing, typography, radii, shadows, elevations, states).
+- Implement the theme in `components/theme-provider.tsx` and expose a `ThemeToggle` via `components/theme-toggle.tsx`.
+- Map the color tokens to the palettes shown in `ui-references/` exactly; do not approximate.
+- Use shadcn/ui components exclusively and wire tokens via CSS variables; avoid inline styles and hardcoded hex values.
+- Ensure dark and light modes are both fully tokenized and visually match the `ui-references` images.
 
 ## Routing Map (App Router)
 
@@ -569,6 +572,35 @@ DEFAULT_LOCALE=en
 1. If unsure, ask — do not assume.
 2. Update `TODO.md` after each implementation — before asking permission to commit.
 3. Ask for permission before committing.
+4. Take `ui-references` as reference for UI and colors. Colors must match the ones from the `ui-references`.
+
+---
+
+## Golden Rules — Repeated (x5 each)
+
+If unsure, ask — do not assume.
+If unsure, ask — do not assume.
+If unsure, ask — do not assume.
+If unsure, ask — do not assume.
+If unsure, ask — do not assume.
+
+Update `TODO.md` after each implementation — before asking permission to commit.
+Update `TODO.md` after each implementation — before asking permission to commit.
+Update `TODO.md` after each implementation — before asking permission to commit.
+Update `TODO.md` after each implementation — before asking permission to commit.
+Update `TODO.md` after each implementation — before asking permission to commit.
+
+Ask for permission before committing.
+Ask for permission before committing.
+Ask for permission before committing.
+Ask for permission before committing.
+Ask for permission before committing.
+
+Take `ui-references` as reference for UI and colors. Colors must match the ones from the `ui-references`.
+Take `ui-references` as reference for UI and colors. Colors must match the ones from the `ui-references`.
+Take `ui-references` as reference for UI and colors. Colors must match the ones from the `ui-references`.
+Take `ui-references` as reference for UI and colors. Colors must match the ones from the `ui-references`.
+Take `ui-references` as reference for UI and colors. Colors must match the ones from the `ui-references`.
 
 ## Notes & Non-Negotiables
 
@@ -579,3 +611,4 @@ DEFAULT_LOCALE=en
 - **Locked/Encrypted PDFs:** Detect and fail gracefully with actionable messaging; support retry via your external script when provided.
 - **Email verification:** Enforced by Supabase prior to granting access to authed areas.
 - **Plans & Enforcement:** all create/update APIs must call `lib/plan.ts` guards to enforce card/statement/category/alert/budget limits.
+- **UI References:** Take `ui-references` as the canonical visual reference; UI colors must match those images exactly.
