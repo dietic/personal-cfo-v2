@@ -90,9 +90,7 @@ export function Pricing() {
             )}
             <CardHeader>
               <CardTitle className="text-2xl">{t(plan.nameKey)}</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {t(plan.descKey)}
-              </p>
+              <p className="text-sm text-muted-foreground">{t(plan.descKey)}</p>
               <div className="mt-4">
                 <span className="text-5xl font-bold">{plan.price}</span>
                 <span className="text-muted-foreground">

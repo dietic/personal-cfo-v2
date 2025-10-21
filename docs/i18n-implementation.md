@@ -48,9 +48,9 @@ export function MyComponent() {
 All translation keys use **dot notation** to access nested objects:
 
 ```typescript
-t("landing.hero.headline1")  // → "Take control of"
-t("landing.features.title")  // → "Everything you need to"
-t("common.save")             // → "Save"
+t("landing.hero.headline1"); // → "Take control of"
+t("landing.features.title"); // → "Everything you need to"
+t("common.save"); // → "Save"
 ```
 
 ### Key Structure
@@ -78,6 +78,7 @@ common
 ### ✅ Browser Language Detection
 
 On first visit (no stored preference):
+
 - Detects browser language via `navigator.language`
 - Sets to `"es"` if browser language starts with "es"
 - Otherwise defaults to `"en"`
@@ -103,6 +104,7 @@ Translation function properly typed to prevent `any` usage.
 ### 1. Add to JSON Files
 
 **`locales/en.json`**:
+
 ```json
 {
   "myFeature": {
@@ -113,6 +115,7 @@ Translation function properly typed to prevent `any` usage.
 ```
 
 **`locales/es.json`**:
+
 ```json
 {
   "myFeature": {
@@ -209,5 +212,5 @@ pnpm build
 
 ---
 
-**Last Updated:** 2025-10-21  
+**Last Updated:** 2025-10-21
 **Status:** ✅ Production Ready (Phase 0.4 Complete)
