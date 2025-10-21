@@ -61,9 +61,7 @@ export function Features() {
             className="group border-border transition-all hover:border-primary/40 hover:shadow-lg"
           >
             <CardContent className="pt-6">
-              <div className="mb-4 text-4xl transition-transform">
-                {f.emoji}
-              </div>
+              <div className="mb-4 text-lg transition-transform">{f.emoji}</div>
               <h3 className="mb-2 text-xl font-semibold">{t(f.titleKey)}</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {t(f.descKey)}
