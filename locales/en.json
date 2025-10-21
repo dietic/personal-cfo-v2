@@ -1,0 +1,41 @@
+{
+  "landing": {
+    "hero": {
+      "headline": "Track your money. See patterns. Act smarter.",
+      "sub": "Upload PDF bank statements, categorize with your own rules, and turn insights into action. Simple, fast, and private.",
+      "ctaJoin": "Join the waiting list",
+      "ctaPricing": "See pricing"
+    },
+    "features": {
+      "fast": {
+        "title": "Fast PDF ingestion",
+        "desc": "Upload and parse PDF statements in seconds. We never store your files."
+      },
+      "rules": {
+        "title": "Rule-based categorization",
+        "desc": "Use keywords and excluded keywords. First match wins; conflicts go to Uncategorized."
+      },
+      "alerts": {
+        "title": "Budgets & alerts",
+        "desc": "Track monthly budgets and get real-time alerts for spikes and overruns."
+      },
+      "analytics": {
+        "title": "Clear analytics",
+        "desc": "Three focused charts with currency toggle (PEN/USD/EUR)."
+      }
+    },
+    "cta": {
+      "title": "Ready to get clarity?",
+      "desc": "Join the waiting list today. We will notify you as soon as your account is ready."
+    },
+    "pricing": {
+      "free": "Free",
+      "plus": "Plus",
+      "pro": "Pro",
+      "join": "Join the waiting list"
+    },
+    "footer": {
+      "rights": "All rights reserved."
+    }
+  }
+}

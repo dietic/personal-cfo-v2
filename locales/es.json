@@ -1,0 +1,41 @@
+{
+  "landing": {
+    "hero": {
+      "headline": "Controla tu dinero. Ve patrones. Actúa con inteligencia.",
+      "sub": "Sube tus estados de cuenta en PDF, categoriza con tus propias reglas y convierte ideas en acción. Simple, rápido y privado.",
+      "ctaJoin": "Únete a la lista de espera",
+      "ctaPricing": "Ver precios"
+    },
+    "features": {
+      "fast": {
+        "title": "Ingesta rápida de PDF",
+        "desc": "Sube y procesa estados de cuenta en segundos. Nunca almacenamos tus archivos."
+      },
+      "rules": {
+        "title": "Categorización por reglas",
+        "desc": "Usa palabras clave y excluidas. La primera coincidencia gana; conflictos van a Sin categoría."
+      },
+      "alerts": {
+        "title": "Presupuestos y alertas",
+        "desc": "Controla presupuestos mensuales y recibe alertas en tiempo real por picos y excesos."
+      },
+      "analytics": {
+        "title": "Analítica clara",
+        "desc": "Tres gráficos enfocados con cambio de moneda (PEN/USD/EUR)."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para tener claridad?",
+      "desc": "Únete hoy a la lista de espera. Te avisaremos cuando tu cuenta esté lista."
+    },
+    "pricing": {
+      "free": "Gratis",
+      "plus": "Plus",
+      "pro": "Pro",
+      "join": "Únete a la lista de espera"
+    },
+    "footer": {
+      "rights": "Todos los derechos reservados."
+    }
+  }
+}

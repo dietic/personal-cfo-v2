@@ -15,14 +15,14 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 0.1 Repository & Environment Setup
 
-- 🔴 Initialize Next.js 15 project with TypeScript
-- 🔴 Configure Tailwind CSS with shadcn/ui
-- 🔴 Install and configure shadcn/ui components
-- 🔴 Set up ESLint with strict TypeScript rules
+- � Initialize Next.js 15 project with TypeScript
+- � Configure Tailwind CSS with shadcn/ui
+- � Install and configure shadcn/ui components
+- � Set up ESLint with strict TypeScript rules
 - 🔴 Configure Prettier for code formatting
-- 🔴 Set up environment variables structure (`.env.local.example`)
-- 🔴 Create `.gitignore` (exclude `.env.local`, `node_modules`, `.next`, etc.)
-- 🔴 Initialize Git repository with proper branching strategy
+- � Set up environment variables structure (`.env.local.example`)
+- � Create `.gitignore` (exclude `.env.local`, `node_modules`, `.next`, etc.)
+- � Initialize Git repository with proper branching strategy
 
 ### 0.2 Supabase Setup
 
@@ -44,19 +44,19 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 0.4 i18n Setup
 
-- 🔴 Create `locales/en.json` with English strings
-- 🔴 Create `locales/es.json` with Spanish strings
-- 🔴 Create `lib/i18n.ts` for translation utilities
-- 🔴 Create `hooks/use-translation.ts` hook
-- 🔴 Add language toggle component
+- � Create `locales/en.json` with English strings
+- � Create `locales/es.json` with Spanish strings
+- � Create `lib/i18n.ts` for translation utilities
+- � Create `hooks/use-translation.ts` hook
+- � Add language toggle component
 
 ### 0.5 Theme & Design System
 
-- 🔴 Set up CSS variables for theme tokens in `globals.css`
-- 🔴 Create `components/theme-provider.tsx`
-- 🔴 Create `components/theme-toggle.tsx`
-- 🔴 Configure light/dark mode switching
-- 🔴 Test theme tokens across shadcn/ui components
+- � Set up CSS variables for theme tokens in `globals.css`
+- � Create `components/theme-provider.tsx`
+- � Create `components/theme-toggle.tsx`
+- � Configure light/dark mode switching
+- � Test theme tokens across shadcn/ui components
 
 ---
 
@@ -617,18 +617,18 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 14.1 Landing Page
 
-- 🔴 Create `/` page (Hero, Value Proposition, Features, Pricing, CTA, Footer)
-- 🔴 Create `components/landing/hero.tsx`
-- 🔴 Create `components/landing/features.tsx`
-- 🔴 Create `components/landing/pricing.tsx` (show Free/Plus/Pro plans)
-- 🔴 Create `components/landing/cta.tsx` ("Join Waiting List" CTA)
-- 🔴 Create `components/landing/footer.tsx` (links, social, copyright)
-- 🔴 Add responsive design (mobile-first)
-- 🔴 Add micro-animations (scroll reveals, hover effects)
+- � Create `/` page (Hero, Value Proposition, Features, Pricing, CTA, Footer)
+- � Create `components/landing/hero.tsx`
+- � Create `components/landing/features.tsx`
+- � Create `components/landing/pricing.tsx` (show Free/Plus/Pro plans)
+- � Create `components/landing/cta.tsx` ("Join Waiting List" CTA)
+- � Create `components/landing/footer.tsx` (links, social, copyright)
+- � Add responsive design (mobile-first)
+- � Add micro-animations (scroll reveals, hover effects)
 
 ### 14.2 Public Navigation
 
-- 🔴 Create `components/nav/public-nav.tsx` (Login, Register CTAs)
+- � Create `components/landing/navbar.tsx` (with language toggle, theme toggle, brand)
 - 🔴 Create `components/nav/auth-nav.tsx` (Dashboard, Logout, User menu)
 
 ---

@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light theme tokens (from previous project spec) */
+  --background: 210 40% 98%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --soft-destructive: 0 84% 66%;
+  --soft-destructive-foreground: 222.2 84% 4.9%;
+  --success: 142.1 76.2% 36.3%;
+  --success-foreground: 355.7 100% 97.3%;
+  --warning: 37 92% 54%;
+  --warning-foreground: 24 100% 8%;
+  --info: 201 96% 32%;
+  --info-foreground: 0 0% 100%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+
+  /* Sidebar (light) */
+  --sidebar: 0 0% 100%; /* alias */
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 222.2 84% 4.9%;
+  --sidebar-primary: 221.2 83.2% 53.3%;
+  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-accent: 210 40% 96.1%;
+  --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+  --sidebar-border: 214.3 31.8% 91.4%;
+  --sidebar-ring: 221.2 83.2% 53.3%;
+
+  /* Charts (analytics – keep existing mapping) */
+  --chart-1: 228 94% 61%;
+  --chart-2: 13 88% 61%;
+  --chart-3: 160 84% 39%;
+  --chart-4: 281 83% 53%;
+  --chart-5: 42 100% 50%;
+
+  /* Radii & elevation */
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 8px;
+
+  --shadow-sm: 0 1px 2px rgba(9, 14, 26, 0.06);
+  --shadow: 0 2px 6px rgba(9, 14, 26, 0.08);
+  --shadow-md: 0 6px 16px rgba(9, 14, 26, 0.1);
+  --shadow-lg: 0 10px 24px rgba(9, 14, 26, 0.12);
+}
+
+.dark {
+  /* Dark theme tokens (from previous project spec) */
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 224.3 76.3% 48%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --soft-destructive: 0 84% 66%;
+  --soft-destructive-foreground: 222.2 84% 4.9%;
+  --success: 142.1 70.6% 45.3%;
+  --success-foreground: 144.9 80.4% 10%;
+  --warning: 37 92% 54%;
+  --warning-foreground: 24 100% 8%;
+  --info: 201 96% 52%;
+  --info-foreground: 220 40% 10%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+
+  /* Sidebar (dark) */
+  --sidebar: 222.2 47.4% 11.2%; /* alias */
+  --sidebar-background: 222.2 47.4% 11.2%;
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-primary: 217.2 91.2% 59.8%;
+  --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+  --sidebar-accent: 217.2 32.6% 17.5%;
+  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar-border: 217.2 32.6% 17.5%;
+  --sidebar-ring: 224.3 76.3% 48%;
+
+  /* Charts */
+  --chart-1: 228 94% 61%;
+  --chart-2: 13 88% 61%;
+  --chart-3: 160 84% 39%;
+  --chart-4: 281 83% 53%;
+  --chart-5: 42 100% 50%;
+}
+
+html,
+body,
+#__next {
+  height: 100%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Utilities for charts and badges to reflect tokens */
+.text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+.bg-sidebar {
+  background-color: hsl(var(--sidebar));
+}
+.text-sidebar-foreground {
+  color: hsl(var(--sidebar-foreground));
+}
+.border-sidebar {
+  border-color: hsl(var(--sidebar-border));
+}

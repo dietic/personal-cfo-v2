@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added (2025-10-21)
+
+- Next.js 15 project scaffold with TypeScript, App Router
+- Tailwind CSS configuration with design tokens
+- Theme system with light/dark mode support (next-themes)
+- CSS variables for comprehensive color palette (light/dark)
+  - Primary, secondary, muted, accent colors
+  - Success, warning, destructive, info, soft-destructive states
+  - Sidebar-specific tokens
+  - Chart colors for analytics
+- shadcn/ui components: Button, Card with multiple variants
+- Icon library (lucide-react) for UI elements
+- i18n foundation (en/es) with translation hook
+- Landing page with conversion-focused design:
+  - Hero section with gradient headline, dual CTAs, trust indicators
+  - Features section with emoji icons and hover animations (6 features)
+  - Pricing section with 3 tiers (Free/Plus/Pro) and "most popular" badge
+  - CTA section with urgency messaging and social proof
+  - Footer with brand, social links, product/legal navigation
+- Navbar with brand logo, ES/EN language toggle, theme toggle (Sun/Moon icons)
+- Environment configuration (.env, .env.local.example)
+- .gitignore with comprehensive rules
+- React Compiler support (babel-plugin-react-compiler)
+- TypeScript strict mode with proper type definitions
+
 ### Planned for v1.0.0
 
 - User authentication with email verification
