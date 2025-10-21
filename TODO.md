@@ -44,11 +44,16 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 0.4 i18n Setup
 
-- � Create `locales/en.json` with English strings
-- � Create `locales/es.json` with Spanish strings
-- � Create `lib/i18n.ts` for translation utilities
-- � Create `hooks/use-translation.ts` hook
-- � Add language toggle component
+- 🟢 Create `locales/en.json` with English strings
+- 🟢 Create `locales/es.json` with Spanish strings
+- 🟢 Create `lib/i18n.ts` for translation utilities
+- 🟢 Create `hooks/use-translation.ts` hook
+- 🟢 Create `contexts/locale-context.tsx` with LocaleProvider
+- 🟢 Add language toggle component (Navbar)
+- 🟢 Integrate LocaleProvider in root layout
+- 🟢 Update all landing page components with translations (Hero, Features, Pricing, CTA, Footer)
+- 🟢 Implement localStorage persistence for locale preference
+- 🟢 Add browser language detection on first visit
 
 ### 0.5 Theme & Design System
 
