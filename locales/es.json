@@ -1,41 +1,118 @@
 {
   "landing": {
     "hero": {
-      "headline": "Controla tu dinero. Ve patrones. Actúa con inteligencia.",
-      "sub": "Sube tus estados de cuenta en PDF, categoriza con tus propias reglas y convierte ideas en acción. Simple, rápido y privado.",
-      "ctaJoin": "Únete a la lista de espera",
-      "ctaPricing": "Ver precios"
+      "badge": "Gratis durante beta • Sin tarjeta de crédito",
+      "headline1": "Toma el control de",
+      "headline2": "tus finanzas",
+      "subheadline": "Sube estados de cuenta, auto-categoriza transacciones y ve exactamente a dónde va tu dinero. Hecho para personas que quieren claridad, no complejidad.",
+      "ctaPrimary": "Únete a la lista de espera",
+      "ctaSecondary": "Ver cómo funciona",
+      "trust1": "No guardamos PDFs",
+      "trust2": "Seguridad bancaria",
+      "trust3": "Cancela cuando quieras"
     },
     "features": {
+      "title": "Todo lo que necesitas para",
+      "subtitle": "dominar tu dinero",
+      "description": "Funciones poderosas diseñadas para la simplicidad. Sin jerga, sin desorden—solo las herramientas que necesitas.",
       "fast": {
-        "title": "Ingesta rápida de PDF",
-        "desc": "Sube y procesa estados de cuenta en segundos. Nunca almacenamos tus archivos."
+        "title": "Súper Rápido",
+        "description": "Sube y procesa estados de cuenta en segundos. Extracción con IA y seguridad bancaria."
       },
-      "rules": {
-        "title": "Categorización por reglas",
-        "desc": "Usa palabras clave y excluidas. La primera coincidencia gana; conflictos van a Sin categoría."
+      "smart": {
+        "title": "Categorización Inteligente",
+        "description": "Auto-categoriza con palabras clave personalizadas. Tus reglas, tu forma—sin trabajo manual."
+      },
+      "insights": {
+        "title": "Información Clara",
+        "description": "Gráficos hermosos que realmente tienen sentido. Rastrea patrones de gasto en múltiples monedas."
       },
       "alerts": {
-        "title": "Presupuestos y alertas",
-        "desc": "Controla presupuestos mensuales y recibe alertas en tiempo real por picos y excesos."
+        "title": "Mantente Informado",
+        "description": "Recibe notificaciones sobre excesos de presupuesto y gastos inusuales antes de que sea un problema."
       },
-      "analytics": {
-        "title": "Analítica clara",
-        "desc": "Tres gráficos enfocados con cambio de moneda (PEN/USD/EUR)."
+      "cards": {
+        "title": "Múltiples Tarjetas",
+        "description": "Rastrea tarjetas y cuentas ilimitadas en un solo lugar. Ve tu panorama financiero completo."
+      },
+      "privacy": {
+        "title": "Privacidad Primero",
+        "description": "Tus datos son tuyos. Procesamos estados de cuenta en memoria y nunca guardamos tus PDFs."
+      }
+    },
+    "pricing": {
+      "title": "Precios simples y transparentes",
+      "subtitle": "Elige el plan que se ajuste a tus necesidades",
+      "monthly": "/mes",
+      "popular": "Más Popular",
+      "cta": "Únete a la lista de espera",
+      "free": {
+        "name": "Gratis",
+        "description": "Perfecto para comenzar",
+        "feature1": "2 estados de cuenta por mes",
+        "feature2": "1 tarjeta",
+        "feature3": "6 categorías predefinidas",
+        "feature4": "2 presupuestos",
+        "feature5": "2 alertas",
+        "feature6": "Analítica básica"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "Para administradores serios",
+        "feature1": "Estados de cuenta ilimitados",
+        "feature2": "Hasta 5 tarjetas",
+        "feature3": "Hasta 25 categorías",
+        "feature4": "10 presupuestos",
+        "feature5": "6 alertas",
+        "feature6": "Analítica avanzada",
+        "feature7": "Soporte por email",
+        "feature8": "Exportar datos (CSV)"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Para usuarios avanzados",
+        "feature1": "Todo en Plus",
+        "feature2": "Tarjetas ilimitadas",
+        "feature3": "Categorías ilimitadas",
+        "feature4": "15 presupuestos",
+        "feature5": "10 alertas",
+        "feature6": "Soporte prioritario",
+        "feature7": "Acceso API (próximamente)",
+        "feature8": "Reportes personalizados"
       }
     },
     "cta": {
-      "title": "¿Listo para tener claridad?",
-      "desc": "Únete hoy a la lista de espera. Te avisaremos cuando tu cuenta esté lista."
-    },
-    "pricing": {
-      "free": "Gratis",
-      "plus": "Plus",
-      "pro": "Pro",
-      "join": "Únete a la lista de espera"
+      "title": "¿Listo para tomar el control?",
+      "subtitle": "Únete a miles en la lista de espera",
+      "description": "Sé de los primeros en experimentar Personal CFO. Lanzamos pronto y los espacios son limitados.",
+      "button": "Únete a la lista de espera",
+      "guarantee": "Sin tarjeta de crédito • Cancela cuando quieras"
     },
     "footer": {
+      "brand": "PersonalCFO",
+      "tagline": "Tu compañero de finanzas personales",
+      "product": "Producto",
+      "features": "Funciones",
+      "pricing": "Precios",
+      "analytics": "Analítica",
+      "legal": "Legal",
+      "privacy": "Política de Privacidad",
+      "terms": "Términos de Servicio",
+      "contact": "Contacto",
+      "social": "Redes",
       "rights": "Todos los derechos reservados."
     }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "confirm": "Confirmar",
+    "close": "Cerrar"
   }
 }

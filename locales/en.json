@@ -1,41 +1,118 @@
 {
   "landing": {
     "hero": {
-      "headline": "Track your money. See patterns. Act smarter.",
-      "sub": "Upload PDF bank statements, categorize with your own rules, and turn insights into action. Simple, fast, and private.",
-      "ctaJoin": "Join the waiting list",
-      "ctaPricing": "See pricing"
+      "badge": "Free during beta • No credit card required",
+      "headline1": "Take control of",
+      "headline2": "your finances",
+      "subheadline": "Upload bank statements, auto-categorize transactions, and see exactly where your money goes. Built for people who want clarity, not complexity.",
+      "ctaPrimary": "Join the waiting list",
+      "ctaSecondary": "See how it works",
+      "trust1": "No PDFs stored",
+      "trust2": "Bank-level security",
+      "trust3": "Cancel anytime"
     },
     "features": {
+      "title": "Everything you need to",
+      "subtitle": "master your money",
+      "description": "Powerful features designed for simplicity. No jargon, no clutter—just the tools you need.",
       "fast": {
-        "title": "Fast PDF ingestion",
-        "desc": "Upload and parse PDF statements in seconds. We never store your files."
+        "title": "Lightning Fast",
+        "description": "Upload and process statements in seconds. AI-powered extraction with bank-grade security."
       },
-      "rules": {
-        "title": "Rule-based categorization",
-        "desc": "Use keywords and excluded keywords. First match wins; conflicts go to Uncategorized."
+      "smart": {
+        "title": "Smart Categorization",
+        "description": "Auto-categorize with custom keywords. Your rules, your way—no manual work required."
+      },
+      "insights": {
+        "title": "Clear Insights",
+        "description": "Beautiful charts that actually make sense. Track spending patterns across multiple currencies."
       },
       "alerts": {
-        "title": "Budgets & alerts",
-        "desc": "Track monthly budgets and get real-time alerts for spikes and overruns."
+        "title": "Stay Informed",
+        "description": "Get notified about budget overruns and unusual spending before it becomes a problem."
       },
-      "analytics": {
-        "title": "Clear analytics",
-        "desc": "Three focused charts with currency toggle (PEN/USD/EUR)."
+      "cards": {
+        "title": "Multi-Card Support",
+        "description": "Track unlimited cards and accounts in one place. See your complete financial picture."
+      },
+      "privacy": {
+        "title": "Privacy First",
+        "description": "Your data stays yours. We process statements in memory and never store your PDFs."
+      }
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "subtitle": "Choose the plan that fits your needs",
+      "monthly": "/month",
+      "popular": "Most Popular",
+      "cta": "Join the waiting list",
+      "free": {
+        "name": "Free",
+        "description": "Perfect for getting started",
+        "feature1": "2 statements per month",
+        "feature2": "1 card",
+        "feature3": "6 preset categories",
+        "feature4": "2 budgets",
+        "feature5": "2 alerts",
+        "feature6": "Basic analytics"
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "For serious money managers",
+        "feature1": "Unlimited statements",
+        "feature2": "Up to 5 cards",
+        "feature3": "Up to 25 categories",
+        "feature4": "10 budgets",
+        "feature5": "6 alerts",
+        "feature6": "Advanced analytics",
+        "feature7": "Email support",
+        "feature8": "Export data (CSV)"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "For power users",
+        "feature1": "Everything in Plus",
+        "feature2": "Unlimited cards",
+        "feature3": "Unlimited categories",
+        "feature4": "15 budgets",
+        "feature5": "10 alerts",
+        "feature6": "Priority support",
+        "feature7": "API access (coming soon)",
+        "feature8": "Custom reports"
       }
     },
     "cta": {
-      "title": "Ready to get clarity?",
-      "desc": "Join the waiting list today. We will notify you as soon as your account is ready."
-    },
-    "pricing": {
-      "free": "Free",
-      "plus": "Plus",
-      "pro": "Pro",
-      "join": "Join the waiting list"
+      "title": "Ready to take control?",
+      "subtitle": "Join thousands on the waiting list",
+      "description": "Be among the first to experience Personal CFO. We're launching soon and spaces are limited.",
+      "button": "Join the waiting list",
+      "guarantee": "No credit card required • Cancel anytime"
     },
     "footer": {
+      "brand": "PersonalCFO",
+      "tagline": "Your personal finance companion",
+      "product": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "analytics": "Analytics",
+      "legal": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "contact": "Contact",
+      "social": "Social",
       "rights": "All rights reserved."
     }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "confirm": "Confirm",
+    "close": "Close"
   }
 }
