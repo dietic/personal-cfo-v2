@@ -163,8 +163,9 @@ Personal CFO helps users improve personal finances. Users upload **PDF bank stat
 4. **Budgets, Analytics & Alerts**
 
    - **Budgets:** current **calendar month** progress bars; resets on 1st of each month.
-   - **Analytics:** 3 charts (6-month fixed window, non-exportable in v1) with **currency toggle** (PEN/USD/EUR minimum). Uses free exchange rate API for real-time conversion when toggling currency.
-   - **Alerts:** v1 supports threshold/rule-based notifications (budget overrun, unusual spikes). Alerts are calculated **real-time** and displayed as cards in the dashboard. Alert events stored in `alert_notifications` table for future use.
+
+- **Analytics:** 3 charts (6-month fixed window, non-exportable in v1) with **currency toggle** (PEN/USD/EUR minimum). Exchange rates: Primary https://v6.exchangerate-api.com/v6/${NEXT_PUBLIC_EXCHANGERATE_API_KEY}/latest/PEN with fallback https://api.exchangerate.fun/latest?base=PEN. Implement retry/fallback logic and short-term caching (e.g., 1-hour TTL) in `lib/currency.ts`.
+- **Alerts:** v1 supports threshold/rule-based notifications (budget overrun, unusual spikes). Alerts are calculated **real-time** and displayed as cards in the dashboard. Alert events stored in `alert_notifications` table for future use.
 
 5. **Keywords & Categories**
    Users maintain categories, keywords (bulk CRUD), and excluded keywords.
@@ -257,7 +258,10 @@ Key pages:
 - Chart B: Monthly spend (last 6 months, **fixed window**) + YTD total
 - Chart C: Expenses per category (current month) – bar
 - **Currency toggle** for all charts (PEN/USD/EUR minimum) with **one currency displayed at a time**
-- **Exchange rates:** Use a free exchange rate API (e.g., exchangerate-api.io or similar) to convert amounts in real-time when user toggles currency
+- **Exchange rates:** Use the following providers in order:
+  - Primary: `https://v6.exchangerate-api.com/v6/${NEXT_PUBLIC_EXCHANGERATE_API_KEY}/latest/PEN`
+  - Fallback: `https://api.exchangerate.fun/latest?base=PEN`
+  - Implement retry/fallback and cache exchange rates (1-hour TTL) in `lib/currency.ts`
 - **No export** functionality in v1 (CSV/PNG export planned for later)
 
 ### 5) Budgets
@@ -549,6 +553,9 @@ CELERY_RESULT_BACKEND=${REDIS_URL}
 
 # i18n
 DEFAULT_LOCALE=en
+
+# Exchange Rates (primary provider key)
+NEXT_PUBLIC_EXCHANGERATE_API_KEY=
 ```
 
 ## Design Philosophy
