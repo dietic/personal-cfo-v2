@@ -460,7 +460,15 @@ pnpm test             # Vitest unit tests
 1. `pnpm run lint` → 0 errors
 2. `pnpm build` → compiles
 3. No unused imports, TODOs, or console.logs
-4. Atomic commits: `feat:`, `fix:`, `refactor:`, `chore:`
+4. Follow commit message format: `type(scope): description`
+   - **type:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+   - **scope:** module name (e.g., `landing`, `auth`, `cards`, `theme`, `i18n`)
+   - **description:** concise summary (imperative mood, lowercase, no period)
+   - Examples:
+     - `feat(landing): add conversion-focused hero section`
+     - `fix(theme): correct dark mode border colors`
+     - `docs(readme): update setup instructions`
+     - `refactor(cards): extract card form to separate component`
 
 ### Backlog & TODO Tracking
 
@@ -474,7 +482,16 @@ pnpm test             # Vitest unit tests
 - Do **not** commit immediately after code changes.
 - Post a short report (what changed + lint/build/test status + brief diff notes).
 - Wait for explicit **Diego approval** before committing.
-- Commit atomically with a descriptive message referencing TODO items.
+- **Split large changes into multiple focused commits:**
+  - If changes span multiple modules/features, create separate commits per module
+  - Each commit should be atomic and deployable
+  - Example: Instead of one large "feat: add landing page and theme", split into:
+    - `feat(theme): add CSS variable tokens and theme provider`
+    - `feat(landing): create hero section with CTAs`
+    - `feat(landing): add features section with emoji icons`
+    - `feat(landing): implement pricing cards`
+- Use descriptive commit messages following the format above
+- Reference TODO items when applicable
 
 ### Branching & PR Hygiene
 
