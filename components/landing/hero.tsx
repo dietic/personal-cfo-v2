@@ -12,25 +12,21 @@ export function Hero() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary sm:px-4 sm:text-sm">
           <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          <span className="whitespace-nowrap">
-            Free during beta • No credit card required
-          </span>
+          <span className="whitespace-nowrap">{t("landing.hero.badge")}</span>
         </div>
 
         {/* Headline */}
         <h1 className="mt-6 text-4xl font-bold tracking-tight sm:mt-8 sm:text-5xl md:text-7xl lg:text-8xl">
-          Take control of
+          {t("landing.hero.headline1")}
           <br />
           <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            your finances
+            {t("landing.hero.headline2")}
           </span>
         </h1>
 
         {/* Subheadline */}
         <p className="mx-auto mt-4 max-w-2xl px-2 text-base text-muted-foreground sm:mt-6 sm:text-lg md:text-xl">
-          Upload bank statements, auto-categorize transactions, and see exactly
-          where your money goes. Built for people who want clarity, not
-          complexity.
+          {t("landing.hero.subheadline")}
         </p>
 
         {/* CTAs */}
@@ -39,7 +35,7 @@ export function Hero() {
             size="lg"
             className="w-full gap-2 text-base shadow-lg sm:w-auto"
           >
-            Join the waiting list
+            {t("landing.hero.ctaPrimary")}
             <ArrowRight className="h-4 w-4" />
           </Button>
           <Button
@@ -52,7 +48,7 @@ export function Hero() {
                 ?.scrollIntoView({ behavior: "smooth" })
             }
           >
-            See how it works
+            {t("landing.hero.ctaSecondary")}
           </Button>
         </div>
 
@@ -60,15 +56,15 @@ export function Hero() {
         <div className="mt-8 flex flex-col items-center justify-center gap-4 text-sm text-muted-foreground sm:mt-12 sm:flex-row sm:gap-6">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-            <span>No PDFs stored</span>
+            <span>{t("landing.hero.trust1")}</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-            <span>Bank-level security</span>
+            <span>{t("landing.hero.trust2")}</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-            <span>Cancel anytime</span>
+            <span>{t("landing.hero.trust3")}</span>
           </div>
         </div>
       </div>

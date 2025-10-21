@@ -13,27 +13,24 @@ export function Cta() {
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/50 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur">
             <TrendingUp className="h-4 w-4" />
-            <span>Join 1,000+ people taking control</span>
+            <span>{t("landing.cta.subtitle")}</span>
           </div>
 
           <h2 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-            Ready to understand
-            <br />
-            <span className="text-primary">where your money goes?</span>
+            {t("landing.cta.title")}
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Stop guessing. Start knowing. Get your free account and see exactly
-            how much you spend on everything—in minutes, not hours.
+            {t("landing.cta.description")}
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Button size="lg" className="gap-2 text-base shadow-lg">
-              Join the waiting list
+              {t("landing.cta.button")}
               <ArrowRight className="h-4 w-4" />
             </Button>
             <p className="text-sm text-muted-foreground">
-              Free during beta • No credit card required
+              {t("landing.cta.guarantee")}
             </p>
           </div>
         </div>
