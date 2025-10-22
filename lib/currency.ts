@@ -3,20 +3,23 @@
  * Handles currency conversion, formatting, and minor unit operations
  */
 
-export type Currency = "PEN" | "USD" | "EUR"
+export type Currency = "PEN" | "USD" | "EUR";
 
 export interface ExchangeRates {
-  base: Currency
-  rates: Record<string, number>
-  timestamp: number
+  base: Currency;
+  rates: Record<string, number>;
+  timestamp: number;
 }
 
 /**
  * Convert amount from minor units (cents) to major units (dollars)
  */
-export function fromMinorUnits(amountCents: number, currency: Currency): number {
+export function fromMinorUnits(
+  amountCents: number,
+  currency: Currency
+): number {
   // All supported currencies use 2 decimal places
-  return amountCents / 100
+  return amountCents / 100;
 }
 
 /**
@@ -24,7 +27,7 @@ export function fromMinorUnits(amountCents: number, currency: Currency): number 
  */
 export function toMinorUnits(amount: number, currency: Currency): number {
   // All supported currencies use 2 decimal places
-  return Math.round(amount * 100)
+  return Math.round(amount * 100);
 }
 
 /**
@@ -41,7 +44,7 @@ export function formatCurrency(
     currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(amount)
+  }).format(amount);
 }
 
 /**
@@ -52,8 +55,8 @@ export function formatCurrencyFromMinorUnits(
   currency: Currency,
   locale: string = "en-US"
 ): string {
-  const amount = fromMinorUnits(amountCents, currency)
-  return formatCurrency(amount, currency, locale)
+  const amount = fromMinorUnits(amountCents, currency);
+  return formatCurrency(amount, currency, locale);
 }
 
 /**
@@ -70,32 +73,32 @@ export function convertCurrency(
   to: Currency,
   rates: ExchangeRates
 ): number {
-  if (from === to) return amount
+  if (from === to) return amount;
 
   // If base currency matches source, use rate directly
   if (rates.base === from) {
-    const rate = rates.rates[to]
-    if (!rate) throw new Error(`No exchange rate found for ${to}`)
-    return amount * rate
+    const rate = rates.rates[to];
+    if (!rate) throw new Error(`No exchange rate found for ${to}`);
+    return amount * rate;
   }
 
   // If base currency matches target, divide by rate
   if (rates.base === to) {
-    const rate = rates.rates[from]
-    if (!rate) throw new Error(`No exchange rate found for ${from}`)
-    return amount / rate
+    const rate = rates.rates[from];
+    if (!rate) throw new Error(`No exchange rate found for ${from}`);
+    return amount / rate;
   }
 
   // Otherwise, convert through base currency
-  const fromRate = rates.rates[from]
-  const toRate = rates.rates[to]
+  const fromRate = rates.rates[from];
+  const toRate = rates.rates[to];
   if (!fromRate || !toRate) {
-    throw new Error(`Missing exchange rates for ${from} or ${to}`)
+    throw new Error(`Missing exchange rates for ${from} or ${to}`);
   }
 
   // Convert from source to base, then base to target
-  const amountInBase = amount / fromRate
-  return amountInBase * toRate
+  const amountInBase = amount / fromRate;
+  return amountInBase * toRate;
 }
 
 /**
@@ -107,16 +110,16 @@ export function convertCurrencyFromMinorUnits(
   to: Currency,
   rates: ExchangeRates
 ): number {
-  const amount = fromMinorUnits(amountCents, from)
-  const converted = convertCurrency(amount, from, to, rates)
-  return toMinorUnits(converted, to)
+  const amount = fromMinorUnits(amountCents, from);
+  const converted = convertCurrency(amount, from, to, rates);
+  return toMinorUnits(converted, to);
 }
 
 /**
  * Validate currency code
  */
 export function isSupportedCurrency(currency: string): currency is Currency {
-  return ["PEN", "USD", "EUR"].includes(currency)
+  return ["PEN", "USD", "EUR"].includes(currency);
 }
 
 /**
@@ -127,6 +130,6 @@ export function getCurrencySymbol(currency: Currency): string {
     PEN: "S/",
     USD: "$",
     EUR: "€",
-  }
-  return symbols[currency]
+  };
+  return symbols[currency];
 }

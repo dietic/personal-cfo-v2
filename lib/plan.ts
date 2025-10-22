@@ -3,15 +3,15 @@
  * Enforces plan limits on cards, statements, categories, alerts, and budgets
  */
 
-export type Plan = "free" | "plus" | "pro" | "admin"
+export type Plan = "free" | "plus" | "pro" | "admin";
 
 export interface PlanEntitlements {
-  cards: number
-  statementsPerMonth: number
-  categories: number
-  alerts: number
-  budgets: number
-  keywordCategorization: boolean
+  cards: number;
+  statementsPerMonth: number;
+  categories: number;
+  alerts: number;
+  budgets: number;
+  keywordCategorization: boolean;
 }
 
 const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
@@ -47,21 +47,21 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     budgets: Infinity,
     keywordCategorization: true,
   },
-}
+};
 
 /**
  * Get entitlements for a given plan
  */
 export function getPlanEntitlements(plan: Plan): PlanEntitlements {
-  return PLAN_ENTITLEMENTS[plan]
+  return PLAN_ENTITLEMENTS[plan];
 }
 
 /**
  * Check if user can create a card based on current count and plan
  */
 export function canCreateCard(plan: Plan, currentCount: number): boolean {
-  const entitlements = getPlanEntitlements(plan)
-  return currentCount < entitlements.cards
+  const entitlements = getPlanEntitlements(plan);
+  return currentCount < entitlements.cards;
 }
 
 /**
@@ -71,8 +71,8 @@ export function canUploadStatement(
   plan: Plan,
   currentMonthCount: number
 ): boolean {
-  const entitlements = getPlanEntitlements(plan)
-  return currentMonthCount < entitlements.statementsPerMonth
+  const entitlements = getPlanEntitlements(plan);
+  return currentMonthCount < entitlements.statementsPerMonth;
 }
 
 /**
@@ -83,33 +83,33 @@ export function canCreateCategory(
   plan: Plan,
   currentUserCategoriesCount: number
 ): boolean {
-  const entitlements = getPlanEntitlements(plan)
+  const entitlements = getPlanEntitlements(plan);
   // free plan: 6 system categories only, cannot add more
   if (plan === "free") {
-    return false
+    return false;
   }
   // plus plan: 6 system + up to 19 user-created = 25 total
   if (plan === "plus") {
-    return currentUserCategoriesCount < 19
+    return currentUserCategoriesCount < 19;
   }
   // pro/admin: unlimited user categories
-  return true
+  return true;
 }
 
 /**
  * Check if user can create a budget based on current count and plan
  */
 export function canCreateBudget(plan: Plan, currentCount: number): boolean {
-  const entitlements = getPlanEntitlements(plan)
-  return currentCount < entitlements.budgets
+  const entitlements = getPlanEntitlements(plan);
+  return currentCount < entitlements.budgets;
 }
 
 /**
  * Check if user can create an alert based on current count and plan
  */
 export function canCreateAlert(plan: Plan, currentCount: number): boolean {
-  const entitlements = getPlanEntitlements(plan)
-  return currentCount < entitlements.alerts
+  const entitlements = getPlanEntitlements(plan);
+  return currentCount < entitlements.alerts;
 }
 
 /**
@@ -120,9 +120,9 @@ export function getRemainingCount(
   resource: keyof PlanEntitlements,
   currentCount: number
 ): number {
-  const entitlements = getPlanEntitlements(plan)
-  const limit = entitlements[resource]
-  if (typeof limit !== "number") return 0
-  if (!isFinite(limit)) return Infinity
-  return Math.max(0, limit - currentCount)
+  const entitlements = getPlanEntitlements(plan);
+  const limit = entitlements[resource];
+  if (typeof limit !== "number") return 0;
+  if (!isFinite(limit)) return Infinity;
+  return Math.max(0, limit - currentCount);
 }
