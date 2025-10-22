@@ -39,7 +39,9 @@ export default function Navbar() {
             </>
           )}
           <div
-            className={`flex items-center gap-2 ${!isAuthPage ? "ml-1 border-l border-border pl-3" : ""}`}
+            className={`flex items-center gap-2 ${
+              !isAuthPage ? "ml-1 border-l border-border pl-3" : ""
+            }`}
           >
             <Button
               variant={locale === "es" ? "secondary" : "ghost"}
