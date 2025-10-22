@@ -44,7 +44,11 @@ interface CardFormProps {
 export function CardForm({ open, onClose, card }: CardFormProps) {
   const { t } = useTranslation();
   const { createCard, updateCard, isCreating, isUpdating } = useCards();
-  const { data: banks = [], isLoading: isLoadingBanks } = useBanks();
+  const {
+    data: banks = [],
+    isLoading: isLoadingBanks,
+    error: banksError,
+  } = useBanks();
   const isEdit = !!card;
 
   const form = useForm<CreateCardInput>({
@@ -116,6 +120,11 @@ export function CardForm({ open, onClose, card }: CardFormProps) {
                       {...field}
                     />
                   </FormControl>
+                  {banksError ? (
+                    <FormDescription className="text-destructive">
+                      {t("common.error")}: {banksError.message}
+                    </FormDescription>
+                  ) : null}
                   <FormMessage />
                 </FormItem>
               )}
@@ -128,22 +137,30 @@ export function CardForm({ open, onClose, card }: CardFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("cards.bank")}</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={isLoadingBanks}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("cards.selectBank")} />
+                      <SelectTrigger /* keep enabled even while loading to allow opening */
+                      >
+                        <div className="flex w-full items-center justify-between gap-2">
+                          <SelectValue placeholder={t("cards.selectBank")} />
+                          {isLoadingBanks ? (
+                            <Loader2 className="h-4 w-4 animate-spin opacity-70" />
+                          ) : null}
+                        </div>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {banks.map((bank) => (
-                        <SelectItem key={bank.id} value={bank.id}>
-                          {bank.name}
+                      {banks.length === 0 && !isLoadingBanks ? (
+                        <SelectItem value="" disabled>
+                          {t("cards.noBanksAvailable")}
                         </SelectItem>
-                      ))}
+                      ) : (
+                        banks.map((bank) => (
+                          <SelectItem key={bank.id} value={bank.id}>
+                            {bank.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
