@@ -24,54 +24,51 @@ describe("Currency Utilities", () => {
 
   describe("fromMinorUnits", () => {
     it("should convert cents to dollars", () => {
-      expect(fromMinorUnits(10000, "USD")).toBe(100);
-      expect(fromMinorUnits(2550, "USD")).toBe(25.5);
-      expect(fromMinorUnits(99, "USD")).toBe(0.99);
+      expect(fromMinorUnits(10000)).toBe(100);
+      expect(fromMinorUnits(2550)).toBe(25.5);
+      expect(fromMinorUnits(99)).toBe(0.99);
     });
 
     it("should convert centimos to soles", () => {
-      expect(fromMinorUnits(10000, "PEN")).toBe(100);
-      expect(fromMinorUnits(3750, "PEN")).toBe(37.5);
+      expect(fromMinorUnits(10000)).toBe(100);
+      expect(fromMinorUnits(3750)).toBe(37.5);
     });
 
     it("should handle zero", () => {
-      expect(fromMinorUnits(0, "USD")).toBe(0);
-      expect(fromMinorUnits(0, "PEN")).toBe(0);
-      expect(fromMinorUnits(0, "EUR")).toBe(0);
+      expect(fromMinorUnits(0)).toBe(0);
     });
 
     it("should handle negative amounts", () => {
-      expect(fromMinorUnits(-1000, "USD")).toBe(-10);
-      expect(fromMinorUnits(-5500, "EUR")).toBe(-55);
+      expect(fromMinorUnits(-1000)).toBe(-10);
+      expect(fromMinorUnits(-5500)).toBe(-55);
     });
   });
 
   describe("toMinorUnits", () => {
     it("should convert dollars to cents", () => {
-      expect(toMinorUnits(100, "USD")).toBe(10000);
-      expect(toMinorUnits(25.5, "USD")).toBe(2550);
-      expect(toMinorUnits(0.99, "USD")).toBe(99);
+      expect(toMinorUnits(100)).toBe(10000);
+      expect(toMinorUnits(25.5)).toBe(2550);
+      expect(toMinorUnits(0.99)).toBe(99);
     });
 
     it("should convert soles to centimos", () => {
-      expect(toMinorUnits(100, "PEN")).toBe(10000);
-      expect(toMinorUnits(37.5, "PEN")).toBe(3750);
+      expect(toMinorUnits(100)).toBe(10000);
+      expect(toMinorUnits(37.5)).toBe(3750);
     });
 
     it("should round to nearest cent", () => {
-      expect(toMinorUnits(10.555, "USD")).toBe(1056);
-      expect(toMinorUnits(10.554, "USD")).toBe(1055);
-      expect(toMinorUnits(10.545, "USD")).toBe(1055);
+      expect(toMinorUnits(10.555)).toBe(1056);
+      expect(toMinorUnits(10.554)).toBe(1055);
+      expect(toMinorUnits(10.545)).toBe(1055);
     });
 
     it("should handle zero", () => {
-      expect(toMinorUnits(0, "USD")).toBe(0);
-      expect(toMinorUnits(0, "PEN")).toBe(0);
+      expect(toMinorUnits(0)).toBe(0);
     });
 
     it("should handle negative amounts", () => {
-      expect(toMinorUnits(-10, "USD")).toBe(-1000);
-      expect(toMinorUnits(-55, "EUR")).toBe(-5500);
+      expect(toMinorUnits(-10)).toBe(-1000);
+      expect(toMinorUnits(-55)).toBe(-5500);
     });
   });
 
@@ -264,8 +261,8 @@ describe("Currency Utilities", () => {
     });
 
     it("should round consistently", () => {
-      expect(toMinorUnits(10.505, "USD")).toBe(1051);
-      expect(toMinorUnits(10.504, "USD")).toBe(1050);
+      expect(toMinorUnits(10.505)).toBe(1051);
+      expect(toMinorUnits(10.504)).toBe(1050);
     });
   });
 });

@@ -14,10 +14,7 @@ export interface ExchangeRates {
 /**
  * Convert amount from minor units (cents) to major units (dollars)
  */
-export function fromMinorUnits(
-  amountCents: number,
-  currency: Currency
-): number {
+export function fromMinorUnits(amountCents: number): number {
   // All supported currencies use 2 decimal places
   return amountCents / 100;
 }
@@ -25,7 +22,7 @@ export function fromMinorUnits(
 /**
  * Convert amount from major units (dollars) to minor units (cents)
  */
-export function toMinorUnits(amount: number, currency: Currency): number {
+export function toMinorUnits(amount: number): number {
   // All supported currencies use 2 decimal places
   return Math.round(amount * 100);
 }
@@ -55,7 +52,7 @@ export function formatCurrencyFromMinorUnits(
   currency: Currency,
   locale: string = "en-US"
 ): string {
-  const amount = fromMinorUnits(amountCents, currency);
+  const amount = fromMinorUnits(amountCents);
   return formatCurrency(amount, currency, locale);
 }
 
@@ -110,9 +107,9 @@ export function convertCurrencyFromMinorUnits(
   to: Currency,
   rates: ExchangeRates
 ): number {
-  const amount = fromMinorUnits(amountCents, from);
+  const amount = fromMinorUnits(amountCents);
   const converted = convertCurrency(amount, from, to, rates);
-  return toMinorUnits(converted, to);
+  return toMinorUnits(converted);
 }
 
 /**

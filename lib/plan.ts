@@ -83,7 +83,6 @@ export function canCreateCategory(
   plan: Plan,
   currentUserCategoriesCount: number
 ): boolean {
-  const entitlements = getPlanEntitlements(plan);
   // free plan: 6 system categories only, cannot add more
   if (plan === "free") {
     return false;

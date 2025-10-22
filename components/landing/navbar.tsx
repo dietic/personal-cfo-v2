@@ -15,22 +15,32 @@ export default function Navbar() {
           <PiggyBank className="h-5 w-5 text-primary" />
           <span className="font-semibold">PersonalCFO</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={locale === "es" ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setLocale("es")}
-          >
-            ES
-          </Button>
-          <Button
-            variant={locale === "en" ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setLocale("en")}
-          >
-            EN
-          </Button>
-          <ThemeToggle />
+        <div className="flex items-center gap-3">
+          <Link href="/login">
+            <Button variant="ghost" size="sm">
+              Sign In
+            </Button>
+          </Link>
+          <Link href="/register">
+            <Button size="sm">Get Started</Button>
+          </Link>
+          <div className="ml-1 flex items-center gap-2 border-l border-border pl-3">
+            <Button
+              variant={locale === "es" ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setLocale("es")}
+            >
+              ES
+            </Button>
+            <Button
+              variant={locale === "en" ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setLocale("en")}
+            >
+              EN
+            </Button>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </header>
