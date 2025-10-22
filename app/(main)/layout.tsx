@@ -8,7 +8,7 @@ export default function MainLayout({
 }) {
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
+      {/* Sidebar - hidden on mobile, visible on desktop */}
       <Sidebar />
 
       {/* Main content area */}
@@ -17,7 +17,7 @@ export default function MainLayout({
         <DashboardNavbar />
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-background p-6">
+        <main className="flex-1 overflow-y-auto bg-background p-4 md:p-6">
           {children}
         </main>
       </div>

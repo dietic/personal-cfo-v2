@@ -1,5 +1,6 @@
 "use client";
 
+import { MobileMenu } from "@/components/dashboard/mobile-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,17 +16,28 @@ import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 
 export function DashboardNavbar() {
-  const { user, profile, signOut } = useAuth();
+  const { profile, user, signOut } = useAuth();
 
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-card px-6">
-      <div className="flex items-center gap-4">
-        <h1 className="text-xl font-semibold">
-          Welcome back, {profile?.name || "User"}!
+    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
+      <div className="flex items-center gap-2 md:gap-4">
+        {/* Mobile menu button */}
+        <MobileMenu />
+
+        {/* Logo on mobile - hidden when menu is visible */}
+        <Link href="/dashboard" className="flex items-center gap-2 md:hidden">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <span className="text-lg font-bold">P</span>
+          </div>
+        </Link>
+
+        <h1 className="text-base font-semibold md:text-xl">
+          <span className="hidden sm:inline">Welcome back, </span>
+          {profile?.name || "User"}!
         </h1>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3">
         <ThemeToggle />
 
         <DropdownMenu>

@@ -63,14 +63,14 @@ export default function DashboardPage() {
   }> = [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <WelcomeHeader />
 
       {/* Cards section - full width */}
       <CardsSummary cards={cards} isLoading={isLoading} />
 
       {/* Summary cards grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <AlertsSummary count={alertsCount} isLoading={isLoading} />
         <MonthlyExpensesSummary
           currentMonthCents={currentMonthExpensesCents}
@@ -86,7 +86,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent transactions */}
-      <div className="grid gap-4">
+      <div className="grid gap-4 lg:grid-cols-4">
         <RecentTransactions
           transactions={recentTransactions}
           isLoading={isLoading}

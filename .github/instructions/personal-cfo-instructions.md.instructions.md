@@ -626,6 +626,18 @@ Take `ui-references` as reference for UI and colors. Colors must match the ones 
 Take `ui-references` as reference for UI and colors. Colors must match the ones from the `ui-references`.
 Take `ui-references` as reference for UI and colors. Colors must match the ones from the `ui-references`.
 
+Everything has to be **_RESPONIVE_**.
+Everything has to be **_RESPONIVE_**.
+Everything has to be **_RESPONIVE_**.
+Everything has to be **_RESPONIVE_**.
+Everything has to be **_RESPONIVE_**.
+
+Everything screen has to have their messages in locales. (THIS HAS TO BE MADE EVERY TIME A COMPONENT IS MADE)
+Everything screen has to have their messages in locales. (THIS HAS TO BE MADE EVERY TIME A COMPONENT IS MADE)
+Everything screen has to have their messages in locales. (THIS HAS TO BE MADE EVERY TIME A COMPONENT IS MADE)
+Everything screen has to have their messages in locales. (THIS HAS TO BE MADE EVERY TIME A COMPONENT IS MADE)
+Everything screen has to have their messages in locales. (THIS HAS TO BE MADE EVERY TIME A COMPONENT IS MADE)
+
 ## Notes & Non-Negotiables
 
 - Use **shadcn/ui** and theme tokens app-wide; no raw `text-white`, `bg-gray-*`, etc.

@@ -29,9 +29,9 @@ export function RecentTransactions({
 }: RecentTransactionsProps) {
   if (isLoading) {
     return (
-      <Card className="col-span-3">
+      <Card className="lg:col-span-4">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
+          <CardTitle className="text-xs font-medium md:text-sm">
             Recent Transactions
           </CardTitle>
           <Receipt className="h-4 w-4 text-muted-foreground" />
@@ -48,20 +48,22 @@ export function RecentTransactions({
   }
 
   return (
-    <Card className="col-span-3">
+    <Card className="lg:col-span-4">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">
+        <CardTitle className="text-xs font-medium md:text-sm">
           Recent Transactions
         </CardTitle>
         <Receipt className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         {transactions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <Receipt className="mb-4 h-12 w-12 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No transactions yet</p>
+          <div className="flex flex-col items-center justify-center py-8 md:py-12">
+            <Receipt className="mb-3 h-10 w-10 text-muted-foreground md:mb-4 md:h-12 md:w-12" />
+            <p className="text-xs text-muted-foreground md:text-sm">
+              No transactions yet
+            </p>
             <Link href="/statements">
-              <Button variant="outline" size="sm" className="mt-4">
+              <Button variant="outline" size="sm" className="mt-3 md:mt-4">
                 Upload Statement
               </Button>
             </Link>
@@ -71,23 +73,23 @@ export function RecentTransactions({
             {transactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-muted/50"
+                className="flex items-center justify-between gap-2 rounded-lg p-2 transition-colors hover:bg-muted/50 md:gap-3 md:p-3"
               >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-3">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted md:h-10 md:w-10">
                     {transaction.category_emoji ? (
-                      <span className="text-lg">
+                      <span className="text-base md:text-lg">
                         {transaction.category_emoji}
                       </span>
                     ) : (
-                      <Receipt className="h-4 w-4 text-muted-foreground" />
+                      <Receipt className="h-3 w-3 text-muted-foreground md:h-4 md:w-4" />
                     )}
                   </div>
-                  <div>
-                    <p className="font-medium">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-medium md:text-sm">
                       {transaction.merchant || transaction.description}
                     </p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground md:gap-2 md:text-xs">
                       <span>
                         {new Date(
                           transaction.transaction_date
@@ -98,22 +100,26 @@ export function RecentTransactions({
                       </span>
                       {transaction.category_name && (
                         <>
-                          <span>•</span>
-                          <span>{transaction.category_name}</span>
+                          <span className="hidden sm:inline">•</span>
+                          <span className="hidden sm:inline">
+                            {transaction.category_name}
+                          </span>
                         </>
                       )}
                       {transaction.card_name && (
                         <>
-                          <span>•</span>
-                          <span>{transaction.card_name}</span>
+                          <span className="hidden md:inline">•</span>
+                          <span className="hidden md:inline">
+                            {transaction.card_name}
+                          </span>
                         </>
                       )}
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="flex-shrink-0 text-right">
                   <p
-                    className={`font-semibold ${
+                    className={`text-xs font-semibold md:text-sm ${
                       transaction.type === "income"
                         ? "text-green-500"
                         : "text-foreground"
@@ -129,7 +135,7 @@ export function RecentTransactions({
               </div>
             ))}
             <Link href="/transactions">
-              <Button variant="ghost" size="sm" className="mt-4 w-full">
+              <Button variant="ghost" size="sm" className="mt-3 w-full md:mt-4">
                 View All Transactions
               </Button>
             </Link>

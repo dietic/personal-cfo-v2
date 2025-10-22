@@ -22,7 +22,7 @@ interface BudgetsSnapshotProps {
 export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
   if (isLoading) {
     return (
-      <Card className="col-span-2">
+      <Card className="sm:col-span-2 lg:col-span-2">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Budgets</CardTitle>
           <Target className="h-4 w-4 text-muted-foreground" />
@@ -44,23 +44,25 @@ export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
   const topBudgets = budgets.slice(0, 3);
 
   return (
-    <Card className="col-span-2">
+    <Card className="sm:col-span-2 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Budgets</CardTitle>
         <Target className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         {topBudgets.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8">
-            <p className="text-sm text-muted-foreground">No budgets set yet</p>
+          <div className="flex flex-col items-center justify-center py-6 md:py-8">
+            <p className="text-xs text-muted-foreground md:text-sm">
+              No budgets set yet
+            </p>
             <Link href="/budgets">
-              <Button variant="outline" size="sm" className="mt-4">
+              <Button variant="outline" size="sm" className="mt-3 md:mt-4">
                 Create Budget
               </Button>
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {topBudgets.map((budget) => {
               const percentage = Math.min(
                 (budget.spent_cents / budget.amount_cents) * 100,
@@ -70,14 +72,16 @@ export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
 
               return (
                 <div key={budget.id} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span>{budget.emoji}</span>
-                      <span className="text-sm font-medium">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 md:gap-2">
+                      <span className="text-sm md:text-base">
+                        {budget.emoji}
+                      </span>
+                      <span className="text-xs font-medium md:text-sm">
                         {budget.category_name}
                       </span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs text-muted-foreground md:text-sm">
                       {(budget.spent_cents / 100).toLocaleString("en-US", {
                         style: "currency",
                         currency: budget.currency,

@@ -1,10 +1,13 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { useLocale } from "@/contexts/locale-context";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
   CreditCard,
   FileText,
+  Globe,
   Home,
   LineChart,
   Receipt,
@@ -32,9 +35,14 @@ const bottomNavigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { locale, setLocale } = useLocale();
+
+  const toggleLocale = () => {
+    setLocale(locale === "en" ? "es" : "en");
+  };
 
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-card">
+    <div className="hidden md:flex h-full w-64 flex-col border-r bg-card">
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/dashboard" className="flex items-center gap-2">
@@ -68,7 +76,17 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom Navigation */}
-      <div className="border-t p-4">
+      <div className="border-t p-4 space-y-1">
+        {/* Locale switcher */}
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 px-3 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          onClick={toggleLocale}
+        >
+          <Globe className="h-5 w-5" />
+          <span>{locale === "en" ? "Español" : "English"}</span>
+        </Button>
+
         {bottomNavigation.map((item) => {
           const isActive = pathname?.startsWith(item.href);
           return (

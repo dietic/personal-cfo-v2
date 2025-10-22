@@ -15,7 +15,9 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
     return (
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
+          <CardTitle className="text-xs font-medium md:text-sm">
+            Active Alerts
+          </CardTitle>
           <AlertCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -30,7 +32,9 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
+        <CardTitle className="text-xs font-medium md:text-sm">
+          Active Alerts
+        </CardTitle>
         <AlertCircle
           className={`h-4 w-4 ${
             hasAlerts ? "text-orange-500" : "text-muted-foreground"
@@ -38,7 +42,7 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
         />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{count}</div>
+        <div className="text-xl font-bold md:text-2xl">{count}</div>
         <p className="mt-1 text-xs text-muted-foreground">
           {hasAlerts ? "Notifications pending" : "All clear"}
         </p>
@@ -46,7 +50,7 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
           <Button
             variant={hasAlerts ? "default" : "outline"}
             size="sm"
-            className="mt-4 w-full"
+            className="mt-3 w-full md:mt-4"
           >
             {hasAlerts ? "View Alerts" : "Manage Alerts"}
           </Button>

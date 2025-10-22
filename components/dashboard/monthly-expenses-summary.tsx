@@ -20,7 +20,7 @@ export function MonthlyExpensesSummary({
     return (
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
+          <CardTitle className="text-xs font-medium md:text-sm">
             Monthly Expenses
           </CardTitle>
           <TrendingDown className="h-4 w-4 text-muted-foreground" />
@@ -43,11 +43,13 @@ export function MonthlyExpensesSummary({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Monthly Expenses</CardTitle>
+        <CardTitle className="text-xs font-medium md:text-sm">
+          Monthly Expenses
+        </CardTitle>
         <TrendingDown className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
+        <div className="text-xl font-bold md:text-2xl">
           {(currentMonthCents / 100).toLocaleString("en-US", {
             style: "currency",
             currency: currency,
@@ -67,7 +69,10 @@ export function MonthlyExpensesSummary({
             >
               {Math.abs(percentageChange).toFixed(1)}%
             </span>
-            <span className="text-muted-foreground">vs last month</span>
+            <span className="text-muted-foreground">
+              <span className="hidden sm:inline">vs last month</span>
+              <span className="sm:hidden">vs last</span>
+            </span>
           </div>
         )}
         <p className="mt-1 text-xs text-muted-foreground">
