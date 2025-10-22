@@ -237,6 +237,7 @@ This document is the **single source of truth** for all features, tasks, and mil
 - 🔴 Add sortable columns (date, amount, category, card)
 - 🔴 Add pagination
 - 🔴 Create `hooks/use-transactions.ts` for data fetching
+- 🟢 Ensure full i18n coverage for transactions (placeholders, loading states, row actions)
 
 ### 5.3 Transactions Tests
 
