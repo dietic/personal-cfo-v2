@@ -212,5 +212,21 @@
     "errorDeleting": "Error al eliminar tarjeta",
     "errorLoading": "Error al cargar tarjetas",
     "loading": "Cargando tarjetas..."
+  },
+  "transactions": {
+    "subtitle": "Registra y administra tus transacciones",
+    "addTransaction": "Agregar Transacción",
+    "description": "Descripción",
+    "descriptionPlaceholder": "ej. Supermercado",
+    "amount": "Monto",
+    "type": "Tipo",
+    "expense": "Gasto",
+    "income": "Ingreso",
+    "date": "Fecha",
+    "card": "Tarjeta",
+    "selectCard": "Selecciona una tarjeta",
+    "add": "Agregar",
+    "recent": "Transacciones Recientes",
+    "noTransactions": "Aún no hay transacciones"
   }
 }

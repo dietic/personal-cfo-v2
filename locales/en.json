@@ -212,5 +212,21 @@
     "errorDeleting": "Error deleting card",
     "errorLoading": "Error loading cards",
     "loading": "Loading cards..."
+  },
+  "transactions": {
+    "subtitle": "Track and manage your transactions",
+    "addTransaction": "Add Transaction",
+    "description": "Description",
+    "descriptionPlaceholder": "e.g. Grocery store",
+    "amount": "Amount",
+    "type": "Type",
+    "expense": "Expense",
+    "income": "Income",
+    "date": "Date",
+    "card": "Card",
+    "selectCard": "Select a card",
+    "add": "Add",
+    "recent": "Recent Transactions",
+    "noTransactions": "No transactions yet"
   }
 }
