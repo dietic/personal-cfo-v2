@@ -1,6 +1,5 @@
 import { requireAuth } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import type { Database } from "@/types/database";
 import { NextResponse } from "next/server";
 
 /**
@@ -19,7 +18,10 @@ export async function GET() {
       .order("name");
 
     if (error) {
-      return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to fetch categories" },
+        { status: 500 }
+      );
     }
 
     if (categories && categories.length > 0) {
@@ -36,7 +38,10 @@ export async function GET() {
     if (!profile) {
       if (!user.email) {
         return NextResponse.json(
-          { error: "Profile not found and missing email on session to create it" },
+          {
+            error:
+              "Profile not found and missing email on session to create it",
+          },
           { status: 404 }
         );
       }
@@ -46,7 +51,10 @@ export async function GET() {
         .insert([{ id: user.id, email: user.email }]);
       if (createProfileError) {
         return NextResponse.json(
-          { error: "Failed to create profile", details: createProfileError.message },
+          {
+            error: "Failed to create profile",
+            details: createProfileError.message,
+          },
           { status: 500 }
         );
       }
@@ -60,7 +68,10 @@ export async function GET() {
       .order("name");
 
     if (refetchError) {
-      return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to fetch categories" },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true, data: seeded ?? [] });
@@ -68,6 +79,9 @@ export async function GET() {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

@@ -20,5 +20,9 @@ async function fetchCategories(): Promise<Category[]> {
 }
 
 export function useCategories() {
-  return useQuery({ queryKey: ["categories"], queryFn: fetchCategories, staleTime: 5 * 60 * 1000 });
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+    staleTime: 5 * 60 * 1000,
+  });
 }
