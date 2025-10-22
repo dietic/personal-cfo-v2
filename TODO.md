@@ -69,41 +69,41 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 1.1 Core Tables Migration
 
-- 🔴 Create migration: `profiles` table with timezone, primary_currency, plan
-- 🔴 Create migration: `banks` table
-- 🔴 Create migration: `cards` table with foreign keys
-- 🔴 Create migration: `statements` table (NO file_path, add retry_count)
-- 🔴 Create migration: `transactions` table (statement_id nullable, updated_at)
-- 🔴 Create migration: `categories` table (is_preset, status enum)
-- 🔴 Create migration: `category_keywords` table
-- 🔴 Create migration: `excluded_keywords` table
-- 🔴 Create migration: `budgets` table (period_start, period_end)
-- 🔴 Create migration: `alerts` table
-- 🔴 Create migration: `alert_notifications` table
-- 🔴 Create migration: `plans` table (optional, if not using static config)
+- � Create migration: `profiles` table with timezone, primary_currency, plan (Applied via 20251021000001)
+- � Create migration: `banks` table (Applied via 20251021000001)
+- � Create migration: `cards` table with foreign keys (Applied via 20251021000002)
+- � Create migration: `statements` table (NO file_path, add retry_count) (Applied via 20251021000002)
+- � Create migration: `transactions` table (statement_id nullable, updated_at) (Applied via 20251021000004)
+- � Create migration: `categories` table (is_preset, status enum) (Applied via 20251021000003)
+- � Create migration: `category_keywords` table (Applied via 20251021000003)
+- � Create migration: `excluded_keywords` table (Applied via 20251021000003)
+- � Create migration: `budgets` table (period_start, period_end) (Applied via 20251021000005)
+- � Create migration: `alerts` table (Applied via 20251021000005)
+- � Create migration: `alert_notifications` table (Applied via 20251021000005)
+- ⏸️ Create migration: `plans` table (optional, if not using static config)
 
 ### 1.2 RLS Policies
 
-- 🔴 Add RLS policy: `profiles` (user_id = auth.uid())
-- 🔴 Add RLS policy: `cards` (user_id = auth.uid())
-- 🔴 Add RLS policy: `statements` (user_id = auth.uid())
-- 🔴 Add RLS policy: `transactions` (user_id = auth.uid())
-- 🔴 Add RLS policy: `categories` (user_id = auth.uid())
-- 🔴 Add RLS policy: `category_keywords` (user_id = auth.uid())
-- 🔴 Add RLS policy: `excluded_keywords` (user_id = auth.uid())
-- 🔴 Add RLS policy: `budgets` (user_id = auth.uid())
-- 🔴 Add RLS policy: `alerts` (user_id = auth.uid())
-- 🔴 Add RLS policy: `alert_notifications` (user_id = auth.uid())
-- 🔴 Add RLS policy: `banks` (public read, admin write)
+- � Add RLS policy: `profiles` (auth.uid() = id)
+- � Add RLS policy: `cards` (auth.uid() = user_id)
+- � Add RLS policy: `statements` (auth.uid() = user_id)
+- � Add RLS policy: `transactions` (auth.uid() = user_id)
+- � Add RLS policy: `categories` (auth.uid() = user_id)
+- � Add RLS policy: `category_keywords` (auth.uid() = user_id)
+- � Add RLS policy: `excluded_keywords` (auth.uid() = user_id)
+- � Add RLS policy: `budgets` (auth.uid() = user_id)
+- � Add RLS policy: `alerts` (auth.uid() = user_id)
+- � Add RLS policy: `alert_notifications` (auth.uid() = user_id)
+- � Add RLS policy: `banks` (public read, admin write)
 
 ### 1.3 Database Indexes
 
-- 🔴 Add index: `transactions(user_id, transaction_date)`
-- 🔴 Add index: `transactions(user_id, category_id)`
-- 🔴 Add index: `transactions(statement_id)`
-- 🔴 Add index: `statements(user_id, uploaded_at)`
-- 🔴 Add index: `categories(user_id, status)`
-- 🔴 Add index: `budgets(user_id, category_id)`
+- � Add index: `transactions(user_id, transaction_date)`
+- � Add index: `transactions(user_id, category_id)`
+- � Add index: `transactions(statement_id)`
+- � Add index: `statements(user_id, uploaded_at)`
+- � Add index: `categories(user_id, status)`
+- � Add index: `budgets(user_id, category_id)`
 
 ### 1.4 Database Functions & Views
 
@@ -114,10 +114,12 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 1.5 Seeds
 
-- 🔴 Seed banks: BCP, Interbank, BBVA, Scotiabank, Diners, Mibanco, Caja Piura, Caja Arequipa, Caja Huancayo, Banco Pichincha, Other
-- 🔴 Seed admin user: `admin@personal-cfo.io` with plan=admin, is_admin=true
-- 🔴 Create trigger/function: Auto-create 6 system categories on user signup (Food, Housing, Transportation, Income, Entertainment, Shopping)
+- � Seed banks: BCP, Interbank, BBVA, Scotiabank, Diners, Mibanco, Caja Piura, Caja Arequipa, Caja Huancayo, Banco Pichincha, Other
+- ⏸️ Seed admin user: `admin@personal-cfo.io` with plan=admin, is_admin=true (awaiting Auth user creation)
+- � Create trigger/function: Auto-create 6 system categories on user signup (Food, Housing, Transportation, Income, Entertainment, Shopping)
 - 🔴 Seed plans table (if using): free, plus, pro, admin with entitlements JSON
+
+> Note: All migrations and seeds above were applied to the SUPABASE-CFO project on 2025-10-22 UTC. Banks count verified = 11. Profiles table currently has 0 rows; default categories will be created on first profile insert via trigger.
 
 ---
 
