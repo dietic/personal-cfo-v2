@@ -114,5 +114,63 @@
     "update": "Actualizar",
     "confirm": "Confirmar",
     "close": "Cerrar"
+  },
+  "dashboard": {
+    "navigation": {
+      "dashboard": "Inicio",
+      "cards": "Tarjetas",
+      "transactions": "Transacciones",
+      "statements": "Estados de cuenta",
+      "analytics": "Analítica",
+      "budgets": "Presupuestos",
+      "alerts": "Alertas",
+      "settings": "Configuración",
+      "admin": "Admin"
+    },
+    "navbar": {
+      "welcomeBack": "Bienvenido,",
+      "signOut": "Cerrar sesión"
+    },
+    "welcome": {
+      "title": "Bienvenido,",
+      "subtitle": "Aquí tienes un resumen de tu actividad financiera",
+      "fallbackName": "de nuevo"
+    },
+    "cards": {
+      "title": "Resumen de tarjetas",
+      "subtitle": "Administra tus tarjetas y controla saldos",
+      "addCard": "Agregar tarjeta",
+      "noCards": "No tienes tarjetas aún",
+      "addFirstCard": "Agregar primera tarjeta"
+    },
+    "alerts": {
+      "title": "Alertas Activas",
+      "noPending": "Todo en orden",
+      "pending": "Notificaciones pendientes",
+      "viewAlerts": "Ver Alertas",
+      "manageAlerts": "Gestionar Alertas"
+    },
+    "expenses": {
+      "title": "Gastos Mensuales",
+      "currentMonth": "Total del mes actual",
+      "vsLastMonth": "vs mes pasado"
+    },
+    "recurring": {
+      "title": "Servicios Recurrentes",
+      "subscriptions": "Suscripciones activas",
+      "noServices": "No se detectaron servicios recurrentes"
+    },
+    "budgets": {
+      "title": "Presupuestos",
+      "noBudgets": "No tienes presupuestos aún",
+      "createBudget": "Crear Presupuesto",
+      "viewAll": "Ver Todos los Presupuestos"
+    },
+    "transactions": {
+      "title": "Transacciones Recientes",
+      "noTransactions": "No hay transacciones aún",
+      "uploadStatement": "Subir Estado de Cuenta",
+      "viewAll": "Ver Todas las Transacciones"
+    }
   }
 }

@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useLocale } from "@/contexts/locale-context";
+import { useTranslation } from "@/hooks/use-translation";
 import {
   BarChart3,
   Bell,
@@ -27,23 +28,24 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/cards", label: "Cards", icon: CreditCard },
-  { href: "/transactions", label: "Transactions", icon: Receipt },
-  { href: "/statements", label: "Statements", icon: FileText },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/budgets", label: "Budgets", icon: Target },
-  { href: "/alerts", label: "Alerts", icon: Bell },
+  { href: "/dashboard", label: "dashboard", icon: LayoutDashboard },
+  { href: "/cards", label: "cards", icon: CreditCard },
+  { href: "/transactions", label: "transactions", icon: Receipt },
+  { href: "/statements", label: "statements", icon: FileText },
+  { href: "/analytics", label: "analytics", icon: BarChart3 },
+  { href: "/budgets", label: "budgets", icon: Target },
+  { href: "/alerts", label: "alerts", icon: Bell },
 ];
 
 const bottomNavItems = [
-  { href: "/settings", label: "Settings", icon: Settings },
-  { href: "/admin", label: "Admin", icon: ShieldCheck, adminOnly: true },
+  { href: "/settings", label: "settings", icon: Settings },
+  { href: "/admin", label: "admin", icon: ShieldCheck, adminOnly: true },
 ];
 
 export function MobileMenu() {
   const pathname = usePathname();
   const { locale, setLocale } = useLocale();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   // Close menu when viewport becomes desktop size
@@ -97,7 +99,7 @@ export function MobileMenu() {
                   }`}
                 >
                   <Icon className="h-4 w-4" />
-                  {item.label}
+                  {t(`dashboard.navigation.${item.label}`)}
                 </Link>
               );
             })}
@@ -137,7 +139,7 @@ export function MobileMenu() {
                   }`}
                 >
                   <Icon className="h-4 w-4" />
-                  {item.label}
+                  {t(`dashboard.navigation.${item.label}`)}
                 </Link>
               );
             })}

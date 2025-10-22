@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/hooks/use-translation";
 import { RotateCw } from "lucide-react";
 
 interface RecurringService {
@@ -19,12 +20,14 @@ export function RecurrentServicesSummary({
   services,
   isLoading,
 }: RecurrentServicesSummaryProps) {
+  const { t } = useTranslation();
+  
   if (isLoading) {
     return (
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-medium md:text-sm">
-            Recurring Services
+            {t("dashboard.recurring.title")}
           </CardTitle>
           <RotateCw className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
@@ -42,14 +45,14 @@ export function RecurrentServicesSummary({
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xs font-medium md:text-sm">
-          Recurring Services
+          {t("dashboard.recurring.title")}
         </CardTitle>
         <RotateCw className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         <div className="text-xl font-bold md:text-2xl">{totalServices}</div>
         <p className="mt-1 text-xs text-muted-foreground">
-          Active subscriptions
+          {t("dashboard.recurring.subscriptions")}
         </p>
         {topServices.length > 0 && (
           <div className="mt-3 space-y-2 md:mt-4">

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/hooks/use-translation";
 import { Receipt } from "lucide-react";
 import Link from "next/link";
 
@@ -27,12 +28,14 @@ export function RecentTransactions({
   transactions,
   isLoading,
 }: RecentTransactionsProps) {
+  const { t } = useTranslation();
+  
   if (isLoading) {
     return (
       <Card className="lg:col-span-4">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-medium md:text-sm">
-            Recent Transactions
+            {t("dashboard.transactions.title")}
           </CardTitle>
           <Receipt className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
@@ -51,7 +54,7 @@ export function RecentTransactions({
     <Card className="lg:col-span-4">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xs font-medium md:text-sm">
-          Recent Transactions
+          {t("dashboard.transactions.title")}
         </CardTitle>
         <Receipt className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
@@ -60,11 +63,11 @@ export function RecentTransactions({
           <div className="flex flex-col items-center justify-center py-8 md:py-12">
             <Receipt className="mb-3 h-10 w-10 text-muted-foreground md:mb-4 md:h-12 md:w-12" />
             <p className="text-xs text-muted-foreground md:text-sm">
-              No transactions yet
+              {t("dashboard.transactions.noTransactions")}
             </p>
             <Link href="/statements">
               <Button variant="outline" size="sm" className="mt-3 md:mt-4">
-                Upload Statement
+                {t("dashboard.transactions.uploadStatement")}
               </Button>
             </Link>
           </div>
@@ -136,7 +139,7 @@ export function RecentTransactions({
             ))}
             <Link href="/transactions">
               <Button variant="ghost" size="sm" className="mt-3 w-full md:mt-4">
-                View All Transactions
+                {t("dashboard.transactions.viewAll")}
               </Button>
             </Link>
           </div>

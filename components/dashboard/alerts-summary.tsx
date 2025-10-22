@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/hooks/use-translation";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 
@@ -11,12 +12,14 @@ interface AlertsSummaryProps {
 }
 
 export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
+  const { t } = useTranslation();
+  
   if (isLoading) {
     return (
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-medium md:text-sm">
-            Active Alerts
+            {t("dashboard.alerts.title")}
           </CardTitle>
           <AlertCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
@@ -33,7 +36,7 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xs font-medium md:text-sm">
-          Active Alerts
+          {t("dashboard.alerts.title")}
         </CardTitle>
         <AlertCircle
           className={`h-4 w-4 ${
@@ -44,7 +47,7 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
       <CardContent>
         <div className="text-xl font-bold md:text-2xl">{count}</div>
         <p className="mt-1 text-xs text-muted-foreground">
-          {hasAlerts ? "Notifications pending" : "All clear"}
+          {hasAlerts ? t("dashboard.alerts.pending") : t("dashboard.alerts.noPending")}
         </p>
         <Link href="/alerts">
           <Button
@@ -52,7 +55,7 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
             size="sm"
             className="mt-3 w-full md:mt-4"
           >
-            {hasAlerts ? "View Alerts" : "Manage Alerts"}
+            {hasAlerts ? t("dashboard.alerts.viewAlerts") : t("dashboard.alerts.manageAlerts")}
           </Button>
         </Link>
       </CardContent>

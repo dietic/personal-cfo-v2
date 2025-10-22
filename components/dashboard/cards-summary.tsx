@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/hooks/use-translation";
 import { CreditCard, Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -19,16 +20,18 @@ interface CardsSummaryProps {
 }
 
 export function CardsSummary({ cards, isLoading }: CardsSummaryProps) {
+  const { t } = useTranslation();
+  
   if (isLoading) {
     return (
       <Card className="col-span-full">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
             <CardTitle className="text-base font-semibold">
-              Resumen de tarjetas
+              {t("dashboard.cards.title")}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Administra tus tarjetas y controla saldos
+              {t("dashboard.cards.subtitle")}
             </p>
           </div>
           <CreditCard className="h-5 w-5 text-muted-foreground" />
@@ -49,16 +52,16 @@ export function CardsSummary({ cards, isLoading }: CardsSummaryProps) {
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <div>
           <CardTitle className="text-base font-semibold">
-            Resumen de tarjetas
+            {t("dashboard.cards.title")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Administra tus tarjetas y controla saldos
+            {t("dashboard.cards.subtitle")}
           </p>
         </div>
         <Link href="/cards">
           <Button size="sm">
             <Plus className="mr-2 h-4 w-4" />
-            Agregar tarjeta
+            {t("dashboard.cards.addCard")}
           </Button>
         </Link>
       </CardHeader>
@@ -66,14 +69,14 @@ export function CardsSummary({ cards, isLoading }: CardsSummaryProps) {
         {cards.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-12">
             <CreditCard className="mb-4 h-12 w-12 text-muted-foreground" />
-            <p className="mb-2 text-sm font-medium">No tienes tarjetas aún</p>
+            <p className="mb-2 text-sm font-medium">{t("dashboard.cards.noCards")}</p>
             <p className="mb-4 text-xs text-muted-foreground">
-              Agrega tu primera tarjeta para comenzar
+              {t("dashboard.cards.subtitle")}
             </p>
             <Link href="/cards">
               <Button variant="outline" size="sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Agregar tarjeta
+                {t("dashboard.cards.addFirstCard")}
               </Button>
             </Link>
           </div>

@@ -12,11 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslation } from "@/hooks/use-translation";
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 
 export function DashboardNavbar() {
   const { profile, user, signOut } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
@@ -32,7 +34,7 @@ export function DashboardNavbar() {
         </Link>
 
         <h1 className="text-base font-semibold md:text-xl">
-          <span className="hidden sm:inline">Welcome back, </span>
+          <span className="hidden sm:inline">{t("dashboard.navbar.welcomeBack")} </span>
           {profile?.name || "User"}!
         </h1>
       </div>
@@ -59,13 +61,13 @@ export function DashboardNavbar() {
             <DropdownMenuItem asChild>
               <Link href="/settings" className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
-                Settings
+                {t("dashboard.navigation.settings")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={signOut} className="cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
-              Sign out
+              {t("dashboard.navbar.signOut")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

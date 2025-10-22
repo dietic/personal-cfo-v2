@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/hooks/use-translation";
 import { Target } from "lucide-react";
 import Link from "next/link";
 
@@ -20,11 +21,13 @@ interface BudgetsSnapshotProps {
 }
 
 export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
+  const { t } = useTranslation();
+  
   if (isLoading) {
     return (
       <Card className="sm:col-span-2 lg:col-span-2">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Budgets</CardTitle>
+          <CardTitle className="text-sm font-medium">{t("dashboard.budgets.title")}</CardTitle>
           <Target className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -46,18 +49,18 @@ export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
   return (
     <Card className="sm:col-span-2 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Budgets</CardTitle>
+        <CardTitle className="text-sm font-medium">{t("dashboard.budgets.title")}</CardTitle>
         <Target className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         {topBudgets.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-6 md:py-8">
             <p className="text-xs text-muted-foreground md:text-sm">
-              No budgets set yet
+              {t("dashboard.budgets.noBudgets")}
             </p>
             <Link href="/budgets">
               <Button variant="outline" size="sm" className="mt-3 md:mt-4">
-                Create Budget
+                {t("dashboard.budgets.createBudget")}
               </Button>
             </Link>
           </div>
@@ -110,7 +113,7 @@ export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
             })}
             <Link href="/budgets">
               <Button variant="ghost" size="sm" className="mt-2 w-full">
-                View All Budgets
+                {t("dashboard.budgets.viewAll")}
               </Button>
             </Link>
           </div>

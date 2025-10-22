@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/locale-context";
+import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
@@ -19,23 +20,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Cards", href: "/cards", icon: CreditCard },
-  { name: "Transactions", href: "/transactions", icon: Receipt },
-  { name: "Statements", href: "/statements", icon: FileText },
-  { name: "Analytics", href: "/analytics", icon: LineChart },
-  { name: "Budgets", href: "/budgets", icon: Target },
-  { name: "Alerts", href: "/alerts", icon: AlertCircle },
+  { name: "dashboard", href: "/dashboard", icon: Home },
+  { name: "cards", href: "/cards", icon: CreditCard },
+  { name: "transactions", href: "/transactions", icon: Receipt },
+  { name: "statements", href: "/statements", icon: FileText },
+  { name: "analytics", href: "/analytics", icon: LineChart },
+  { name: "budgets", href: "/budgets", icon: Target },
+  { name: "alerts", href: "/alerts", icon: AlertCircle },
 ];
 
 const bottomNavigation = [
-  { name: "Settings", href: "/settings", icon: Settings },
-  { name: "Admin", href: "/admin", icon: Shield },
+  { name: "settings", href: "/settings", icon: Settings },
+  { name: "admin", href: "/admin", icon: Shield },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { locale, setLocale } = useLocale();
+  const { t } = useTranslation();
 
   const toggleLocale = () => {
     setLocale(locale === "en" ? "es" : "en");
@@ -69,7 +71,7 @@ export function Sidebar() {
               )}
             >
               <item.icon className="h-5 w-5" />
-              {item.name}
+              {t(`dashboard.navigation.${item.name}`)}
             </Link>
           );
         })}
@@ -101,7 +103,7 @@ export function Sidebar() {
               )}
             >
               <item.icon className="h-5 w-5" />
-              {item.name}
+              {t(`dashboard.navigation.${item.name}`)}
             </Link>
           );
         })}
