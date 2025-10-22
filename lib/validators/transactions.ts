@@ -15,7 +15,11 @@ export const createTransactionSchema = z.object({
     .min(1, "Description is required")
     .max(200, "Description must be 200 characters or less")
     .trim(),
-  merchant: z.string().max(100).trim().optional().nullable(),
+  merchant: z
+    .string()
+    .min(1, "Merchant is required")
+    .max(100, "Merchant must be 100 characters or less")
+    .trim(),
   transaction_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/g, "Date must be YYYY-MM-DD"),
@@ -24,7 +28,8 @@ export const createTransactionSchema = z.object({
     .string()
     .length(3, "Currency must be a 3-letter code")
     .transform((s) => s.toUpperCase()),
-  amount: z.number().finite().max(10_000_000, "Amount too large"),
+  // Coerce amount from string (from form inputs) to number
+  amount: z.coerce.number().finite().max(10_000_000, "Amount too large"),
   type: transactionTypeSchema,
 });
 
@@ -47,7 +52,8 @@ export const updateTransactionSchema = z.object({
     .length(3)
     .transform((s) => s.toUpperCase())
     .optional(),
-  amount: z.number().finite().max(10_000_000).optional(),
+  // Coerce amount for updates as well
+  amount: z.coerce.number().finite().max(10_000_000).optional(),
   type: transactionTypeSchema.optional(),
 });
 

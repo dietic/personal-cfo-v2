@@ -19,12 +19,17 @@ export async function PATCH(
     const parsed = updateTransactionSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+        {
+          error: "Validation failed",
+          details: parsed.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
 
-    const updates = parsed.data as Partial<Database["public"]["Tables"]["transactions"]["Update"]>;
+    const updates = parsed.data as Partial<
+      Database["public"]["Tables"]["transactions"]["Update"]
+    >;
 
     // If provided, verify ownership of card and category
     if (updates.card_id) {
@@ -34,7 +39,8 @@ export async function PATCH(
         .eq("id", updates.card_id)
         .eq("user_id", user.id)
         .single();
-      if (!card) return NextResponse.json({ error: "Card not found" }, { status: 404 });
+      if (!card)
+        return NextResponse.json({ error: "Card not found" }, { status: 404 });
     }
 
     if (updates.category_id) {
@@ -44,16 +50,27 @@ export async function PATCH(
         .eq("id", updates.category_id)
         .eq("user_id", user.id)
         .single();
-      if (!category) return NextResponse.json({ error: "Category not found" }, { status: 404 });
+      if (!category)
+        return NextResponse.json(
+          { error: "Category not found" },
+          { status: 404 }
+        );
     }
 
     // Handle amount + type -> amount_cents mapping if client sent an amount
     // We allow either { amount }+{ type }+optional currency, or direct DB fields
     type MaybeAmount = { amount?: number; type?: "income" | "expense" };
     const maybe = body as MaybeAmount;
-    if (typeof maybe.amount === "number" && (maybe.type === "income" || maybe.type === "expense")) {
-      const amount_cents = Math.round(Math.abs(maybe.amount) * 100) * (maybe.type === "expense" ? -1 : 1);
-  (updates as Database["public"]["Tables"]["transactions"]["Update"]).amount_cents = amount_cents as unknown as number;
+    if (
+      typeof maybe.amount === "number" &&
+      (maybe.type === "income" || maybe.type === "expense")
+    ) {
+      const amount_cents =
+        Math.round(Math.abs(maybe.amount) * 100) *
+        (maybe.type === "expense" ? -1 : 1);
+      (
+        updates as Database["public"]["Tables"]["transactions"]["Update"]
+      ).amount_cents = amount_cents as unknown as number;
     }
 
     // Update (RLS ensures row belongs to user via user_id filter)
@@ -72,9 +89,15 @@ export async function PATCH(
 
     if (error) {
       if (error.code === "PGRST116") {
-        return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Transaction not found" },
+          { status: 404 }
+        );
       }
-      return NextResponse.json({ error: "Failed to update transaction" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to update transaction" },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true, data });
@@ -82,7 +105,10 @@ export async function PATCH(
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -105,9 +131,15 @@ export async function DELETE(
 
     if (error) {
       if (error.code === "PGRST116") {
-        return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Transaction not found" },
+          { status: 404 }
+        );
       }
-      return NextResponse.json({ error: "Failed to delete transaction" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to delete transaction" },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });
@@ -115,6 +147,9 @@ export async function DELETE(
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
