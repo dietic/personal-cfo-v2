@@ -6,6 +6,7 @@ import { useTranslation } from "@/hooks/use-translation";
 import { PiggyBank } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import LandingMobileMenu from "./mobile-menu";
 
 export default function Navbar() {
   const { locale, setLocale } = useTranslation();
@@ -25,7 +26,8 @@ export default function Navbar() {
           <PiggyBank className="h-5 w-5 text-primary" />
           <span className="font-semibold">PersonalCFO</span>
         </Link>
-        <div className="flex items-center gap-3">
+        {/* Desktop actions */}
+        <div className="hidden items-center gap-3 md:flex">
           {!isAuthPage && (
             <>
               <Link href="/login">
@@ -59,6 +61,10 @@ export default function Navbar() {
             </Button>
             <ThemeToggle />
           </div>
+        </div>
+        {/* Mobile menu trigger */}
+        <div className="md:hidden">
+          <LandingMobileMenu />
         </div>
       </div>
     </header>
