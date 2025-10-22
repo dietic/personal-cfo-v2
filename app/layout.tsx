@@ -1,4 +1,3 @@
-import Navbar from "@/components/landing/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LocaleProvider } from "@/contexts/locale-context";
 import "@/styles/globals.css";
@@ -14,10 +13,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <LocaleProvider>
-            <Navbar />
-            {children}
-          </LocaleProvider>
+          <LocaleProvider>{children}</LocaleProvider>
         </ThemeProvider>
       </body>
     </html>
