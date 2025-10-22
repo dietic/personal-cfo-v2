@@ -15,22 +15,14 @@ export default function DashboardPage() {
   // TODO: Replace with real data from API
   const isLoading = false;
 
-  // Mock cards data
+  // Empty cards array - will be populated from API
   const cards: Array<{
     id: string;
     name: string;
     bank_name: string;
     bank_color: string | null;
     last_four?: string;
-  }> = [
-    {
-      id: "1",
-      name: "bcp",
-      bank_name: "BCP",
-      bank_color: "#002855", // BCP blue
-      last_four: undefined,
-    },
-  ];
+  }> = [];
 
   const alertsCount = 0;
   const budgets: Array<{
