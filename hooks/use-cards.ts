@@ -146,15 +146,27 @@ export function useCards() {
 /**
  * Fetch all banks for the bank selector
  */
-async function fetchBanks() {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("banks")
-    .select("id, name, brand_color, logo_url")
-    .order("name");
+async function fetchBanks(): Promise<Bank[]> {
+  // Primary: call REST API directly to avoid any client library edge cases
+  const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/banks?select=id,name,brand_color,logo_url&order=name`;
+  const headers = {
+    apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
+    Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+  } as const;
 
-  if (error) throw error;
-  return data;
+  const res = await fetch(url, { headers });
+  if (!res.ok) {
+    // Fallback: try supabase-js client in case REST had an issue
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("banks")
+      .select("id, name, brand_color, logo_url")
+      .order("name");
+    if (error) throw new Error(error.message);
+    return (data ?? []) as Bank[];
+  }
+  const data = (await res.json()) as Bank[];
+  return data ?? [];
 }
 
 /**
