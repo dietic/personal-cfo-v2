@@ -1,5 +1,6 @@
 import { requireAuth } from "@/lib/auth";
 import { updateCardSchema } from "@/lib/validators/cards";
+import type { Database } from "@/types/database";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -28,7 +29,8 @@ export async function PATCH(
       );
     }
 
-    const updates = validation.data;
+    const updates: Database["public"]["Tables"]["cards"]["Update"] =
+      validation.data;
 
     // If updating bank_id, verify bank exists
     if (updates.bank_id) {
@@ -46,6 +48,8 @@ export async function PATCH(
     // Update the card (RLS ensures only user's own cards can be updated)
     const { data: card, error: updateError } = await supabase
       .from("cards")
+      // @ts-expect-error: Supabase type inference can resolve update payload to never here.
+      // The payload is validated with Zod (updateCardSchema) and matches Database public.tables.cards.Update.
       .update(updates)
       .eq("id", id)
       .eq("user_id", user.id)
