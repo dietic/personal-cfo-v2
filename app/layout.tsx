@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LocaleProvider } from "@/contexts/locale-context";
 import "@/styles/globals.css";
 import { ReactNode } from "react";
+import { Toaster } from "sonner";
 
 export const metadata = {
   title: "Personal CFO",
@@ -15,7 +16,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <LocaleProvider>{children}</LocaleProvider>
+            <LocaleProvider>
+              {children}
+              <Toaster position="top-right" richColors />
+            </LocaleProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>
