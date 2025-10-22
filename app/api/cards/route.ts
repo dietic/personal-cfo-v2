@@ -1,5 +1,7 @@
 import { requireAuth } from "@/lib/auth";
+import { supabaseAdmin } from "@/lib/supabase";
 import { createCardSchema } from "@/lib/validators/cards";
+import type { Database } from "@/types/database";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -32,8 +34,9 @@ export async function GET() {
       .order("created_at", { ascending: false });
 
     if (error) {
+      console.error("Supabase error fetching cards:", error);
       return NextResponse.json(
-        { error: "Failed to fetch cards" },
+        { error: "Failed to fetch cards", details: error.message },
         { status: 500 }
       );
     }
@@ -76,14 +79,53 @@ export async function POST(request: NextRequest) {
     const { name, bank_id, due_date } = validation.data;
 
     // Get user's plan
-    const { data: profile } = await supabase
+    let { data: profile } = await supabase
       .from("profiles")
       .select("plan")
       .eq("id", user.id)
-      .single();
+      .single<{ plan: Database["public"]["Enums"]["plan_type"] }>();
 
+    // Fallback: create a default profile if it does not exist (handles legacy users created before trigger)
     if (!profile) {
-      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+      if (!user.email) {
+        return NextResponse.json(
+          {
+            error: "Profile not found",
+            message: "Missing email on session to auto-create profile",
+          },
+          { status: 404 }
+        );
+      }
+
+      // Bypass RLS to create the profile for the authenticated user
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: createProfileError } = await (supabaseAdmin as any)
+        .from("profiles")
+        // Insert as an array to align with Supabase typings and avoid TS inference pitfalls
+        .insert([{ id: user.id, email: user.email }]);
+
+      if (createProfileError) {
+        return NextResponse.json(
+          {
+            error: "Failed to initialize profile",
+            details: createProfileError.message,
+          },
+          { status: 500 }
+        );
+      }
+
+      // Re-fetch (or assume defaults)
+      const { data: createdProfile } = await supabase
+        .from("profiles")
+        .select("plan")
+        .eq("id", user.id)
+        .single<{ plan: Database["public"]["Enums"]["plan_type"] }>();
+
+      profile =
+        createdProfile ??
+        ({ plan: "free" } as {
+          plan: Database["public"]["Enums"]["plan_type"];
+        });
     }
 
     // Count existing cards
@@ -129,6 +171,8 @@ export async function POST(request: NextRequest) {
     // Create the card (RLS ensures user_id is set correctly)
     const { data: card, error: insertError } = await supabase
       .from("cards")
+      // @ts-expect-error: Supabase type inference can resolve insert payload to never here.
+      // Payload validated by Zod and matches Database public.tables.cards.Insert shape.
       .insert({
         user_id: user.id,
         name,
