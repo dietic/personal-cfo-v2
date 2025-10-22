@@ -141,7 +141,8 @@
       "subtitle": "Administra tus tarjetas y controla saldos",
       "addCard": "Agregar tarjeta",
       "noCards": "No tienes tarjetas aún",
-      "addFirstCard": "Agregar primera tarjeta"
+      "addFirstCard": "Agregar primera tarjeta",
+      "creditCard": "Tarjeta de crédito"
     },
     "alerts": {
       "title": "Alertas Activas",

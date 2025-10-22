@@ -21,7 +21,7 @@ export function RecurrentServicesSummary({
   isLoading,
 }: RecurrentServicesSummaryProps) {
   const { t } = useTranslation();
-  
+
   if (isLoading) {
     return (
       <Card>

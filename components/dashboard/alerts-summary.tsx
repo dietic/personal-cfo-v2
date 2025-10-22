@@ -13,7 +13,7 @@ interface AlertsSummaryProps {
 
 export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
   const { t } = useTranslation();
-  
+
   if (isLoading) {
     return (
       <Card>
@@ -47,7 +47,9 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
       <CardContent>
         <div className="text-xl font-bold md:text-2xl">{count}</div>
         <p className="mt-1 text-xs text-muted-foreground">
-          {hasAlerts ? t("dashboard.alerts.pending") : t("dashboard.alerts.noPending")}
+          {hasAlerts
+            ? t("dashboard.alerts.pending")
+            : t("dashboard.alerts.noPending")}
         </p>
         <Link href="/alerts">
           <Button
@@ -55,7 +57,9 @@ export function AlertsSummary({ count, isLoading }: AlertsSummaryProps) {
             size="sm"
             className="mt-3 w-full md:mt-4"
           >
-            {hasAlerts ? t("dashboard.alerts.viewAlerts") : t("dashboard.alerts.manageAlerts")}
+            {hasAlerts
+              ? t("dashboard.alerts.viewAlerts")
+              : t("dashboard.alerts.manageAlerts")}
           </Button>
         </Link>
       </CardContent>

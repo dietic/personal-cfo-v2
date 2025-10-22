@@ -29,7 +29,7 @@ export function RecentTransactions({
   isLoading,
 }: RecentTransactionsProps) {
   const { t } = useTranslation();
-  
+
   if (isLoading) {
     return (
       <Card className="lg:col-span-4">

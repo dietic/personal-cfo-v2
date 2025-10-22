@@ -21,7 +21,7 @@ interface CardsSummaryProps {
 
 export function CardsSummary({ cards, isLoading }: CardsSummaryProps) {
   const { t } = useTranslation();
-  
+
   if (isLoading) {
     return (
       <Card className="col-span-full">
@@ -69,7 +69,9 @@ export function CardsSummary({ cards, isLoading }: CardsSummaryProps) {
         {cards.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-12">
             <CreditCard className="mb-4 h-12 w-12 text-muted-foreground" />
-            <p className="mb-2 text-sm font-medium">{t("dashboard.cards.noCards")}</p>
+            <p className="mb-2 text-sm font-medium">
+              {t("dashboard.cards.noCards")}
+            </p>
             <p className="mb-4 text-xs text-muted-foreground">
               {t("dashboard.cards.subtitle")}
             </p>
@@ -101,7 +103,9 @@ export function CardsSummary({ cards, isLoading }: CardsSummaryProps) {
 
                     {/* Card name/bank */}
                     <div className="mb-2">
-                      <p className="text-xs opacity-80">Credit Card</p>
+                      <p className="text-xs opacity-80">
+                        {t("dashboard.cards.creditCard")}
+                      </p>
                       <p className="text-lg font-semibold">{card.name}</p>
                     </div>
 

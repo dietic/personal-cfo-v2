@@ -34,7 +34,9 @@ export function DashboardNavbar() {
         </Link>
 
         <h1 className="text-base font-semibold md:text-xl">
-          <span className="hidden sm:inline">{t("dashboard.navbar.welcomeBack")} </span>
+          <span className="hidden sm:inline">
+            {t("dashboard.navbar.welcomeBack")}{" "}
+          </span>
           {profile?.name || "User"}!
         </h1>
       </div>

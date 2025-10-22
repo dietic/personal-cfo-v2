@@ -137,11 +137,12 @@
       "fallbackName": "there"
     },
     "cards": {
-      "title": "Resumen de tarjetas",
-      "subtitle": "Administra tus tarjetas y controla saldos",
-      "addCard": "Agregar tarjeta",
-      "noCards": "No tienes tarjetas aún",
-      "addFirstCard": "Agregar primera tarjeta"
+      "title": "Cards Summary",
+      "subtitle": "Manage your cards and track balances",
+      "addCard": "Add Card",
+      "noCards": "No cards yet",
+      "addFirstCard": "Add First Card",
+      "creditCard": "Credit Card"
     },
     "alerts": {
       "title": "Active Alerts",

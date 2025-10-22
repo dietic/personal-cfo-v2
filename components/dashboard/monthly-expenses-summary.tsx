@@ -18,7 +18,7 @@ export function MonthlyExpensesSummary({
   isLoading,
 }: MonthlyExpensesSummaryProps) {
   const { t } = useTranslation();
-  
+
   if (isLoading) {
     return (
       <Card>
@@ -73,7 +73,9 @@ export function MonthlyExpensesSummary({
               {Math.abs(percentageChange).toFixed(1)}%
             </span>
             <span className="text-muted-foreground">
-              <span className="hidden sm:inline">{t("dashboard.expenses.vsLastMonth")}</span>
+              <span className="hidden sm:inline">
+                {t("dashboard.expenses.vsLastMonth")}
+              </span>
               <span className="sm:hidden">vs last</span>
             </span>
           </div>
