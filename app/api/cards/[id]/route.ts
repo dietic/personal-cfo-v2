@@ -39,10 +39,7 @@ export async function PATCH(
         .single();
 
       if (!bank) {
-        return NextResponse.json(
-          { error: "Bank not found" },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: "Bank not found" }, { status: 404 });
       }
     }
 

@@ -83,10 +83,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!profile) {
-      return NextResponse.json(
-        { error: "Profile not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
     // Count existing cards
@@ -108,7 +105,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Plan limit reached",
-          message: `Your ${profile.plan} plan allows up to ${limit} card${limit === 1 ? "" : "s"}. Upgrade to add more.`,
+          message: `Your ${profile.plan} plan allows up to ${limit} card${
+            limit === 1 ? "" : "s"
+          }. Upgrade to add more.`,
           limit,
           current: existingCards,
         },
