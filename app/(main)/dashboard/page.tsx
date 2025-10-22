@@ -8,21 +8,25 @@ import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { RecurrentServicesSummary } from "@/components/dashboard/recurrent-services-summary";
 import { WelcomeHeader } from "@/components/dashboard/welcome-header";
 import { useAuth } from "@/hooks/use-auth";
+import { useCards } from "@/hooks/use-cards";
 
 export default function DashboardPage() {
   const { profile } = useAuth();
 
-  // TODO: Replace with real data from API
-  const isLoading = false;
-
-  // Empty cards array - will be populated from API
+  // Cards from API
+  const { cards: userCards, isLoading } = useCards();
   const cards: Array<{
     id: string;
     name: string;
     bank_name: string;
     bank_color: string | null;
     last_four?: string;
-  }> = [];
+  }> = (userCards || []).map((c) => ({
+    id: c.id,
+    name: c.name,
+    bank_name: c.banks?.name ?? "",
+    bank_color: c.banks?.brand_color ?? null,
+  }));
 
   const alertsCount = 0;
   const budgets: Array<{
