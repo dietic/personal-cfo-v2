@@ -187,6 +187,7 @@
     "cardNamePlaceholder": "My Credit Card",
     "bank": "Bank",
     "selectBank": "Select a bank",
+    "noBanksAvailable": "No banks available",
     "dueDate": "Due Date (optional)",
     "dueDatePlaceholder": "Day of month (1-31)",
     "dueDateDescription": "Day of month when payment is due",
