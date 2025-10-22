@@ -638,6 +638,12 @@ Everything screen has to have their messages in locales. (THIS HAS TO BE MADE EV
 Everything screen has to have their messages in locales. (THIS HAS TO BE MADE EVERY TIME A COMPONENT IS MADE)
 Everything screen has to have their messages in locales. (THIS HAS TO BE MADE EVERY TIME A COMPONENT IS MADE)
 
+Every time you're about to implement a new module read the instructions and re-read the module specific section of instructions.
+Every time you're about to implement a new module read the instructions and re-read the module specific section of instructions.
+Every time you're about to implement a new module read the instructions and re-read the module specific section of instructions.
+Every time you're about to implement a new module read the instructions and re-read the module specific section of instructions.
+Every time you're about to implement a new module read the instructions and re-read the module specific section of instructions.
+
 ## Notes & Non-Negotiables
 
 - Use **shadcn/ui** and theme tokens app-wide; no raw `text-white`, `bg-gray-*`, etc.
