@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -206,7 +207,7 @@ export function StatementsTable({
         </div>
 
         <div className="rounded-md border">
-          <Table>
+          <Table aria-busy={isLoading ? true : undefined}>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-8">
@@ -237,6 +238,36 @@ export function StatementsTable({
               </TableRow>
             </TableHeader>
             <TableBody>
+              {isLoading && (
+                <>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={`sk-${i}`}>
+                      <TableCell className="w-8">
+                        <Skeleton className="h-4 w-4 rounded" />
+                      </TableCell>
+                      <TableCell className="w-[40%]">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="mt-2 h-3 w-1/3" />
+                      </TableCell>
+                      <TableCell className="w-[16%]">
+                        <Skeleton className="h-4 w-24" />
+                      </TableCell>
+                      <TableCell className="w-[16%]">
+                        <Skeleton className="h-5 w-28 rounded-full" />
+                      </TableCell>
+                      <TableCell className="w-[16%]">
+                        <Skeleton className="h-4 w-28" />
+                      </TableCell>
+                      <TableCell className="w-[12%]">
+                        <Skeleton className="h-5 w-12 rounded" />
+                      </TableCell>
+                      <TableCell className="w-8">
+                        <Skeleton className="ml-auto h-4 w-4 rounded" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </>
+              )}
               {statements.map((st) => (
                 <TableRow key={st.id}>
                   <TableCell className="w-8">
@@ -296,7 +327,7 @@ export function StatementsTable({
                   </TableCell>
                 </TableRow>
               ))}
-              {statements.length === 0 && (
+              {!isLoading && statements.length === 0 && (
                 <TableRow>
                   <TableCell
                     colSpan={7}

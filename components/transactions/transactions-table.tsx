@@ -36,6 +36,8 @@ import {
   Trash,
   Trash2,
 } from "lucide-react";
+//
+import { Skeleton } from "@/components/ui/skeleton";
 import { useMemo, useState } from "react";
 import { DeleteTransactionDialog } from "./delete-transaction-dialog";
 import { TransactionEditDialog } from "./transaction-edit-dialog";
@@ -271,7 +273,7 @@ export function TransactionsTable({
         </div>
 
         <div className="rounded-md border">
-          <Table>
+          <Table aria-busy={isLoading ? true : undefined}>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-8">
@@ -347,6 +349,39 @@ export function TransactionsTable({
               </TableRow>
             </TableHeader>
             <TableBody>
+              {isLoading && (
+                <>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={`sk-${i}`}>
+                      <TableCell className="w-8">
+                        <Skeleton className="h-4 w-4 rounded" />
+                      </TableCell>
+                      <TableCell className="w-[40%]">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="mt-2 h-3 w-1/3" />
+                      </TableCell>
+                      <TableCell className="w-[12%]">
+                        <Skeleton className="h-4 w-20" />
+                      </TableCell>
+                      <TableCell className="w-[16%]">
+                        <Skeleton className="h-5 w-24 rounded-full" />
+                      </TableCell>
+                      <TableCell className="w-[16%]">
+                        <Skeleton className="h-4 w-24" />
+                      </TableCell>
+                      <TableCell className="w-[80px]">
+                        <Skeleton className="h-5 w-10 rounded" />
+                      </TableCell>
+                      <TableCell className="w-[120px]">
+                        <Skeleton className="ml-auto h-4 w-16" />
+                      </TableCell>
+                      <TableCell className="w-8">
+                        <Skeleton className="ml-auto h-4 w-4 rounded" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </>
+              )}
               {rows.map((tx) => (
                 <TableRow key={tx.id}>
                   <TableCell className="w-8">
@@ -429,7 +464,7 @@ export function TransactionsTable({
                   </TableCell>
                 </TableRow>
               ))}
-              {rows.length === 0 && (
+              {!isLoading && rows.length === 0 && (
                 <TableRow>
                   <TableCell
                     colSpan={8}

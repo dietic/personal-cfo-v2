@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/hooks/use-translation";
 import { Target } from "lucide-react";
 import Link from "next/link";
@@ -25,7 +26,7 @@ export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
 
   if (isLoading) {
     return (
-      <Card className="sm:col-span-2 lg:col-span-2">
+      <Card className="sm:col-span-2 lg:col-span-2" aria-busy>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
             {t("dashboard.budgets.title")}
@@ -36,8 +37,8 @@ export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="space-y-2">
-                <div className="h-4 w-32 animate-pulse rounded bg-muted" />
-                <div className="h-2 w-full animate-pulse rounded bg-muted" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-2 w-full" />
               </div>
             ))}
           </div>

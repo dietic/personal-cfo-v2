@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/hooks/use-translation";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
@@ -21,7 +22,7 @@ export function MonthlyExpensesSummary({
 
   if (isLoading) {
     return (
-      <Card>
+      <Card aria-busy>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-medium md:text-sm">
             {t("dashboard.expenses.title")}
@@ -29,7 +30,7 @@ export function MonthlyExpensesSummary({
           <TrendingDown className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="h-8 w-24 animate-pulse rounded bg-muted" />
+          <Skeleton className="h-8 w-24" />
         </CardContent>
       </Card>
     );

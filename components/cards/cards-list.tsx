@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Card as CardType } from "@/hooks/use-cards";
 import { useTranslation } from "@/hooks/use-translation";
 import { CreditCard, Edit, MoreVertical, Plus, Trash } from "lucide-react";
@@ -36,7 +37,7 @@ export function CardsList({
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-48 animate-pulse rounded-xl bg-muted" />
+          <Skeleton key={i} className="h-48 rounded-xl" />
         ))}
       </div>
     );

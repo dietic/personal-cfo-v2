@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/hooks/use-translation";
 import { Receipt } from "lucide-react";
 import Link from "next/link";
@@ -32,7 +33,7 @@ export function RecentTransactions({
 
   if (isLoading) {
     return (
-      <Card className="lg:col-span-4">
+      <Card className="lg:col-span-4" aria-busy>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-medium md:text-sm">
             {t("dashboard.transactions.title")}
@@ -42,7 +43,7 @@ export function RecentTransactions({
         <CardContent>
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-12 animate-pulse rounded bg-muted" />
+              <Skeleton key={i} className="h-12 rounded" />
             ))}
           </div>
         </CardContent>

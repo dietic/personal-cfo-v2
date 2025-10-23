@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/hooks/use-translation";
 import { CreditCard, Plus } from "lucide-react";
 import Link from "next/link";
@@ -24,7 +25,7 @@ export function CardsSummary({ cards, isLoading }: CardsSummaryProps) {
 
   if (isLoading) {
     return (
-      <Card className="col-span-full">
+      <Card className="col-span-full" aria-busy>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
             <CardTitle className="text-base font-semibold">
@@ -39,7 +40,7 @@ export function CardsSummary({ cards, isLoading }: CardsSummaryProps) {
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-40 animate-pulse rounded-xl bg-muted" />
+              <Skeleton key={i} className="h-40 rounded-xl" />
             ))}
           </div>
         </CardContent>

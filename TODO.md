@@ -940,3 +940,12 @@ This document is the **single source of truth** for all features, tasks, and mil
   - Moved “Items per page” into Card header section (next to pager)
   - Added labels for Status, Card, and Search inputs
   - Updated i18n (en/es) with `statements.itemsPerPage`
+- 🟢 UX(tables): Added explicit loading states for Transactions and Statements tables
+  - Show spinner row with localized “Loading…” while fetching
+  - Mark tables `aria-busy` during loading for a11y
+  - Avoid showing empty state while loading
+- 🟢 UX(skeletons): Upgraded loading UI to Skeletons across app
+  - Added shared `components/ui/skeleton.tsx`
+  - Transactions/Statements now render skeleton rows instead of plain spinner text
+  - Cards list and dashboard widgets (alerts, budgets, cards, expenses, recent txs, recurring) show polished skeletons
+  - Added `aria-busy` on loading Cards and dashboard Cards
