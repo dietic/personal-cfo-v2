@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { useLocale } from "@/contexts/locale-context";
 import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
@@ -17,6 +16,7 @@ import {
   Shield,
   Target,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -48,7 +48,11 @@ export function Sidebar() {
     <div className="hidden md:flex h-full w-64 flex-col border-r bg-card">
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/dashboard" className="flex items-center gap-2" aria-label="Personal CFO Dashboard">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2"
+          aria-label="Personal CFO Dashboard"
+        >
           {/* Light logo */}
           <Image
             src="/cfo-logo.png"

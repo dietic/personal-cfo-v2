@@ -28,8 +28,18 @@ export function DashboardNavbar() {
         <MobileMenu />
 
         {/* Logo on mobile (isotype) */}
-        <Link href="/dashboard" className="flex items-center gap-2 md:hidden" aria-label="Personal CFO Dashboard">
-          <Image src="/cfo-isotype.png" alt="Personal CFO" width={28} height={28} className="h-7 w-7" />
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 md:hidden"
+          aria-label="Personal CFO Dashboard"
+        >
+          <Image
+            src="/cfo-isotype.png"
+            alt="Personal CFO"
+            width={28}
+            height={28}
+            className="h-7 w-7"
+          />
         </Link>
 
         <h1 className="text-base font-semibold md:text-xl">
