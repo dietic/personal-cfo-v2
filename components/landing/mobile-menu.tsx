@@ -45,7 +45,13 @@ export default function LandingMobileMenu() {
       <SheetContent side="right" className="w-72">
         <SheetHeader>
           <SheetTitle className="text-left flex items-center gap-2">
-            <Image src="/cfo-isotype.png" alt="Personal CFO" width={24} height={24} className="h-6 w-6" />
+            <Image
+              src="/cfo-isotype.png"
+              alt="Personal CFO"
+              width={24}
+              height={24}
+              className="h-6 w-6"
+            />
             <span className="sr-only">Personal CFO</span>
           </SheetTitle>
         </SheetHeader>
