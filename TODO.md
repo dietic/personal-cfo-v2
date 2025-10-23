@@ -639,6 +639,7 @@ This document is the **single source of truth** for all features, tasks, and mil
 - � Create `components/landing/navbar.tsx` (with language toggle, theme toggle, brand)
 - 🔴 Create `components/nav/auth-nav.tsx` (Dashboard, Logout, User menu)
 - 🟢 Fix landing navbar mobile overflow by adding responsive mobile menu (Sheet) and hiding desktop actions under md
+- 🔴 Change mobile menu isotype to white variant (use white asset in dark theme or ensure contrast in mobile sheet)
 
 ---
 
