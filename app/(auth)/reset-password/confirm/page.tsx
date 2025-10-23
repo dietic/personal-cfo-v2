@@ -1,5 +1,8 @@
 "use client";
 
+// Opt out of static prerendering to avoid export-time import issues
+export const dynamic = "force-dynamic";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -75,9 +78,9 @@ export default function ResetPasswordConfirmPage() {
 
       // Success - redirect to login
       router.push("/login?reset=success");
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred. Please try again.");
-      console.error("Password update error:", err);
+      // Silent: error is surfaced in UI state
     } finally {
       setLoading(false);
     }
