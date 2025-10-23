@@ -74,7 +74,6 @@ export function useAuth() {
           });
         }
       } catch (error) {
-        console.error("Error fetching session:", error);
         setState({
           user: null,
           profile: null,
