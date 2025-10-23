@@ -1,6 +1,36 @@
-# Personal CFO - Development TODO
+# Personal CFO - Developme### 0.2 Supabase Setup
 
-This document is the **single source of truth** for all features, tasks, and milestones. Update this file as you complete tasks.
+- 🟢 Create Supabase project
+- 🟢 Configure Supabase client libraries (`lib/supabase.ts`, `lib/supabase-browser.ts`)
+- 🔴 Set up Supabase environment variables (`.env.local.example` + docs)
+- ⏸️ Configure Supabase Storage bucket for temp uploads (v1 processes PDFs in memory; no storage needed)
+- 🟢 Set up RLS policies scaffold (implemented in migrations)
+- 🔴 Enable email verification in Supabase Auth settings
+
+### 0.3 Core Infrastructure
+
+- 🔴 Create `lib/env.ts` for environment variable validation
+- 🟢 Create `lib/logger.ts` for structured logging
+- 🔴 Create `lib/errors.ts` for error h### 14.1 Landing Page
+
+- 🟢 Create `/` page (Hero, Value Proposition, Features, Pricing, CTA, Footer)
+- 🟢 Create `components/landing/hero.tsx`
+- 🟢 Create `components/landing/features.tsx`
+- 🟢 Create `components/landing/pricing.tsx` (show Free/Plus/Pro plans)
+- 🟢 Create `components/landing/cta.tsx` ("Join Waiting List" CTA)
+- 🟢 Create `components/landing/footer.tsx` (links, social, copyright)
+- 🟢 Add responsive design (mobile-first)
+- 🔴 Add micro-animations (scroll reveals, hover effects)
+
+### 14.2 Public Navigation
+
+- 🟢 Create `components/landing/navbar.tsx` (with language toggle, theme toggle, brand)
+- 🔴 Create `components/nav/auth-nav.tsx` (Dashboard, Logout, User menu)
+- 🟢 Fix landing navbar mobile overflow by adding responsive mobile menu (Sheet) and hiding desktop actions under md
+- 🔴 Change mobile menu isotype to white variant (use white asset in dark theme or ensure contrast in mobile sheet)
+- 🟢 Create `lib/validators/` folder with base Zod schemas
+- 🟢 Set up `middleware.ts` for route protection
+- 🟢 Configure Next.js (`next.config.ts`) (App Router + settings)ument is the **single source of truth** for all features, tasks, and milestones. Update this file as you complete tasks.
 
 **Status Legend:**
 
@@ -15,51 +45,32 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 0.1 Repository & Environment Setup
 
-- � Initialize Next.js 15 project with TypeScript
-- � Configure Tailwind CSS with shadcn/ui
-- � Install and configure shadcn/ui components
-- � Set up ESLint with strict TypeScript rules
+- 🟢 Initialize Next.js 15 project with TypeScript
+- 🟢 Configure Tailwind CSS with shadcn/ui
+- 🟢 Install and configure shadcn/ui components
+- 🟢 Set up ESLint with strict TypeScript rules
 - 🔴 Configure Prettier for code formatting
-- � Set up environment variables structure (`.env.local.example`)
-- � Create `.gitignore` (exclude `.env.local`, `node_modules`, `.next`, etc.)
-- � Initialize Git repository with proper branching strategy
+- 🔴 Set up environment variables structure (`.env.local.example`)
+- 🟢 Create `.gitignore` (exclude `.env.local`, `node_modules`, `.next`, etc.)
+- 🟢 Initialize Git repository with proper branching strategy
 
 ### 0.2 Supabase Setup
 
-- 🔴 Create Supabase project
-- 🔴 Configure Supabase client libraries (`lib/supabase.ts`, `lib/supabase-bro## Delta – 2025-10-23
-
-- 🟢 Chore(instructions): Added Golden Rules enforcing UI consistency
-  - Items-per-page control must live inside the table Card next to the pager
-  - Inputs must have visible labels (desktop) or accessible labels (mobile)
-  - References are guides only; follow our design tokens and patterns
-  - Added Module Implementation Verification section with Playwright checklist
-- 🟢 Feat(statements): Completely aligned Statements UI with Transactions pattern
-  - Page header: matches Transactions typography (text-2xl font-bold, subtitle)
-  - Toolbar restructure: filters on left (Status + Card + Search), actions on right (Import + Re-categorize)
-  - Card wrapper: "All statements" title in CardHeader, table in CardContent
-  - Pager: "Delete selected" button to LEFT of "X selected" text (matching Transactions)
-  - Items-per-page control inside Card next to pager
-  - Updated i18n (en/es) with `statements.allStatements` and `statements.selected`
-- 🟢 Feat(statements): Implemented statement upload modal (UI only, no processing)
-  - Drag-and-drop + click-to-browse file picker
-  - PDF validation (MIME type + 25MB max size)
-  - Card selection dropdown
-  - Comprehensive user guidance (file requirements, processing time, security notes)
-  - Full i18n coverage (en/es) with descriptive error messages
-  - Wired to "Import statement" button in toolbar 🔴 Set up Supabase environment variables
+- � Create Supabase project
+- � Configure Supabase client libraries (`lib/supabase.ts`, `lib/supabase-browser.ts`)
+- � Set up Supabase environment variables (`.env.local.example` + docs)
+- ⏸️ Configure Supabase Storage bucket for temp uploads (v1 processes PDFs in memory; no storage needed)
+- 🟢 Set up RLS policies scaffold (implemented in migrations)
 - 🔴 Enable email verification in Supabase Auth settings
-- 🔴 Configure Supabase Storage bucket for temp uploads (if needed)
-- 🔴 Set up RLS policies scaffold
 
 ### 0.3 Core Infrastructure
 
 - 🔴 Create `lib/env.ts` for environment variable validation
-- 🔴 Create `lib/logger.ts` for structured logging
+- � Create `lib/logger.ts` for structured logging
 - 🔴 Create `lib/errors.ts` for error handling utilities
-- 🔴 Create `lib/validators/` folder with base Zod schemas
-- 🔴 Set up middleware.ts for route protection
-- 🔴 Configure Next.js `next.config.js` (enable App Router, i18n, etc.)
+- � Create `lib/validators/` folder with base Zod schemas
+- � Set up `middleware.ts` for route protection
+- � Configure Next.js (`next.config.ts`) (App Router + settings)
 
 ### 0.4 i18n Setup
 
@@ -76,11 +87,11 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 0.5 Theme & Design System
 
-- � Set up CSS variables for theme tokens in `globals.css`
-- � Create `components/theme-provider.tsx`
-- � Create `components/theme-toggle.tsx`
-- � Configure light/dark mode switching
-- � Test theme tokens across shadcn/ui components
+- 🟢 Set up CSS variables for theme tokens in `globals.css`
+- 🟢 Create `components/theme-provider.tsx`
+- 🟢 Create `components/theme-toggle.tsx`
+- 🟢 Configure light/dark mode switching
+- 🟢 Test theme tokens across shadcn/ui components
 
 ---
 
@@ -88,41 +99,41 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 1.1 Core Tables Migration
 
-- � Create migration: `profiles` table with timezone, primary_currency, plan (Applied via 20251021000001)
-- � Create migration: `banks` table (Applied via 20251021000001)
-- � Create migration: `cards` table with foreign keys (Applied via 20251021000002)
-- � Create migration: `statements` table (NO file_path, add retry_count) (Applied via 20251021000002)
-- � Create migration: `transactions` table (statement_id nullable, updated_at) (Applied via 20251021000004)
-- � Create migration: `categories` table (is_preset, status enum) (Applied via 20251021000003)
-- � Create migration: `category_keywords` table (Applied via 20251021000003)
-- � Create migration: `excluded_keywords` table (Applied via 20251021000003)
-- � Create migration: `budgets` table (period_start, period_end) (Applied via 20251021000005)
-- � Create migration: `alerts` table (Applied via 20251021000005)
-- � Create migration: `alert_notifications` table (Applied via 20251021000005)
+- 🟢 Create migration: `profiles` table with timezone, primary_currency, plan (Applied via 20251021000001)
+- 🟢 Create migration: `banks` table (Applied via 20251021000001)
+- 🟢 Create migration: `cards` table with foreign keys (Applied via 20251021000002)
+- 🟢 Create migration: `statements` table (NO file_path, add retry_count) (Applied via 20251021000002)
+- 🟢 Create migration: `transactions` table (statement_id nullable, updated_at) (Applied via 20251021000004)
+- 🟢 Create migration: `categories` table (is_preset, status enum) (Applied via 20251021000003)
+- 🟢 Create migration: `category_keywords` table (Applied via 20251021000003)
+- 🟢 Create migration: `excluded_keywords` table (Applied via 20251021000003)
+- 🟢 Create migration: `budgets` table (period_start, period_end) (Applied via 20251021000005)
+- 🟢 Create migration: `alerts` table (Applied via 20251021000005)
+- 🟢 Create migration: `alert_notifications` table (Applied via 20251021000005)
 - ⏸️ Create migration: `plans` table (optional, if not using static config)
 
 ### 1.2 RLS Policies
 
-- � Add RLS policy: `profiles` (auth.uid() = id)
-- � Add RLS policy: `cards` (auth.uid() = user_id)
-- � Add RLS policy: `statements` (auth.uid() = user_id)
-- � Add RLS policy: `transactions` (auth.uid() = user_id)
-- � Add RLS policy: `categories` (auth.uid() = user_id)
-- � Add RLS policy: `category_keywords` (auth.uid() = user_id)
-- � Add RLS policy: `excluded_keywords` (auth.uid() = user_id)
-- � Add RLS policy: `budgets` (auth.uid() = user_id)
-- � Add RLS policy: `alerts` (auth.uid() = user_id)
-- � Add RLS policy: `alert_notifications` (auth.uid() = user_id)
-- � Add RLS policy: `banks` (public read, admin write)
+- 🟢 Add RLS policy: `profiles` (auth.uid() = id)
+- 🟢 Add RLS policy: `cards` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `statements` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `transactions` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `categories` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `category_keywords` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `excluded_keywords` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `budgets` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `alerts` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `alert_notifications` (auth.uid() = user_id)
+- 🟢 Add RLS policy: `banks` (public read, admin write)
 
 ### 1.3 Database Indexes
 
-- � Add index: `transactions(user_id, transaction_date)`
-- � Add index: `transactions(user_id, category_id)`
-- � Add index: `transactions(statement_id)`
-- � Add index: `statements(user_id, uploaded_at)`
-- � Add index: `categories(user_id, status)`
-- � Add index: `budgets(user_id, category_id)`
+- 🟢 Add index: `transactions(user_id, transaction_date)`
+- 🟢 Add index: `transactions(user_id, category_id)`
+- 🟢 Add index: `transactions(statement_id)`
+- 🟢 Add index: `statements(user_id, uploaded_at)`
+- 🟢 Add index: `categories(user_id, status)`
+- 🟢 Add index: `budgets(user_id, category_id)`
 
 ### 1.4 Database Functions & Views
 
@@ -133,9 +144,9 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 1.5 Seeds
 
-- � Seed banks: BCP, Interbank, BBVA, Scotiabank, Diners, Mibanco, Caja Piura, Caja Arequipa, Caja Huancayo, Banco Pichincha, Other
+- 🟢 Seed banks: BCP, Interbank, BBVA, Scotiabank, Diners, Mibanco, Caja Piura, Caja Arequipa, Caja Huancayo, Banco Pichincha, Other
 - ⏸️ Seed admin user: `admin@personal-cfo.io` with plan=admin, is_admin=true (awaiting Auth user creation)
-- � Create trigger/function: Auto-create 6 system categories on user signup (Food, Housing, Transportation, Income, Entertainment, Shopping)
+- 🟢 Create trigger/function: Auto-create 6 system categories on user signup (Food, Housing, Transportation, Income, Entertainment, Shopping)
 - 🔴 Seed plans table (if using): free, plus, pro, admin with entitlements JSON
 
 > Note: All migrations and seeds above were applied to the SUPABASE-CFO project on 2025-10-22 UTC. Banks count verified = 11. Profiles table currently has 0 rows; default categories will be created on first profile insert via trigger.
@@ -155,17 +166,17 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 2.2 Auth Logic
 
-- 🔴 Create `lib/auth.ts` with `requireAuth()` server helper
-- 🔴 Create `hooks/use-auth.ts` client hook
-- 🔴 Implement session management with Supabase Auth
-- 🔴 Add logout functionality
+- � Create `lib/auth.ts` with `requireAuth()` server helper
+- � Create `hooks/use-auth.ts` client hook
+- � Implement session management with Supabase Auth
+- � Add logout functionality
 - 🔴 Handle email verification status checks
 
 ### 2.3 Middleware
 
-- 🔴 Protect routes: `/dashboard`, `/cards`, `/transactions`, `/statements`, `/analytics`, `/budgets`, `/settings`, `/admin`
-- 🔴 Redirect unauthenticated users to `/login?redirect=<path>`
-- 🔴 Redirect authenticated users from `/login` to `/dashboard`
+- � Protect routes: `/dashboard`, `/cards`, `/transactions`, `/statements`, `/analytics`, `/budgets`, `/settings`, `/admin`
+- � Redirect unauthenticated users to `/login?redirect=<path>`
+- � Redirect authenticated users from `/login` to `/dashboard`
 - 🔴 Check email verification status on protected routes
 
 ### 2.4 Profile Management
@@ -181,18 +192,18 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 3.1 Plan Utilities
 
-- 🔴 Create `lib/plan.ts` with plan entitlement constants
-- 🔴 Create `getPlanEntitlements(plan)` function
-- 🔴 Create `canCreateCard(userId)` check
-- 🔴 Create `canUploadStatement(userId)` check (monthly limit for free)
+- � Create `lib/plan.ts` with plan entitlement constants
+- � Create `getPlanEntitlements(plan)` function
+- � Create `canCreateCard(userId)` check
+- � Create `canUploadStatement(userId)` check (monthly limit for free)
 - 🔴 Create `canCreateCategory(userId)` check
 - 🔴 Create `canCreateBudget(userId)` check
 - 🔴 Create `canCreateAlert(userId)` check
 
 ### 3.2 Plan Enforcement in APIs
 
-- 🔴 Add plan checks to `POST /api/cards`
-- 🔴 Add plan checks to `POST /api/statements`
+- � Add plan checks to `POST /api/cards`
+- � Add plan checks to `POST /api/statements`
 - 🔴 Add plan checks to `POST /api/settings/categories`
 - 🔴 Add plan checks to `POST /api/budgets`
 - 🔴 Add plan checks to `POST /api/alerts`
@@ -210,22 +221,22 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 4.1 Cards API
 
-- 🔴 Create `app/api/cards/route.ts` (GET all, POST create)
-- 🔴 Create `app/api/cards/[id]/route.ts` (GET one, PATCH update, DELETE)
-- 🔴 Create `lib/validators/cards.ts` with Zod schemas
-- 🔴 Implement plan checks in POST handler
-- 🔴 Add RLS validation
+- � Create `app/api/cards/route.ts` (GET all, POST create)
+- � Create `app/api/cards/[id]/route.ts` (GET one, PATCH update, DELETE)
+- � Create `lib/validators/cards.ts` with Zod schemas
+- � Implement plan checks in POST handler
+- � Add RLS validation
 
 ### 4.2 Cards UI
 
-- 🔴 Create `/cards` page with table/grid view
-- 🔴 Create `components/cards/cards-table.tsx`
-- 🔴 Create `components/cards/card-form.tsx` (modal or drawer)
-- 🔴 Create `components/cards/card-delete-dialog.tsx`
-- 🔴 Add bank dropdown (populated from `banks` table)
-- 🔴 Add due date picker (optional field)
-- 🔴 Add loading/error/empty states
-- 🔴 Create `hooks/use-cards.ts` for data fetching
+- � Create `/cards` page with table/grid view
+- � Create `components/cards/cards-list.tsx` (card grid view)
+- � Create `components/cards/card-form.tsx` (modal or drawer)
+- � Create `components/cards/delete-card-dialog.tsx`
+- � Add bank dropdown (populated from `banks` table)
+- � Add due date picker (optional field)
+- � Add loading/error/empty states
+- � Create `hooks/use-cards.ts` for data fetching
 
 ### 4.3 Cards Tests
 
@@ -240,22 +251,22 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 5.1 Transactions API
 
-- 🔴 Create `app/api/transactions/route.ts` (GET with filters, POST create)
-- 🔴 Create `app/api/transactions/[id]/route.ts` (GET one, PATCH update, DELETE)
-- 🔴 Create `app/api/transactions/bulk-delete/route.ts` (DELETE multiple by ids)
+- � Create `app/api/transactions/route.ts` (GET with filters, POST create)
+- � Create `app/api/transactions/[id]/route.ts` (GET one, PATCH update, DELETE)
+- � Create `app/api/transactions/bulk-delete/route.ts` (DELETE multiple by ids) - basic delete implemented, bulk endpoint pending
 - 🔴 Create `app/api/transactions/recategorize/route.ts` (PATCH bulk re-categorize)
-- 🔴 Create `lib/validators/transactions.ts` with Zod schemas
+- � Create `lib/validators/transactions.ts` with Zod schemas
 
 ### 5.2 Transactions UI
 
-- 🔴 Create `/transactions` page with table view
-- 🔴 Create `components/transactions/transactions-table.tsx`
-- 🔴 Create `components/transactions/transaction-form.tsx` (manual add/edit)
-- 🔴 Create `components/transactions/transaction-filters.tsx` (date range, category, card, currency)
-- 🔴 Create `components/transactions/transaction-bulk-actions.tsx` (select, delete, re-categorize)
-- 🔴 Add sortable columns (date, amount, category, card)
-- 🔴 Add pagination
-- 🔴 Create `hooks/use-transactions.ts` for data fetching
+- � Create `/transactions` page with table view
+- � Create `components/transactions/transactions-table.tsx`
+- � Create `components/transactions/transaction-form.tsx` (manual add/edit)
+- � Create `components/transactions/filters-dialog.tsx` (date range, category, card, currency)
+- � Create `components/transactions/transactions-toolbar.tsx` (select, delete, re-categorize)
+- � Add sortable columns (date, amount, category, card)
+- � Add pagination
+- � Create `hooks/use-transactions.ts` for data fetching
 - 🟢 Ensure full i18n coverage for transactions (placeholders, loading states, row actions)
 
 ### 5.3 Transactions Tests
@@ -341,59 +352,60 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 7.1 Statements API
 
-- 🔴 Create `app/api/statements/route.ts` (GET all, POST upload)
-- 🔴 Create `app/api/statements/[id]/route.ts` (GET one, DELETE)
+- � Create `app/api/statements/route.ts` (GET all, POST upload)
+- � Create `app/api/statements/[id]/route.ts` (GET one, DELETE)
 - 🔴 Create `app/api/statements/[id]/retry/route.ts` (POST retry extraction)
 - 🔴 Create `app/api/statements/[id]/recategorize/route.ts` (POST re-categorize transactions)
-- 🔴 Create `app/api/statements/bulk-delete/route.ts`
-- 🔴 Create `lib/validators/statements.ts` with Zod schemas
-- 🔴 Implement plan checks (free: 2/month limit)
+- � Create `app/api/statements/bulk-delete/route.ts`
+- � Create `lib/validators/statements.ts` with Zod schemas
+- � Implement plan checks (free: 2/month limit)
 - 🔴 Implement rate limiting (10 uploads/minute per user)
 
 ### 7.2 PDF Processing Infrastructure
 
-- 🔴 Create `lib/pdf/extract.ts` for PDF text extraction
-- 🔴 Add PDF encryption/lock detection
-- 🔴 Add text prefix artifact stripping
-- 🔴 Implement MIME type validation (`application/pdf`)
-- 🔴 Create temp file handling (process in memory, delete immediately)
-- 🔴 Add retry logic (max 2 retries)
+- � Create `lib/pdf/extract.ts` for PDF text extraction
+- � Add PDF encryption/lock detection
+- � Add text prefix artifact stripping
+- � Implement MIME type validation (`application/pdf`)
+- � Create temp file handling (process in memory, delete immediately)
+- � Add retry logic (max 2 retries)
 
 ### 7.3 AI Extraction (OpenAI)
 
-- 🔴 Create `lib/ai/parse-statement.ts` (ASK DIEGO FOR PROMPT before implementing)
-- 🔴 Integrate OpenAI API for transaction extraction
-- 🔴 Parse JSON response from AI
-- 🔴 Validate extracted transactions
-- 🔴 Handle low-confidence extractions (mark as failed)
+- � Create `lib/ai/parse-statement.ts` (prompt implemented)
+- � Integrate OpenAI API for transaction extraction
+- � Parse JSON response from AI
+- � Validate extracted transactions
+- � Handle low-confidence extractions (mark as failed)
 
 ### 7.4 Background Jobs Setup
 
-- 🔴 Choose queue system (Celery + Redis OR Supabase native queue)
-- 🔴 Set up Redis (if using Celery)
-- 🔴 Create `workers/` folder structure
-- 🔴 Create statement extraction task
+- � Choose queue system (Inngest with dev fallback to inline processing)
+- ⏸️ Set up Redis (not needed; using Inngest)
+- � Create background processing infrastructure via `lib/inngest/`
+- � Create statement extraction task (`lib/inngest/functions/process-statement.ts`)
 - 🔴 Create re-categorization task
-- 🔴 Add job status updates (processing → completed/failed)
-- 🔴 Add retry mechanism with backoff
+- � Add job status updates (processing → completed/failed)
+- � Add retry mechanism with backoff (Inngest retry count tracked)
 
 ### 7.5 Statements UI
 
-- 🔴 Create `/statements` page with table view
-- 🔴 Create `components/statements/statements-table.tsx`
-- 🔴 Create `components/statements/statement-upload-form.tsx` (drag-and-drop + click to browse)
+- � Create `/statements` page with table view
+- � Create `components/statements/statements-table.tsx`
+- � Create `components/statements/statement-upload-dialog.tsx` (drag-and-drop + click to browse)
   - **File validation:** PDF only (application/pdf MIME type)
   - **Upload methods:** Drag-and-drop zone + click to browse file picker
   - **User guidance:** Show helpful notes about file requirements and processing expectations
   - **Card selection:** Dropdown to associate statement with a card
-  - **No processing yet:** Modal only handles file selection and validation; backend processing implemented separately
-- 🔴 Create `components/statements/statement-status-badge.tsx`
+  - **Password protection:** Prompt for password if PDF is locked
+- � Create `components/statements/statements-toolbar.tsx` with status badges
 - 🔴 Add retry button for failed statements
-- 🔴 Add bulk delete with confirmation
+- � Add bulk delete with confirmation (`components/statements/delete-statement-dialog.tsx`)
 - 🔴 Add re-categorize button (single/bulk)
-- 🔴 Create `hooks/use-statements.ts`
-- 🔴 Show upload progress indicator
-- 🔴 Show helpful error messages for locked PDFs
+- � Create `hooks/use-statements.ts`
+- � Show upload progress indicator (toasts and realtime updates)
+- � Show helpful error messages for locked PDFs
+- 🟢 Create `components/statements/statement-realtime-listener.tsx` for realtime status updates
 
 ### 7.6 Tests
 
@@ -450,8 +462,8 @@ This document is the **single source of truth** for all features, tasks, and mil
 ### 9.1 Exchange Rate Integration
 
 - 🔴 Research free exchange rate APIs (exchangerate-api.io, currencyapi.com, etc.)
-- 🔴 Create `lib/currency.ts` with exchange rate utilities
-- 🔴 Implement `getExchangeRate(from, to)` function
+- � Create `lib/currency.ts` with exchange rate utilities
+- � Implement `getExchangeRate(from, to)` function (basic implementation exists)
 - 🔴 Add caching for exchange rates (1-hour TTL)
 - 🔴 Handle API errors gracefully (fallback to cached rates)
 
@@ -552,16 +564,16 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 11.2 Dashboard UI
 
-- 🔴 Create `/dashboard` page (main landing after login)
-- 🔴 Create `components/dashboard/welcome-header.tsx`
-- 🔴 Create `components/dashboard/cards-summary.tsx` (count, quick add CTA)
-- 🔴 Create `components/dashboard/alerts-summary.tsx` (notification cards)
-- 🔴 Create `components/dashboard/budgets-snapshot.tsx` (top 3 budgets with progress)
-- 🔴 Create `components/dashboard/monthly-expenses-summary.tsx` (current month total)
-- 🔴 Create `components/dashboard/recurrent-services-summary.tsx` (optional, detect recurring transactions)
-- 🔴 Create `components/dashboard/recent-transactions.tsx` (last 5-10)
-- 🔴 Add loading/empty states
-- 🔴 Create `hooks/use-dashboard.ts`
+- � Create `/dashboard` page (main landing after login)
+- � Create `components/dashboard/welcome-header.tsx`
+- � Create `components/dashboard/cards-summary.tsx` (count, quick add CTA)
+- � Create `components/dashboard/alerts-summary.tsx` (notification cards)
+- � Create `components/dashboard/budgets-snapshot.tsx` (top 3 budgets with progress)
+- � Create `components/dashboard/monthly-expenses-summary.tsx` (current month total)
+- � Create `components/dashboard/recurrent-services-summary.tsx` (optional, detect recurring transactions)
+- � Create `components/dashboard/recent-transactions.tsx` (last 5-10)
+- � Add loading/empty states (Skeleton loaders implemented)
+- 🔴 Create `hooks/use-dashboard.ts` (currently components fetch their own data)
 
 ---
 
@@ -698,10 +710,10 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 16.1 Logging Infrastructure
 
-- 🔴 Create `lib/logger.ts` with structured logging (JSON format)
-- 🔴 Add log levels: info, warn, error
-- 🔴 Replace all `console.log` with structured logger
-- 🔴 Add context to logs (user_id, request_id, etc.)
+- � Create `lib/logger.ts` with structured logging (JSON format)
+- � Add log levels: info, warn, error
+- � Replace all `console.log` with structured logger
+- � Add context to logs (user_id, request_id, etc.)
 
 ### 16.2 Error Tracking
 
