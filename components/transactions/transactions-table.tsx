@@ -130,10 +130,12 @@ export function TransactionsTable({
   onChangePageSize,
 }: Props) {
   const { t } = useTranslation();
-  const { useList, deleteTransaction, bulkDelete, isDeleting } =
-    useTransactions();
+  const { useList, bulkDelete, isDeleting } = useTransactions();
   const { data: listResult, isLoading } = useList({ filters, page, pageSize });
-  const transactions = listResult?.data ?? [];
+  const transactions = useMemo(
+    () => listResult?.data ?? [],
+    [listResult?.data]
+  );
   const total = listResult?.total ?? 0;
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [sortKey, setSortKey] = useState<SortKey>("transaction_date");
@@ -152,6 +154,11 @@ export function TransactionsTable({
 
   const allSelected = rows.length > 0 && rows.every((d) => selected[d.id]);
   const someSelected = rows.some((d) => selected[d.id]);
+  const headerChecked: boolean | "indeterminate" = allSelected
+    ? true
+    : someSelected
+    ? "indeterminate"
+    : false;
 
   const toggleAll = (checked: boolean) => {
     const next: Record<string, boolean> = {};
@@ -269,11 +276,11 @@ export function TransactionsTable({
               <TableRow>
                 <TableHead className="w-8">
                   <Checkbox
-                    checked={allSelected}
-                    aria-checked={
-                      allSelected ? true : someSelected ? "mixed" : false
+                    checked={headerChecked}
+                    aria-label={t("transactions.selectAll")}
+                    onCheckedChange={(v: boolean | "indeterminate") =>
+                      toggleAll(Boolean(v))
                     }
-                    onChange={(e) => toggleAll(e.target.checked)}
                   />
                 </TableHead>
                 <TableHead
@@ -345,7 +352,10 @@ export function TransactionsTable({
                   <TableCell className="w-8">
                     <Checkbox
                       checked={!!selected[tx.id]}
-                      onChange={(e) => toggleOne(tx.id, e.target.checked)}
+                      aria-label={t("transactions.selectRow")}
+                      onCheckedChange={(v: boolean | "indeterminate") =>
+                        toggleOne(tx.id, Boolean(v))
+                      }
                     />
                   </TableCell>
                   <TableCell className="max-w-[640px] w-[40%]">
