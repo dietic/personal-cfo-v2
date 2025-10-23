@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { useTranslation } from "@/hooks/use-translation";
 import { Globe, LogIn, Menu, Rocket } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -43,7 +44,10 @@ export default function LandingMobileMenu() {
       </SheetTrigger>
       <SheetContent side="right" className="w-72">
         <SheetHeader>
-          <SheetTitle className="text-left">PersonalCFO</SheetTitle>
+          <SheetTitle className="text-left flex items-center gap-2">
+            <Image src="/cfo-isotype.png" alt="Personal CFO" width={24} height={24} className="h-6 w-6" />
+            <span className="sr-only">Personal CFO</span>
+          </SheetTitle>
         </SheetHeader>
         <div className="mt-4 flex flex-col gap-2">
           <Link href="/login" onClick={() => setOpen(false)}>

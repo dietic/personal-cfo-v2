@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { useLocale } from "@/contexts/locale-context";
 import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
@@ -47,11 +48,25 @@ export function Sidebar() {
     <div className="hidden md:flex h-full w-64 flex-col border-r bg-card">
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="text-lg font-bold">P</span>
-          </div>
-          <span className="text-lg font-semibold">PersonalCFO</span>
+        <Link href="/dashboard" className="flex items-center gap-2" aria-label="Personal CFO Dashboard">
+          {/* Light logo */}
+          <Image
+            src="/cfo-logo.png"
+            alt="Personal CFO"
+            width={132}
+            height={24}
+            className="block dark:hidden h-6 w-auto"
+            priority
+          />
+          {/* Dark logo */}
+          <Image
+            src="/cfo-logo-white.png"
+            alt="Personal CFO"
+            width={132}
+            height={24}
+            className="hidden dark:block h-6 w-auto"
+            priority
+          />
         </Link>
       </div>
 

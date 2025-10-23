@@ -14,6 +14,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslation } from "@/hooks/use-translation";
 import { LogOut, Settings, User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export function DashboardNavbar() {
@@ -26,11 +27,9 @@ export function DashboardNavbar() {
         {/* Mobile menu button */}
         <MobileMenu />
 
-        {/* Logo on mobile - hidden when menu is visible */}
-        <Link href="/dashboard" className="flex items-center gap-2 md:hidden">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="text-lg font-bold">P</span>
-          </div>
+        {/* Logo on mobile (isotype) */}
+        <Link href="/dashboard" className="flex items-center gap-2 md:hidden" aria-label="Personal CFO Dashboard">
+          <Image src="/cfo-isotype.png" alt="Personal CFO" width={28} height={28} className="h-7 w-7" />
         </Link>
 
         <h1 className="text-base font-semibold md:text-xl">
