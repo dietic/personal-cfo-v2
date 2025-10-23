@@ -36,6 +36,14 @@ These instructions are always loaded and must be followed:
 - **No PDF Storage:** PDFs deleted immediately after processing to avoid storing sensitive financial data
 - **Password Reset:** Admins can reset to default `PersonalCFO2025!`, users can change via Settings
 
+## Testing & Test Files
+
+- **Test PDF Files:** `test-files/EECC_VISA.PDF` is provided for testing statement upload and extraction
+- **CRITICAL:** Any temporary test files created during development (e.g., `test-*.mjs`, `test-*.ts`, `test-*.pdf`) MUST be deleted immediately after testing
+- **Never commit test files** (except those in `test-files/` directory which are intentional fixtures)
+- Use `test-files/` directory for permanent test fixtures only
+- Clean up after yourself: remove any temporary scripts, logs, or debug files before committing
+
 ## API Versioning
 
 - **v1 Routes:** All current routes are implicitly v1
@@ -585,11 +593,52 @@ NEXT_PUBLIC_EXCHANGERATE_API_KEY=
 - Landing includes Pricing and CTA before footer
 - Shipping mindset: MVP first, iterate fast, keep type-safety high
 
+## Consistency & References (New Golden Rules)
+
+- UI, components, and modules MUST be visually and behaviorally consistent across the app.
+  - Table modules live inside a Card shell with a compact header (showing count + pager) and the table body inside the Card content.
+  - The “Items per page” control belongs inside the same Card section as the pager for that table, not in the page header.
+  - Inputs must have visible labels on desktop and accessible labels on mobile (aria-label). Do not rely on placeholder-only labels.
+- “UI references” are only that—references. They indicate capabilities and rough layout but we always follow our project’s style guide and tokenized components. Do not copy visual quirks from references if they clash with our design system.
+- When introducing a new UI, mirror existing patterns (spacing, typography scale, chip styles, badge variants, pager placement, table density) from the closest equivalent module (e.g., Transactions → Statements) unless a documented exception exists.
+
 ## Role Expectations & Quality Bar
 
 - **Copywriting:** senior-level; confident, crisp, helpful
 - **UI:** FAANG-level FE/UX; accessible, responsive, tokenized
 - **Logic:** senior backend; simple, robust, typed, observable
+
+## Module Implementation Verification (Playwright)
+
+When implementing a new module (e.g., Statements, Budgets, Analytics), you MUST verify visual and organizational consistency by:
+
+1. **Compare side-by-side with reference module** (usually Transactions):
+
+   - Use Playwright to capture screenshots of both the reference module and your new module in the same viewport size.
+   - Compare layouts, spacing, typography scales, filter placement, button alignment, pager location, and items-per-page control position.
+
+2. **Automated visual checks** (when Playwright is set up):
+
+   ```typescript
+   // Example: Compare Statements page to Transactions page layout
+   await page.goto("/transactions");
+   const txScreenshot = await page.screenshot();
+   await page.goto("/statements");
+   const stScreenshot = await page.screenshot();
+   // Visually inspect or use image comparison libraries
+   ```
+
+3. **Manual review checklist** before marking a module done:
+   - [ ] Page header matches reference (heading size, subtitle, spacing)
+   - [ ] Toolbar layout matches (filters on left, actions on right)
+   - [ ] Card wrapper with CardHeader + CardContent for table
+   - [ ] Pager + items-per-page inside Card, not in page header
+   - [ ] Bulk action button appears to the LEFT of "X selected" text
+   - [ ] All inputs have visible labels (desktop) or accessible labels (mobile)
+   - [ ] Empty states, loading states, and error states match reference UX
+   - [ ] Responsive breakpoints work identically to reference module
+
+**Golden Rule:** When in doubt, screenshot both pages (reference + new) side-by-side and verify pixel-perfect alignment of key UI elements.
 
 ## Golden Rules
 

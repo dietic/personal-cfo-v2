@@ -27,8 +27,27 @@ This document is the **single source of truth** for all features, tasks, and mil
 ### 0.2 Supabase Setup
 
 - 🔴 Create Supabase project
-- 🔴 Configure Supabase client libraries (`lib/supabase.ts`, `lib/supabase-browser.ts`)
-- 🔴 Set up Supabase environment variables
+- 🔴 Configure Supabase client libraries (`lib/supabase.ts`, `lib/supabase-bro## Delta – 2025-10-23
+
+- 🟢 Chore(instructions): Added Golden Rules enforcing UI consistency
+  - Items-per-page control must live inside the table Card next to the pager
+  - Inputs must have visible labels (desktop) or accessible labels (mobile)
+  - References are guides only; follow our design tokens and patterns
+  - Added Module Implementation Verification section with Playwright checklist
+- 🟢 Feat(statements): Completely aligned Statements UI with Transactions pattern
+  - Page header: matches Transactions typography (text-2xl font-bold, subtitle)
+  - Toolbar restructure: filters on left (Status + Card + Search), actions on right (Import + Re-categorize)
+  - Card wrapper: "All statements" title in CardHeader, table in CardContent
+  - Pager: "Delete selected" button to LEFT of "X selected" text (matching Transactions)
+  - Items-per-page control inside Card next to pager
+  - Updated i18n (en/es) with `statements.allStatements` and `statements.selected`
+- 🟢 Feat(statements): Implemented statement upload modal (UI only, no processing)
+  - Drag-and-drop + click-to-browse file picker
+  - PDF validation (MIME type + 25MB max size)
+  - Card selection dropdown
+  - Comprehensive user guidance (file requirements, processing time, security notes)
+  - Full i18n coverage (en/es) with descriptive error messages
+  - Wired to "Import statement" button in toolbar 🔴 Set up Supabase environment variables
 - 🔴 Enable email verification in Supabase Auth settings
 - 🔴 Configure Supabase Storage bucket for temp uploads (if needed)
 - 🔴 Set up RLS policies scaffold
@@ -362,7 +381,12 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 - 🔴 Create `/statements` page with table view
 - 🔴 Create `components/statements/statements-table.tsx`
-- 🔴 Create `components/statements/statement-upload-form.tsx`
+- 🔴 Create `components/statements/statement-upload-form.tsx` (drag-and-drop + click to browse)
+  - **File validation:** PDF only (application/pdf MIME type)
+  - **Upload methods:** Drag-and-drop zone + click to browse file picker
+  - **User guidance:** Show helpful notes about file requirements and processing expectations
+  - **Card selection:** Dropdown to associate statement with a card
+  - **No processing yet:** Modal only handles file selection and validation; backend processing implemented separately
 - 🔴 Create `components/statements/statement-status-badge.tsx`
 - 🔴 Add retry button for failed statements
 - 🔴 Add bulk delete with confirmation
@@ -902,3 +926,17 @@ This document is the **single source of truth** for all features, tasks, and mil
 - Mark blocked tasks with ⏸️
 - Keep task descriptions detailed enough to resume work anytime
 - Reference this file when planning sprints or checking progress
+
+---
+
+## Delta – 2025-10-23
+
+- 🟢 Chore(instructions): Added Golden Rules enforcing UI consistency
+  - Items-per-page control must live inside the table Card next to the pager
+  - Inputs must have visible labels (desktop) or accessible labels (mobile)
+  - References are guides only; follow our design tokens and patterns
+- 🟢 Feat(statements): Align Statements UI with Transactions patterns
+  - Wrapped list inside Card with header and content
+  - Moved “Items per page” into Card header section (next to pager)
+  - Added labels for Status, Card, and Search inputs
+  - Updated i18n (en/es) with `statements.itemsPerPage`

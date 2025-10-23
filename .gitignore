@@ -67,3 +67,4 @@ venv/
 # Misc
 *.tsbuildinfo
 *.sass-cache
+test-files/
