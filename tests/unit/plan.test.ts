@@ -1,5 +1,4 @@
 import {
-  canCreateAlert,
   canCreateBudget,
   canCreateCard,
   canCreateCategory,
@@ -18,7 +17,6 @@ describe("Plan Entitlements", () => {
         cards: 1,
         statementsPerMonth: 2,
         categories: 6,
-        alerts: 2,
         budgets: 2,
         keywordCategorization: true,
       });
@@ -30,7 +28,6 @@ describe("Plan Entitlements", () => {
         cards: 5,
         statementsPerMonth: Infinity,
         categories: 25,
-        alerts: 6,
         budgets: 10,
         keywordCategorization: true,
       });
@@ -42,7 +39,6 @@ describe("Plan Entitlements", () => {
         cards: Infinity,
         statementsPerMonth: Infinity,
         categories: Infinity,
-        alerts: 10,
         budgets: 15,
         keywordCategorization: true,
       });
@@ -54,7 +50,6 @@ describe("Plan Entitlements", () => {
         cards: Infinity,
         statementsPerMonth: Infinity,
         categories: Infinity,
-        alerts: Infinity,
         budgets: Infinity,
         keywordCategorization: true,
       });
@@ -157,30 +152,6 @@ describe("Plan Entitlements", () => {
     });
   });
 
-  describe("canCreateAlert", () => {
-    it("should allow free user to create up to 2 alerts", () => {
-      expect(canCreateAlert("free", 0)).toBe(true);
-      expect(canCreateAlert("free", 1)).toBe(true);
-      expect(canCreateAlert("free", 2)).toBe(false);
-    });
-
-    it("should allow plus user to create up to 6 alerts", () => {
-      expect(canCreateAlert("plus", 0)).toBe(true);
-      expect(canCreateAlert("plus", 5)).toBe(true);
-      expect(canCreateAlert("plus", 6)).toBe(false);
-    });
-
-    it("should allow pro user to create up to 10 alerts", () => {
-      expect(canCreateAlert("pro", 0)).toBe(true);
-      expect(canCreateAlert("pro", 9)).toBe(true);
-      expect(canCreateAlert("pro", 10)).toBe(false);
-    });
-
-    it("should allow admin to create unlimited alerts", () => {
-      expect(canCreateAlert("admin", 999)).toBe(true);
-    });
-  });
-
   describe("getRemainingCount", () => {
     it("should calculate remaining cards for free plan", () => {
       expect(getRemainingCount("free", "cards", 0)).toBe(1);
@@ -201,12 +172,6 @@ describe("Plan Entitlements", () => {
       expect(getRemainingCount("free", "cards", 10)).toBe(0);
       expect(getRemainingCount("plus", "budgets", 20)).toBe(0);
     });
-
-    it("should handle alerts correctly for different plans", () => {
-      expect(getRemainingCount("free", "alerts", 1)).toBe(1);
-      expect(getRemainingCount("plus", "alerts", 3)).toBe(3);
-      expect(getRemainingCount("pro", "alerts", 8)).toBe(2);
-    });
   });
 
   describe("Plan comparison and upgrade paths", () => {
@@ -226,7 +191,6 @@ describe("Plan Entitlements", () => {
       expect(adminLimits.cards).toBe(Infinity);
       expect(adminLimits.statementsPerMonth).toBe(Infinity);
       expect(adminLimits.categories).toBe(Infinity);
-      expect(adminLimits.alerts).toBe(Infinity);
       expect(adminLimits.budgets).toBe(Infinity);
     });
 
