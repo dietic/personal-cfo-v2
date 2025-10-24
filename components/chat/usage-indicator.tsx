@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslation } from "@/hooks/use-translation";
 import type { ChatUsage } from "@/hooks/use-chat";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface UsageIndicatorProps {
   usage: ChatUsage | null;
@@ -25,7 +25,5 @@ export function UsageIndicator({ usage }: UsageIndicatorProps) {
       .replace("{limit}", String(limit));
   }
 
-  return (
-    <p className="text-xs text-muted-foreground">{usageText}</p>
-  );
+  return <p className="text-xs text-muted-foreground">{usageText}</p>;
 }

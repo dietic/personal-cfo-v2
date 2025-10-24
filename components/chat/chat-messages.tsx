@@ -1,17 +1,20 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { Bot, User } from "lucide-react";
-import { useTranslation } from "@/hooks/use-translation";
 import type { ChatMessage } from "@/hooks/use-chat";
+import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
+import { Bot, User } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 interface ChatMessagesProps {
   messages: ChatMessage[];
   isLoading?: boolean;
 }
 
-export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps) {
+export function ChatMessages({
+  messages,
+  isLoading = false,
+}: ChatMessagesProps) {
   const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -33,10 +36,18 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
             {t("chat.examples.title")}
           </p>
           <div className="space-y-1 text-left text-sm text-muted-foreground">
-            <p className="rounded-md bg-muted p-2">💰 {t("chat.examples.food")}</p>
-            <p className="rounded-md bg-muted p-2">📊 {t("chat.examples.biggest")}</p>
-            <p className="rounded-md bg-muted p-2">🎯 {t("chat.examples.budgets")}</p>
-            <p className="rounded-md bg-muted p-2">📈 {t("chat.examples.income")}</p>
+            <p className="rounded-md bg-muted p-2">
+              💰 {t("chat.examples.food")}
+            </p>
+            <p className="rounded-md bg-muted p-2">
+              📊 {t("chat.examples.biggest")}
+            </p>
+            <p className="rounded-md bg-muted p-2">
+              🎯 {t("chat.examples.budgets")}
+            </p>
+            <p className="rounded-md bg-muted p-2">
+              📈 {t("chat.examples.income")}
+            </p>
           </div>
         </div>
       </div>

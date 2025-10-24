@@ -1,18 +1,18 @@
 "use client";
 
-import { X } from "lucide-react";
-import { useTranslation } from "@/hooks/use-translation";
-import { useChat } from "@/hooks/use-chat";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
 } from "@/components/ui/sheet";
-import { ChatMessages } from "./chat-messages";
+import { useChat } from "@/hooks/use-chat";
+import { useTranslation } from "@/hooks/use-translation";
+import { X } from "lucide-react";
 import { ChatInput } from "./chat-input";
+import { ChatMessages } from "./chat-messages";
 import { UsageIndicator } from "./usage-indicator";
 
 interface ChatDrawerProps {

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, FormEvent, KeyboardEvent } from "react";
-import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "@/hooks/use-translation";
+import { Send } from "lucide-react";
+import { FormEvent, KeyboardEvent, useState } from "react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -44,7 +44,9 @@ export function ChatInput({
       <div className="flex gap-2">
         <Textarea
           value={input}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            setInput(e.target.value)
+          }
           onKeyDown={handleKeyDown}
           placeholder={placeholder || t("chat.inputPlaceholder")}
           disabled={disabled}

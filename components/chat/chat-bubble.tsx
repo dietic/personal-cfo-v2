@@ -1,9 +1,9 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
+import { MessageCircle } from "lucide-react";
 
 interface ChatBubbleProps {
   onClick: () => void;

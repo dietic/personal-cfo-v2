@@ -1,6 +1,6 @@
+import { ChatProvider } from "@/components/chat/chat-provider";
 import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar";
 import { Sidebar } from "@/components/dashboard/sidebar";
-import { ChatProvider } from "@/components/chat/chat-provider";
 
 export default function MainLayout({
   children,

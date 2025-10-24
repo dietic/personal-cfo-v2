@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { useAuth } from "@/hooks/use-auth";
-import { useTranslation } from "@/hooks/use-translation";
 import { ChatWidget } from "@/components/chat";
+import { ChatBubble } from "@/components/chat/chat-bubble";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,7 +11,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ChatBubble } from "@/components/chat/chat-bubble";
+import { useAuth } from "@/hooks/use-auth";
+import { useTranslation } from "@/hooks/use-translation";
+import Link from "next/link";
+import { useState } from "react";
 
 export function ChatProvider() {
   const { profile } = useAuth();
@@ -38,7 +38,10 @@ export function ChatProvider() {
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowUpgradeModal(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowUpgradeModal(false)}
+              >
                 Cancel
               </Button>
               <Link href="/settings?tab=billing">
