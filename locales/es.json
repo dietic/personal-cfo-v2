@@ -176,6 +176,75 @@
       "viewAll": "Ver Todas las Transacciones"
     }
   },
+  "settings": {
+    "subtitle": "Administra reglas de categorización y preferencias",
+    "tabs": {
+      "categories": "Categorías",
+      "keywords": "Palabras clave",
+      "excluded": "Excluidas"
+    },
+    "categories": {
+      "title": "Categorías",
+      "subtitle": "Crea categorías personalizadas y define colores y emojis",
+      "add": "Agregar categoría",
+      "editTitle": "Editar categoría",
+      "createTitle": "Crear categoría",
+      "deleteTitle": "Eliminar categoría",
+      "deleteDesc": "Eliminar una categoría pondrá las transacciones existentes como Sin categoría. Esta acción no se puede deshacer.",
+      "name": "Nombre",
+      "namePh": "ej. Supermercado",
+      "emoji": "Emoji",
+      "color": "Color",
+      "preset": "Predeterminada",
+      "custom": "Personalizada",
+      "empty": "Aún no hay categorías",
+      "table": {
+        "name": "Nombre",
+        "emoji": "Emoji",
+        "color": "Color",
+        "type": "Tipo",
+        "actions": "Acciones"
+      }
+    },
+    "keywords": {
+      "title": "Palabras clave",
+      "subtitle": "Agrega palabras clave para auto-categorizar (la primera coincidencia gana)",
+      "selectCategory": "Selecciona una categoría",
+      "add": "Agregar palabra clave",
+      "editTitle": "Editar palabra clave",
+      "createTitle": "Crear palabra clave",
+      "deleteTitle": "Eliminar palabra clave",
+      "deleteDesc": "¿Seguro que deseas eliminar esta palabra clave?",
+      "keyword": "Palabra clave",
+      "keywordPh": "ej. Starbucks, Uber, Netflix",
+      "empty": "Aún no hay palabras clave",
+      "table": {
+        "keyword": "Palabra clave",
+        "actions": "Acciones"
+      }
+    },
+    "excluded": {
+      "title": "Palabras clave excluidas",
+      "subtitle": "Evita que ciertas palabras se auto-categoricen (quedarán como Sin categoría)",
+      "add": "Agregar palabra",
+      "bulkAdd": "Agregar en lote",
+      "editTitle": "Editar palabra excluida",
+      "createTitle": "Crear palabra excluida",
+      "deleteTitle": "Eliminar palabra excluida",
+      "deleteDesc": "¿Seguro que deseas eliminar esta palabra excluida?",
+      "keyword": "Palabra",
+      "keywordPh": "ej. Transferencia, Pago",
+      "empty": "Aún no hay palabras excluidas",
+      "table": {
+        "keyword": "Palabra",
+        "actions": "Acciones"
+      },
+      "bulkTitle": "Agregar palabras excluidas en lote",
+      "bulkLabel": "Palabras (separadas por coma o nueva línea)",
+      "bulkPh": "ej. Transferencia, Pago, Reembolso",
+      "bulkHint": "Ignoraremos duplicados y espacios"
+    }
+  },
   "cards": {
     "title": "Tarjetas",
     "subtitle": "Administra tus tarjetas y controla saldos",

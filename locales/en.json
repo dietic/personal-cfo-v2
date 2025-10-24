@@ -177,6 +177,75 @@
       "viewAll": "View All Transactions"
     }
   },
+  "settings": {
+    "subtitle": "Manage categorization rules and preferences",
+    "tabs": {
+      "categories": "Categories",
+      "keywords": "Keywords",
+      "excluded": "Excluded"
+    },
+    "categories": {
+      "title": "Categories",
+      "subtitle": "Create custom categories and personalize colors and emojis",
+      "add": "Add Category",
+      "editTitle": "Edit Category",
+      "createTitle": "Create Category",
+      "deleteTitle": "Delete Category",
+      "deleteDesc": "Deleting a category will set existing transactions to Uncategorized. This cannot be undone.",
+      "name": "Name",
+      "namePh": "e.g. Groceries",
+      "emoji": "Emoji",
+      "color": "Color",
+      "preset": "Preset",
+      "custom": "Custom",
+      "empty": "No categories yet",
+      "table": {
+        "name": "Name",
+        "emoji": "Emoji",
+        "color": "Color",
+        "type": "Type",
+        "actions": "Actions"
+      }
+    },
+    "keywords": {
+      "title": "Keywords",
+      "subtitle": "Add keywords for auto-categorization (first match wins)",
+      "selectCategory": "Select a category",
+      "add": "Add Keyword",
+      "editTitle": "Edit Keyword",
+      "createTitle": "Create Keyword",
+      "deleteTitle": "Delete Keyword",
+      "deleteDesc": "Are you sure you want to delete this keyword?",
+      "keyword": "Keyword",
+      "keywordPh": "e.g. Starbucks, Uber, Netflix",
+      "empty": "No keywords yet",
+      "table": {
+        "keyword": "Keyword",
+        "actions": "Actions"
+      }
+    },
+    "excluded": {
+      "title": "Excluded Keywords",
+      "subtitle": "Prevent keywords from being auto-categorized (they'll remain Uncategorized)",
+      "add": "Add Keyword",
+      "bulkAdd": "Bulk Add",
+      "editTitle": "Edit Excluded Keyword",
+      "createTitle": "Create Excluded Keyword",
+      "deleteTitle": "Delete Excluded Keyword",
+      "deleteDesc": "Are you sure you want to delete this excluded keyword?",
+      "keyword": "Keyword",
+      "keywordPh": "e.g. Transfer, Payment",
+      "empty": "No excluded keywords yet",
+      "table": {
+        "keyword": "Keyword",
+        "actions": "Actions"
+      },
+      "bulkTitle": "Bulk Add Excluded Keywords",
+      "bulkLabel": "Keywords (comma or newline separated)",
+      "bulkPh": "e.g. Transfer, Payment, Refund",
+      "bulkHint": "We'll ignore duplicates and whitespace"
+    }
+  },
   "cards": {
     "title": "Cards",
     "subtitle": "Manage your cards and track balances",
