@@ -101,8 +101,43 @@ export function generatePeriodBins(
   _timezone: string = "UTC" // Prefix with underscore to mark as intentionally unused
 ): string[] {
   const bins: string[] = [];
-  const current = new Date(from);
 
+  // Align the starting point to the beginning of the selected period so that
+  // the bin keys match the keys produced by getPeriodStart() in the APIs.
+  // This was causing all-zero series because bins started at the raw `from`
+  // timestamp (e.g., 24th of the month) while aggregation used month-start
+  // (e.g., 1st of the month), leading to mismatched keys.
+  const start = new Date(from);
+  switch (granularity) {
+    case "day": {
+      // Normalize to 00:00:00 UTC of the same day
+      start.setUTCHours(0, 0, 0, 0);
+      break;
+    }
+    case "week": {
+      // Start of week (Sunday) at 00:00:00 UTC
+      const dayOfWeek = start.getUTCDay();
+      start.setUTCDate(start.getUTCDate() - dayOfWeek);
+      start.setUTCHours(0, 0, 0, 0);
+      break;
+    }
+    case "month": {
+      // First day of the month at 00:00:00 UTC
+      const y = start.getUTCFullYear();
+      const m = start.getUTCMonth();
+      start.setTime(Date.UTC(y, m, 1, 0, 0, 0, 0));
+      break;
+    }
+    case "quarter": {
+      // First day of the quarter at 00:00:00 UTC
+      const y = start.getUTCFullYear();
+      const qStart = Math.floor(start.getUTCMonth() / 3) * 3;
+      start.setTime(Date.UTC(y, qStart, 1, 0, 0, 0, 0));
+      break;
+    }
+  }
+
+  const current = start;
   while (current <= to) {
     bins.push(current.toISOString());
 
@@ -213,39 +248,60 @@ export function isUnusualSpike(
 }
 
 /**
- * Format period label for display
- * @param isoDate ISO date string
- * @param granularity Period granularity
- * @param locale User locale
- * @returns Formatted period label
+ * Format period label based on granularity
+ * For display purposes in UI
+ * - Week: W1, W2, W3, etc. (week number in month)
+ * - Month: Jan 2025, Feb 2025, etc.
+ * - Quarter: Q1 2025, Q2 2025, etc.
  */
 export function formatPeriodLabel(
-  isoDate: string,
-  granularity: "day" | "week" | "month" | "quarter",
-  locale: string = "en-US"
+  periodISOString: string,
+  granularity: "week" | "month" | "quarter",
+  allPeriods?: string[]
 ): string {
-  const date = new Date(isoDate);
+  const date = new Date(periodISOString);
 
   switch (granularity) {
-    case "day":
-      return new Intl.DateTimeFormat(locale, {
+    case "week": {
+      // Calculate week number within the month
+      if (allPeriods) {
+        // Get all weeks in the same month
+        const weeksInMonth = allPeriods.filter((p) => {
+          const pDate = new Date(p);
+          return (
+            pDate.getUTCFullYear() === date.getUTCFullYear() &&
+            pDate.getUTCMonth() === date.getUTCMonth()
+          );
+        });
+        const weekIndex = weeksInMonth.indexOf(periodISOString);
+        if (weekIndex >= 0) {
+          return `W${weekIndex + 1}`;
+        }
+      }
+      // Fallback: calculate week of month
+      const firstDayOfMonth = new Date(
+        Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)
+      );
+      const weekOfMonth = Math.ceil(
+        (date.getUTCDate() + firstDayOfMonth.getUTCDay()) / 7
+      );
+      return `W${weekOfMonth}`;
+    }
+    case "month": {
+      const year = date.getUTCFullYear();
+      const month = date.toLocaleString("en-US", {
         month: "short",
-        day: "numeric",
-        year: "numeric",
-      }).format(date);
-    case "week":
-      return `Week of ${new Intl.DateTimeFormat(locale, {
-        month: "short",
-        day: "numeric",
-      }).format(date)}`;
-    case "month":
-      return new Intl.DateTimeFormat(locale, {
-        month: "long",
-        year: "numeric",
-      }).format(date);
-    case "quarter":
-      const quarter = Math.floor(date.getMonth() / 3) + 1;
-      return `Q${quarter} ${date.getFullYear()}`;
+        timeZone: "UTC",
+      });
+      return `${month} ${year}`;
+    }
+    case "quarter": {
+      const year = date.getUTCFullYear();
+      const quarter = Math.floor(date.getUTCMonth() / 3) + 1;
+      return `Q${quarter} ${year}`;
+    }
+    default:
+      return periodISOString;
   }
 }
 

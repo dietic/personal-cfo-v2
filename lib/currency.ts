@@ -34,8 +34,19 @@ export function toMinorUnits(amount: number): number {
 export function formatCurrency(
   amount: number,
   currency: Currency,
-  locale: string = "en-US"
+  options?: { locale?: string; compact?: boolean }
 ): string {
+  const locale = options?.locale || "en-US";
+
+  if (options?.compact) {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }).format(amount);
+  }
+
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
@@ -50,10 +61,10 @@ export function formatCurrency(
 export function formatCurrencyFromMinorUnits(
   amountCents: number,
   currency: Currency,
-  locale: string = "en-US"
+  options?: { locale?: string; compact?: boolean }
 ): string {
   const amount = fromMinorUnits(amountCents);
-  return formatCurrency(amount, currency, locale);
+  return formatCurrency(amount, currency, options);
 }
 
 /**

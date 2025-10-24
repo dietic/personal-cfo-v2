@@ -19,8 +19,18 @@ export const CurrencySchema = z.enum(["PEN", "USD", "EUR"]);
  * Base analytics query parameters (shared across all endpoints)
  */
 export const BaseAnalyticsQuerySchema = z.object({
-  from: z.string().datetime().describe("Start date (ISO 8601)"),
-  to: z.string().datetime().describe("End date (ISO 8601)"),
+  from: z
+    .string()
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    })
+    .describe("Start date (ISO 8601 or YYYY-MM-DD)"),
+  to: z
+    .string()
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    })
+    .describe("End date (ISO 8601 or YYYY-MM-DD)"),
   account: z
     .string()
     .uuid()
@@ -77,6 +87,9 @@ export const SpendOverTimeResponseSchema = z.object({
   data: z.array(
     z.object({
       period: z.string().describe("ISO date for the period start"),
+      periodLabel: z
+        .string()
+        .describe("Formatted period label (e.g., 'W1', 'Jan 2025')"),
       amount: z
         .number()
         .describe("Total spend in target currency (major units)"),
@@ -112,6 +125,9 @@ export const IncomeVsExpensesResponseSchema = z.object({
   data: z.array(
     z.object({
       period: z.string().describe("ISO date for the period start"),
+      periodLabel: z
+        .string()
+        .describe("Formatted period label (e.g., 'W1', 'Jan 2025')"),
       income: z
         .number()
         .describe("Total income in target currency (major units, positive)"),

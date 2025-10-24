@@ -12,6 +12,7 @@
 
 import {
   fillTimeSeriesGaps,
+  formatPeriodLabel,
   generatePeriodBins,
   roundToTwoDecimals,
 } from "@/lib/analytics";
@@ -207,6 +208,7 @@ export async function GET(request: NextRequest) {
 
       return {
         period: p.period,
+        periodLabel: formatPeriodLabel(p.period, granularity, bins),
         amount: roundToTwoDecimals(fromMinorUnits(p.amountCents)),
         txCount: p.txCount,
         topCategory,
@@ -215,10 +217,15 @@ export async function GET(request: NextRequest) {
 
     // Fill gaps with zeros
     const completeData = fillTimeSeriesGaps(periodData, bins, {
+      periodLabel: "",
       amount: 0,
       txCount: 0,
       topCategory: null,
-    });
+    }).map((item) => ({
+      ...item,
+      periodLabel:
+        item.periodLabel || formatPeriodLabel(item.period, granularity, bins),
+    }));
 
     return NextResponse.json({ success: true, data: completeData });
   } catch (error) {

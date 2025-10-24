@@ -1,6 +1,13 @@
 /**
  * Spend by Category Analytics API
- * GET /api/analytics/spend-by-category
+ * GET /api/analytics/    // Build query for transactions
+    let query = supabase
+      .from("transactions")
+      .select("id, amount_cents, currency, category_id, categories(id, name, color)")
+      .eq("user_id", user.id)
+      .gte("transaction_date", from)
+      .lte("transaction_date", to)
+      .eq("type", "expense"); // Only expenses for spending analysisategory
  *
  * Returns spending aggregated by category for a given period with:
  * - Amount per category in target currency
