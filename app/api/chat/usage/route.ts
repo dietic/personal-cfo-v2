@@ -1,4 +1,4 @@
-// @ts-nocheck - Supabase type inference issues, will fix in type refinement pass
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { requireAuth } from "@/lib/auth";
 import { getPlanEntitlements, getRemainingChatQueries } from "@/lib/plan";
@@ -15,11 +15,11 @@ export async function GET() {
     const supabaseAdmin = getSupabaseAdmin();
 
     // Get user's profile (for plan)
-    const { data: profile } = await supabase
+    const { data: profile } = (await supabase
       .from("profiles")
       .select("plan")
       .eq("id", user.id)
-      .single();
+      .single()) as { data: any };
 
     if (!profile) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
@@ -28,12 +28,12 @@ export async function GET() {
     const userPlan = profile.plan as "free" | "plus" | "pro" | "admin";
 
     // Get monthly usage count
-    const { data: usageCount } = await supabaseAdmin.rpc(
+    const { data: usageCount } = (await supabaseAdmin.rpc(
       "get_monthly_chat_usage",
       {
         p_user_id: user.id,
-      }
-    );
+      } as any
+    )) as { data: number | null };
 
     const currentMonthUsage = usageCount || 0;
 

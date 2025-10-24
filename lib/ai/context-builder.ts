@@ -3,7 +3,6 @@
  * Builds user financial context from last 6 months of transactions
  */
 
-// @ts-nocheck - Supabase types are complex, will fix in type refinement pass
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { getSupabaseAdmin } from "@/lib/supabase";
@@ -54,11 +53,11 @@ export async function buildUserContext(
   const supabase = getSupabaseAdmin();
 
   // Get user profile for currency and timezone
-  const { data: profile } = await supabase
+  const { data: profile } = (await supabase
     .from("profiles")
     .select("primary_currency, timezone")
     .eq("id", userId)
-    .single();
+    .single()) as { data: any };
 
   const primaryCurrency = profile?.primary_currency || "PEN";
   const timezone = profile?.timezone || "America/Lima";
@@ -69,7 +68,7 @@ export async function buildUserContext(
   const sixMonthsAgoISO = sixMonthsAgo.toISOString().split("T")[0];
 
   // Fetch last 6 months of transactions (limit 1000)
-  const { data: transactions } = await supabase
+  const { data: transactions } = (await supabase
     .from("transactions")
     .select(
       `
@@ -87,7 +86,7 @@ export async function buildUserContext(
     .eq("user_id", userId)
     .gte("transaction_date", sixMonthsAgoISO)
     .order("transaction_date", { ascending: false })
-    .limit(1000);
+    .limit(1000)) as { data: any[] | null };
 
   const txs = transactions || [];
 
@@ -144,7 +143,7 @@ export async function buildUserContext(
     .slice(-6);
 
   // Get active budgets
-  const { data: budgetData } = await supabase
+  const { data: budgetData } = (await supabase
     .from("budgets")
     .select(
       `
@@ -155,7 +154,7 @@ export async function buildUserContext(
     `
     )
     .eq("user_id", userId)
-    .eq("active", true);
+    .eq("active", true)) as { data: any[] | null };
 
   const budgets =
     budgetData?.map((b) => {
