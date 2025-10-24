@@ -8,6 +8,7 @@ These instructions are always loaded and must be followed:
 
 - `.github/instructions/personal-cfo-instructions.md.instructions.md` (this file)
 - `.github/
+
 ## Modules & UX Contract
 
 ### 0) Dashboard
