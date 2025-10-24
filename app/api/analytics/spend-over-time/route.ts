@@ -10,20 +10,20 @@
  * - Fills gaps with zeros
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth";
-import { SpendOverTimeQuerySchema } from "@/lib/validators/analytics";
 import {
-  getExchangeRates,
-  convertCurrencyFromMinorUnits,
-  fromMinorUnits,
-  type Currency,
-} from "@/lib/currency";
-import {
-  generatePeriodBins,
   fillTimeSeriesGaps,
+  generatePeriodBins,
   roundToTwoDecimals,
 } from "@/lib/analytics";
+import { requireAuth } from "@/lib/auth";
+import {
+  convertCurrencyFromMinorUnits,
+  fromMinorUnits,
+  getExchangeRates,
+  type Currency,
+} from "@/lib/currency";
+import { SpendOverTimeQuerySchema } from "@/lib/validators/analytics";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,7 +43,11 @@ export async function GET(request: NextRequest) {
     const validation = SpendOverTimeQuerySchema.safeParse(queryParams);
     if (!validation.success) {
       return NextResponse.json(
-        { error: true, message: "Invalid query parameters", details: validation.error.issues },
+        {
+          error: true,
+          message: "Invalid query parameters",
+          details: validation.error.issues,
+        },
         { status: 400 }
       );
     }
@@ -57,7 +61,8 @@ export async function GET(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    const timezone = ((profile as { timezone?: string } | null)?.timezone) || "UTC";
+    const timezone =
+      (profile as { timezone?: string } | null)?.timezone || "UTC";
 
     // Get exchange rates for currency conversion
     const rates = await getExchangeRates();
@@ -69,7 +74,9 @@ export async function GET(request: NextRequest) {
     // Build query for transactions
     let query = supabase
       .from("transactions")
-      .select("id, amount_cents, currency, category_id, transaction_date, categories(id, name)")
+      .select(
+        "id, amount_cents, currency, category_id, transaction_date, categories(id, name)"
+      )
       .eq("user_id", user.id)
       .gte("transaction_date", from)
       .lte("transaction_date", to)
@@ -117,22 +124,29 @@ export async function GET(request: NextRequest) {
           weekStart.setUTCHours(0, 0, 0, 0);
           return weekStart.toISOString();
         case "month":
-          return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)).toISOString();
+          return new Date(
+            Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)
+          ).toISOString();
         case "quarter":
           const quarterStart = Math.floor(date.getUTCMonth() / 3) * 3;
-          return new Date(Date.UTC(date.getUTCFullYear(), quarterStart, 1)).toISOString();
+          return new Date(
+            Date.UTC(date.getUTCFullYear(), quarterStart, 1)
+          ).toISOString();
         default:
           return dateStr;
       }
     };
 
     // Aggregate transactions by period
-    const periodMap = new Map<string, {
-      period: string;
-      amountCents: number;
-      txCount: number;
-      categories: Map<string, { name: string; amountCents: number }>;
-    }>();
+    const periodMap = new Map<
+      string,
+      {
+        period: string;
+        amountCents: number;
+        txCount: number;
+        categories: Map<string, { name: string; amountCents: number }>;
+      }
+    >();
 
     for (const tx of typedTransactions) {
       const periodStart = getPeriodStart(tx.transaction_date);
@@ -159,7 +173,10 @@ export async function GET(request: NextRequest) {
       existing.txCount += 1;
 
       // Track top category
-      const categoryData = tx.categories as unknown as { id: string; name: string } | null;
+      const categoryData = tx.categories as unknown as {
+        id: string;
+        name: string;
+      } | null;
       if (tx.category_id && categoryData) {
         const catId = tx.category_id;
         const catName = categoryData.name;
@@ -174,7 +191,8 @@ export async function GET(request: NextRequest) {
     // Build result with top category per period
     const periodData = Array.from(periodMap.values()).map((p) => {
       // Find top category for this period
-      let topCategory: { id: string; name: string; amount: number } | null = null;
+      let topCategory: { id: string; name: string; amount: number } | null =
+        null;
       if (p.categories.size > 0) {
         const sorted = Array.from(p.categories.entries()).sort(
           (a, b) => b[1].amountCents - a[1].amountCents
@@ -196,11 +214,11 @@ export async function GET(request: NextRequest) {
     });
 
     // Fill gaps with zeros
-    const completeData = fillTimeSeriesGaps(
-      periodData,
-      bins,
-      { amount: 0, txCount: 0, topCategory: null }
-    );
+    const completeData = fillTimeSeriesGaps(periodData, bins, {
+      amount: 0,
+      txCount: 0,
+      topCategory: null,
+    });
 
     return NextResponse.json({ success: true, data: completeData });
   } catch (error) {

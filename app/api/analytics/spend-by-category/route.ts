@@ -9,20 +9,20 @@
  * - Transaction count
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth";
-import { SpendByCategoryQuerySchema } from "@/lib/validators/analytics";
 import {
-  getExchangeRates,
-  convertCurrencyFromMinorUnits,
-  fromMinorUnits,
-  type Currency,
-} from "@/lib/currency";
-import {
-  getPreviousPeriod,
   calculatePercentageChange,
+  getPreviousPeriod,
   roundToTwoDecimals,
 } from "@/lib/analytics";
+import { requireAuth } from "@/lib/auth";
+import {
+  convertCurrencyFromMinorUnits,
+  fromMinorUnits,
+  getExchangeRates,
+  type Currency,
+} from "@/lib/currency";
+import { SpendByCategoryQuerySchema } from "@/lib/validators/analytics";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -41,7 +41,11 @@ export async function GET(request: NextRequest) {
     const validation = SpendByCategoryQuerySchema.safeParse(queryParams);
     if (!validation.success) {
       return NextResponse.json(
-        { error: true, message: "Invalid query parameters", details: validation.error.issues },
+        {
+          error: true,
+          message: "Invalid query parameters",
+          details: validation.error.issues,
+        },
         { status: 400 }
       );
     }
@@ -58,7 +62,9 @@ export async function GET(request: NextRequest) {
     // Build query for current period
     let query = supabase
       .from("transactions")
-      .select("id, amount_cents, currency, category_id, categories(id, name, color, status)")
+      .select(
+        "id, amount_cents, currency, category_id, categories(id, name, color, status)"
+      )
       .eq("user_id", user.id)
       .gte("transaction_date", from)
       .lte("transaction_date", to)
@@ -85,7 +91,12 @@ export async function GET(request: NextRequest) {
       amount_cents: number;
       currency: string;
       category_id: string | null;
-      categories: { id: string; name: string; color: string; status: string } | null;
+      categories: {
+        id: string;
+        name: string;
+        color: string;
+        status: string;
+      } | null;
     };
     const typedTransactions = (transactions || []) as TransactionWithCategory[];
 
@@ -111,13 +122,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Aggregate by category for current period
-    const categoryMap = new Map<string, {
-      categoryId: string;
-      name: string;
-      color: string;
-      amountCents: number;
-      txCount: number;
-    }>();
+    const categoryMap = new Map<
+      string,
+      {
+        categoryId: string;
+        name: string;
+        color: string;
+        amountCents: number;
+        txCount: number;
+      }
+    >();
 
     for (const tx of typedTransactions) {
       const categoryId = tx.category_id || "uncategorized";
@@ -180,7 +194,8 @@ export async function GET(request: NextRequest) {
     // Build response with percentages and deltas
     const result = Array.from(categoryMap.values()).map((cat) => {
       const amount = fromMinorUnits(cat.amountCents);
-      const pct = totalAmountCents > 0 ? (cat.amountCents / totalAmountCents) * 100 : 0;
+      const pct =
+        totalAmountCents > 0 ? (cat.amountCents / totalAmountCents) * 100 : 0;
 
       const prevAmountCents = prevCategoryMap.get(cat.categoryId) || 0;
       const prevAmount = fromMinorUnits(prevAmountCents);

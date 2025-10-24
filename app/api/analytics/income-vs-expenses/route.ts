@@ -10,21 +10,21 @@
  * - Fills gaps with zeros
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth";
-import { IncomeVsExpensesQuerySchema } from "@/lib/validators/analytics";
 import {
-  getExchangeRates,
-  convertCurrencyFromMinorUnits,
-  fromMinorUnits,
-  type Currency,
-} from "@/lib/currency";
-import {
-  generatePeriodBins,
-  fillTimeSeriesGaps,
   classifyTransaction,
+  fillTimeSeriesGaps,
+  generatePeriodBins,
   roundToTwoDecimals,
 } from "@/lib/analytics";
+import { requireAuth } from "@/lib/auth";
+import {
+  convertCurrencyFromMinorUnits,
+  fromMinorUnits,
+  getExchangeRates,
+  type Currency,
+} from "@/lib/currency";
+import { IncomeVsExpensesQuerySchema } from "@/lib/validators/analytics";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,7 +44,11 @@ export async function GET(request: NextRequest) {
     const validation = IncomeVsExpensesQuerySchema.safeParse(queryParams);
     if (!validation.success) {
       return NextResponse.json(
-        { error: true, message: "Invalid query parameters", details: validation.error.issues },
+        {
+          error: true,
+          message: "Invalid query parameters",
+          details: validation.error.issues,
+        },
         { status: 400 }
       );
     }
@@ -58,7 +62,8 @@ export async function GET(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    const timezone = ((profile as { timezone?: string } | null)?.timezone) || "UTC";
+    const timezone =
+      (profile as { timezone?: string } | null)?.timezone || "UTC";
 
     // Get exchange rates for currency conversion
     const rates = await getExchangeRates();
@@ -70,7 +75,9 @@ export async function GET(request: NextRequest) {
     // Build query for transactions (all types)
     let query = supabase
       .from("transactions")
-      .select("id, amount_cents, currency, type, transaction_date, category_id, categories(name)")
+      .select(
+        "id, amount_cents, currency, type, transaction_date, category_id, categories(name)"
+      )
       .eq("user_id", user.id)
       .gte("transaction_date", from)
       .lte("transaction_date", to)
@@ -118,21 +125,28 @@ export async function GET(request: NextRequest) {
           weekStart.setUTCHours(0, 0, 0, 0);
           return weekStart.toISOString();
         case "month":
-          return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)).toISOString();
+          return new Date(
+            Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)
+          ).toISOString();
         case "quarter":
           const quarterStart = Math.floor(date.getUTCMonth() / 3) * 3;
-          return new Date(Date.UTC(date.getUTCFullYear(), quarterStart, 1)).toISOString();
+          return new Date(
+            Date.UTC(date.getUTCFullYear(), quarterStart, 1)
+          ).toISOString();
         default:
           return dateStr;
       }
     };
 
     // Aggregate transactions by period
-    const periodMap = new Map<string, {
-      period: string;
-      incomeCents: number;
-      expensesCents: number;
-    }>();
+    const periodMap = new Map<
+      string,
+      {
+        period: string;
+        incomeCents: number;
+        expensesCents: number;
+      }
+    >();
 
     for (const tx of typedTransactions) {
       const periodStart = getPeriodStart(tx.transaction_date);
@@ -184,11 +198,11 @@ export async function GET(request: NextRequest) {
     });
 
     // Fill gaps with zeros
-    const completeData = fillTimeSeriesGaps(
-      periodData,
-      bins,
-      { income: 0, expenses: 0, net: 0 }
-    );
+    const completeData = fillTimeSeriesGaps(periodData, bins, {
+      income: 0,
+      expenses: 0,
+      net: 0,
+    });
 
     return NextResponse.json({ success: true, data: completeData });
   } catch (error) {

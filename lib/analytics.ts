@@ -3,9 +3,8 @@
  * Helper functions for analytics calculations, aggregations, and conversions
  */
 
-import type { Currency } from "./currency";
+import type { Currency, ExchangeRates } from "./currency";
 import { convertCurrencyFromMinorUnits, fromMinorUnits } from "./currency";
-import type { ExchangeRates } from "./currency";
 
 /**
  * Transaction data structure from database
@@ -54,7 +53,10 @@ export function convertTransactionAmount(
  * Calculate previous period date range
  * Returns { from, to } for the period immediately preceding the given range
  */
-export function getPreviousPeriod(from: Date, to: Date): { from: Date; to: Date } {
+export function getPreviousPeriod(
+  from: Date,
+  to: Date
+): { from: Date; to: Date } {
   const durationMs = to.getTime() - from.getTime();
   const prevTo = new Date(from.getTime() - 1); // 1ms before current period starts
   const prevFrom = new Date(prevTo.getTime() - durationMs);
@@ -65,7 +67,10 @@ export function getPreviousPeriod(from: Date, to: Date): { from: Date; to: Date 
  * Calculate percentage change between two values
  * Returns null if previous is 0
  */
-export function calculatePercentageChange(current: number, previous: number): number {
+export function calculatePercentageChange(
+  current: number,
+  previous: number
+): number {
   if (previous === 0) {
     return current > 0 ? 100 : 0;
   }

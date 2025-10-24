@@ -21,7 +21,11 @@ export const CurrencySchema = z.enum(["PEN", "USD", "EUR"]);
 export const BaseAnalyticsQuerySchema = z.object({
   from: z.string().datetime().describe("Start date (ISO 8601)"),
   to: z.string().datetime().describe("End date (ISO 8601)"),
-  account: z.string().uuid().optional().describe("Optional card/account ID filter"),
+  account: z
+    .string()
+    .uuid()
+    .optional()
+    .describe("Optional card/account ID filter"),
   currency: CurrencySchema.describe("Target currency for conversion"),
 });
 
@@ -51,7 +55,9 @@ export const SpendByCategoryResponseSchema = z.object({
   ),
 });
 
-export type SpendByCategoryResponse = z.infer<typeof SpendByCategoryResponseSchema>;
+export type SpendByCategoryResponse = z.infer<
+  typeof SpendByCategoryResponseSchema
+>;
 
 /**
  * Spend Over Time API query parameters
@@ -71,7 +77,9 @@ export const SpendOverTimeResponseSchema = z.object({
   data: z.array(
     z.object({
       period: z.string().describe("ISO date for the period start"),
-      amount: z.number().describe("Total spend in target currency (major units)"),
+      amount: z
+        .number()
+        .describe("Total spend in target currency (major units)"),
       txCount: z.number().int().nonnegative(),
       topCategory: z
         .object({
@@ -104,14 +112,20 @@ export const IncomeVsExpensesResponseSchema = z.object({
   data: z.array(
     z.object({
       period: z.string().describe("ISO date for the period start"),
-      income: z.number().describe("Total income in target currency (major units, positive)"),
-      expenses: z.number().describe("Total expenses in target currency (major units, positive)"),
+      income: z
+        .number()
+        .describe("Total income in target currency (major units, positive)"),
+      expenses: z
+        .number()
+        .describe("Total expenses in target currency (major units, positive)"),
       net: z.number().describe("Net cashflow (income - expenses)"),
     })
   ),
 });
 
-export type IncomeVsExpensesResponse = z.infer<typeof IncomeVsExpensesResponseSchema>;
+export type IncomeVsExpensesResponse = z.infer<
+  typeof IncomeVsExpensesResponseSchema
+>;
 
 /**
  * Net Cashflow API query parameters
@@ -128,8 +142,12 @@ export const NetCashflowResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     net: z.number().describe("Net cashflow in target currency (major units)"),
-    income: z.number().describe("Total income in target currency (major units)"),
-    expenses: z.number().describe("Total expenses in target currency (major units)"),
+    income: z
+      .number()
+      .describe("Total income in target currency (major units)"),
+    expenses: z
+      .number()
+      .describe("Total expenses in target currency (major units)"),
     deltaPctPrev: z.number().describe("% change vs previous period"),
     sparkline: z.array(
       z.object({

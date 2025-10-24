@@ -161,13 +161,17 @@ async function fetchFromPrimaryAPI(): Promise<ExchangeRates> {
   });
 
   if (!response.ok) {
-    throw new Error(`Primary API failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Primary API failed: ${response.status} ${response.statusText}`
+    );
   }
 
   const data = await response.json();
 
   if (data.result !== "success") {
-    throw new Error(`Primary API returned error: ${data["error-type"] || "unknown"}`);
+    throw new Error(
+      `Primary API returned error: ${data["error-type"] || "unknown"}`
+    );
   }
 
   return {
@@ -188,7 +192,9 @@ async function fetchFromFallbackAPI(): Promise<ExchangeRates> {
   });
 
   if (!response.ok) {
-    throw new Error(`Fallback API failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Fallback API failed: ${response.status} ${response.statusText}`
+    );
   }
 
   const data = await response.json();

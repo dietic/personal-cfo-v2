@@ -10,22 +10,22 @@
  * - Sparkline data (daily or weekly bins)
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth";
-import { NetCashflowQuerySchema } from "@/lib/validators/analytics";
 import {
-  getExchangeRates,
-  convertCurrencyFromMinorUnits,
-  fromMinorUnits,
-  type Currency,
-} from "@/lib/currency";
-import {
-  getPreviousPeriod,
   calculatePercentageChange,
-  getSparklineGranularity,
   classifyTransaction,
+  getPreviousPeriod,
+  getSparklineGranularity,
   roundToTwoDecimals,
 } from "@/lib/analytics";
+import { requireAuth } from "@/lib/auth";
+import {
+  convertCurrencyFromMinorUnits,
+  fromMinorUnits,
+  getExchangeRates,
+  type Currency,
+} from "@/lib/currency";
+import { NetCashflowQuerySchema } from "@/lib/validators/analytics";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,7 +44,11 @@ export async function GET(request: NextRequest) {
     const validation = NetCashflowQuerySchema.safeParse(queryParams);
     if (!validation.success) {
       return NextResponse.json(
-        { error: true, message: "Invalid query parameters", details: validation.error.issues },
+        {
+          error: true,
+          message: "Invalid query parameters",
+          details: validation.error.issues,
+        },
         { status: 400 }
       );
     }
@@ -64,7 +68,9 @@ export async function GET(request: NextRequest) {
     // Build query for current period transactions
     let query = supabase
       .from("transactions")
-      .select("id, amount_cents, currency, type, transaction_date, category_id, categories(name)")
+      .select(
+        "id, amount_cents, currency, type, transaction_date, category_id, categories(name)"
+      )
       .eq("user_id", user.id)
       .gte("transaction_date", from)
       .lte("transaction_date", to)
@@ -128,9 +134,13 @@ export async function GET(request: NextRequest) {
       }
 
       // Update sparkline
-      const sparklineDate = getSparklineDate(tx.transaction_date, sparklineGranularity);
+      const sparklineDate = getSparklineDate(
+        tx.transaction_date,
+        sparklineGranularity
+      );
       const currentNet = sparklineMap.get(sparklineDate) || 0;
-      const contribution = classification === "income" ? amountInTarget : -amountInTarget;
+      const contribution =
+        classification === "income" ? amountInTarget : -amountInTarget;
       sparklineMap.set(sparklineDate, currentNet + contribution);
     }
 
@@ -211,16 +221,17 @@ export async function GET(request: NextRequest) {
 /**
  * Get sparkline date bucket for a transaction date
  */
-function getSparklineDate(dateStr: string, granularity: "day" | "week"): string {
+function getSparklineDate(
+  dateStr: string,
+  granularity: "day" | "week"
+): string {
   const date = new Date(dateStr);
 
   if (granularity === "day") {
     // Return start of day
-    return new Date(Date.UTC(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate()
-    )).toISOString();
+    return new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+    ).toISOString();
   } else {
     // Return start of week (Sunday)
     const dayOfWeek = date.getUTCDay();
