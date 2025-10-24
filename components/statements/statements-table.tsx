@@ -139,6 +139,28 @@ export function StatementsTable({
     setSelected({});
   };
 
+  // Helper to pretty-print file types (localized)
+  function prettyFileType(fileType?: string | null, fileName?: string | null) {
+    const fromName = () => {
+      if (!fileName) return undefined;
+      const dot = fileName.lastIndexOf(".");
+      if (dot === -1) return undefined;
+      return fileName.slice(dot + 1).toLowerCase();
+    };
+
+    const type = (fileType || fromName() || "pdf").toLowerCase();
+
+    if (type.includes("pdf")) return t("statements.fileTypes.pdf");
+    if (type.includes("csv")) return t("statements.fileTypes.csv");
+    if (type.includes("png")) return t("statements.fileTypes.png");
+    if (type.includes("jpeg") || type.includes("jpg"))
+      return t("statements.fileTypes.jpg");
+
+    // Fallback: use extension uppercased
+    const ext = fromName();
+    return ext ? ext.toUpperCase() : type.toUpperCase();
+  }
+
   return (
     <>
       <div className="space-y-2">
@@ -302,7 +324,12 @@ export function StatementsTable({
                     {new Date(st.uploaded_at).toLocaleString()}
                   </TableCell>
                   <TableCell className="w-[12%]">
-                    <Badge variant="outline">{st.file_type ?? "PDF"}</Badge>
+                    <Badge
+                      variant="outline"
+                      className="border-muted-foreground/30 text-foreground"
+                    >
+                      {prettyFileType(st.file_type, st.file_name)}
+                    </Badge>
                   </TableCell>
                   <TableCell className="w-8 text-right">
                     <DropdownMenu>

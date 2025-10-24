@@ -14,7 +14,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       className={cn(
         "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
         variant === "default" && "bg-muted text-foreground",
-        variant === "outline" && "border border-input text-foreground",
+        variant === "outline" && "border",
         variant === "destructive" && "bg-destructive/20 text-destructive",
         variant === "secondary" && "bg-secondary text-secondary-foreground",
         variant === "success" &&

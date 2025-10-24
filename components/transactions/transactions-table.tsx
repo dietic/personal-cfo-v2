@@ -98,22 +98,39 @@ function formatAmountNoCurrency(amountCents: number) {
 }
 
 function categoryColorClasses(color?: string | null) {
-  switch (color) {
-    case "orange":
-      return "border-orange-500 text-orange-600 dark:text-orange-400";
-    case "slate":
-      return "border-slate-500 text-slate-600 dark:text-slate-300";
-    case "teal":
-      return "border-teal-500 text-teal-600 dark:text-teal-400";
-    case "indigo":
-      return "border-indigo-500 text-indigo-600 dark:text-indigo-400";
-    case "purple":
-      return "border-purple-500 text-purple-600 dark:text-purple-400";
-    case "blue":
-      return "border-blue-500 text-blue-600 dark:text-blue-400";
-    default:
-      return "border-muted-foreground/30 text-muted-foreground";
+  // Support hex values stored in DB (e.g., #f97316) and known token names
+  if (!color) return null;
+
+  const isHex = /^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/.test(color);
+  if (isHex) {
+    return { borderColor: color, color } as React.CSSProperties;
   }
+
+  const isCssColor = /^(rgb|hsl)a?\(/i.test(color);
+  if (isCssColor) {
+    return { borderColor: color, color } as React.CSSProperties;
+  }
+
+  // Map token names to hex values (aligned with CategoryColorPicker presets)
+  const tokenToHex: Record<string, string> = {
+    orange: "#f97316",
+    slate: "#64748b",
+    teal: "#14b8a6",
+    indigo: "#6366f1",
+    purple: "#a855f7",
+    blue: "#3b82f6",
+  };
+
+  const hex = tokenToHex[color.toLowerCase?.() ?? ""];
+  if (hex) {
+    return { borderColor: hex, color: hex } as React.CSSProperties;
+  }
+
+  // Fallback: muted
+  return {
+    borderColor: "var(--muted-foreground)",
+    color: "var(--muted-foreground)",
+  } as React.CSSProperties;
 }
 
 interface Props {
@@ -408,10 +425,14 @@ export function TransactionsTable({
                     {tx.categories ? (
                       <Badge
                         variant="outline"
-                        className={`whitespace-nowrap ${categoryColorClasses(
-                          tx.categories.color
-                        )}`}
+                        className="whitespace-nowrap"
+                        style={
+                          categoryColorClasses(tx.categories.color) || undefined
+                        }
                       >
+                        {tx.categories.emoji && (
+                          <span className="mr-1">{tx.categories.emoji}</span>
+                        )}
                         {tx.categories.name}
                       </Badge>
                     ) : (
@@ -427,7 +448,10 @@ export function TransactionsTable({
                     {tx.cards?.name}
                   </TableCell>
                   <TableCell className="w-[80px]">
-                    <Badge variant="outline" className="uppercase">
+                    <Badge
+                      variant="outline"
+                      className="border-muted-foreground/30 uppercase text-foreground"
+                    >
                       {tx.currency}
                     </Badge>
                   </TableCell>
