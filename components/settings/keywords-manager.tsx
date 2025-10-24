@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -55,37 +56,116 @@ import { useLocale } from "@/contexts/locale-context";
 import { useCategories } from "@/hooks/use-categories";
 import { useKeywords } from "@/hooks/use-keywords";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit, MoreHorizontal, Plus, Trash } from "lucide-react";
+import {
+  ArrowRightLeft,
+  CheckCircle2,
+  Edit,
+  Loader2,
+  MoreHorizontal,
+  Plus,
+  RotateCw,
+  Trash,
+  XCircle,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const schema = z.object({ keyword: z.string().min(1).max(100) });
 
+function getStatusBadge(
+  status: "categorizing" | "active" | "failed",
+  t: (key: string) => string,
+  onRetry?: () => void
+) {
+  switch (status) {
+    case "categorizing":
+      return (
+        <Badge
+          variant="secondary"
+          className="bg-muted text-muted-foreground pl-1.5 pr-2"
+        >
+          <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+          {t("settings.keywords.table.categorizing")}
+        </Badge>
+      );
+    case "active":
+      return (
+        <Badge
+          variant="secondary"
+          className="bg-emerald-600/15 text-emerald-400 pl-1.5 pr-2"
+        >
+          <CheckCircle2 className="mr-1 h-3.5 w-3.5" />
+          {t("settings.keywords.table.active")}
+        </Badge>
+      );
+    case "failed":
+      return (
+        <div className="flex items-center gap-2">
+          <Badge
+            variant="secondary"
+            className="bg-destructive/10 text-destructive pl-1.5 pr-2"
+          >
+            <XCircle className="mr-1 h-3.5 w-3.5" />
+            {t("settings.keywords.table.failed")}
+          </Badge>
+          {onRetry && (
+            <button
+              onClick={onRetry}
+              className="p-1 text-muted-foreground hover:text-foreground"
+              title={t("common.retry")}
+            >
+              <RotateCw className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+      );
+  }
+}
+
 export function KeywordsTab() {
   const { t } = useLocale();
   const { categories } = useCategories();
-  const customCategories = useMemo(
-    () => categories.filter((c) => !c.is_preset),
+  const activeCategories = useMemo(
+    () => categories.filter((c) => c.status === "active"),
     [categories]
   );
   const [selected, setSelected] = useState<string | null>(
-    customCategories[0]?.id ?? null
+    activeCategories[0]?.id ?? null
   );
-  const { keywords, isLoading, createKeyword, updateKeyword, deleteKeyword } =
-    useKeywords(selected);
+  const {
+    keywords,
+    isLoading,
+    createKeyword,
+    updateKeyword,
+    deleteKeyword,
+    retryKeyword,
+    reassignKeyword,
+    isCreating,
+    isUpdating,
+    isDeleting,
+    isReassigning,
+  } = useKeywords(selected);
 
   useEffect(() => {
-    if (!selected && customCategories.length > 0) {
-      setSelected(customCategories[0].id);
+    if (!selected && activeCategories.length > 0) {
+      setSelected(activeCategories[0].id);
     }
-  }, [customCategories, selected]);
+  }, [activeCategories, selected]);
 
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState<{ id: string; keyword: string } | null>(
     null
   );
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [reassign, setReassign] = useState<{
+    id: string;
+    keyword: string;
+    fromCategoryId: string;
+  } | null>(null);
+  const [reassignOpen, setReassignOpen] = useState(false);
+  const [selectedToCategory, setSelectedToCategory] = useState<string>("");
 
   const [page] = useState(1);
   const [pageSize, setPageSize] = useState(25);
@@ -120,7 +200,7 @@ export function KeywordsTab() {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {customCategories.map((c) => (
+                {activeCategories.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     {c.emoji ? `${c.emoji} ` : ""}
                     {c.name}
@@ -177,8 +257,11 @@ export function KeywordsTab() {
               <Table aria-busy={isLoading ? true : undefined}>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[92%]">
+                    <TableHead className="w-[70%]">
                       {t("settings.keywords.table.keyword")}
+                    </TableHead>
+                    <TableHead className="w-[20%]">
+                      {t("settings.keywords.table.status")}
                     </TableHead>
                     <TableHead className="w-8" />
                   </TableRow>
@@ -192,6 +275,9 @@ export function KeywordsTab() {
                             <Skeleton className="h-4 w-3/4" />
                           </TableCell>
                           <TableCell>
+                            <Skeleton className="h-5 w-16" />
+                          </TableCell>
+                          <TableCell>
                             <Skeleton className="ml-auto h-4 w-4 rounded" />
                           </TableCell>
                         </TableRow>
@@ -201,7 +287,7 @@ export function KeywordsTab() {
                   {!isLoading && (keywords ?? []).length === 0 && (
                     <TableRow>
                       <TableCell
-                        colSpan={2}
+                        colSpan={3}
                         className="py-8 text-center text-sm text-muted-foreground"
                       >
                         {t("settings.keywords.empty")}
@@ -215,6 +301,12 @@ export function KeywordsTab() {
                         <TableRow key={k.id}>
                           <TableCell className="font-medium">
                             {k.keyword}
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(k.status, t, async () => {
+                              await retryKeyword(k.id);
+                              toast.info(t("settings.keywords.retrying"));
+                            })}
                           </TableCell>
                           <TableCell className="text-right">
                             <DropdownMenu>
@@ -235,6 +327,20 @@ export function KeywordsTab() {
                                 >
                                   <Edit className="mr-2 h-4 w-4" />{" "}
                                   {t("common.edit")}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setReassign({
+                                      id: k.id,
+                                      keyword: k.keyword,
+                                      fromCategoryId: k.category_id,
+                                    });
+                                    setSelectedToCategory(""); // Reset selection
+                                    setReassignOpen(true);
+                                  }}
+                                >
+                                  <ArrowRightLeft className="mr-2 h-4 w-4" />{" "}
+                                  {t("settings.keywords.reassign")}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   className="text-destructive focus:text-destructive"
@@ -274,11 +380,24 @@ export function KeywordsTab() {
                     input: { keyword: values.keyword.trim() },
                   });
                   setEdit(null);
+                  toast.success(t("settings.keywords.updated"));
                 } else {
-                  await createKeyword({
+                  const result = await createKeyword({
                     category_id: selected,
                     keyword: values.keyword.trim(),
                   });
+
+                  // Show success message with categorization stats
+                  if (result.categorizedCount > 0) {
+                    const message = t(
+                      "settings.keywords.autoCategorized"
+                    ).replace("{count}", result.categorizedCount.toString());
+                    toast.success(t("settings.keywords.created"), {
+                      description: message,
+                    });
+                  } else {
+                    toast.success(t("settings.keywords.created"));
+                  }
                 }
                 setOpen(false);
               })}
@@ -294,6 +413,7 @@ export function KeywordsTab() {
                       <Input
                         {...field}
                         placeholder={t("settings.keywords.keywordPh")}
+                        disabled={isCreating || isUpdating}
                       />
                     </FormControl>
                   </FormItem>
@@ -304,10 +424,14 @@ export function KeywordsTab() {
                   type="button"
                   variant="ghost"
                   onClick={() => setOpen(false)}
+                  disabled={isCreating || isUpdating}
                 >
                   {t("common.cancel")}
                 </Button>
-                <Button type="submit">
+                <Button type="submit" disabled={isCreating || isUpdating}>
+                  {(isCreating || isUpdating) && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
                   {edit ? t("common.update") : t("common.create")}
                 </Button>
               </DialogFooter>
@@ -330,19 +454,121 @@ export function KeywordsTab() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>
+              {t("common.cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
+              disabled={isDeleting}
               onClick={async () => {
                 if (!deleteId) return;
                 await deleteKeyword(deleteId);
                 setDeleteId(null);
               }}
             >
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={reassignOpen} onOpenChange={setReassignOpen}>
+        <DialogContent aria-describedby={undefined}>
+          <DialogHeader>
+            <DialogTitle>{t("settings.keywords.reassignTitle")}</DialogTitle>
+          </DialogHeader>
+          {reassign && (
+            <div className="space-y-4">
+              <div>
+                <Label>{t("settings.keywords.reassignKeyword")}</Label>
+                <div className="mt-1.5 text-sm font-medium">
+                  {reassign.keyword}
+                </div>
+              </div>
+              <div>
+                <Label>{t("settings.keywords.fromCategory")}</Label>
+                <Select value={reassign.fromCategoryId} disabled>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {activeCategories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.emoji} {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>{t("settings.keywords.toCategory")}</Label>
+                <Select
+                  value={selectedToCategory}
+                  onValueChange={setSelectedToCategory}
+                  disabled={isReassigning}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue
+                      placeholder={t("settings.keywords.selectCategory")}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {activeCategories
+                      .filter((cat) => cat.id !== reassign.fromCategoryId)
+                      .map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.emoji} {cat.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    setReassignOpen(false);
+                    setReassign(null);
+                    setSelectedToCategory("");
+                  }}
+                  disabled={isReassigning}
+                >
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  type="button"
+                  disabled={!selectedToCategory || isReassigning}
+                  onClick={async () => {
+                    if (!reassign || !selectedToCategory) return;
+                    try {
+                      await reassignKeyword({
+                        id: reassign.id,
+                        newCategoryId: selectedToCategory,
+                      });
+                      setReassignOpen(false);
+                      setReassign(null);
+                      setSelectedToCategory("");
+                      toast.success(t("settings.keywords.reassignSuccess"));
+                    } catch (error) {
+                      toast.error(
+                        error instanceof Error
+                          ? error.message
+                          : t("common.error")
+                      );
+                    }
+                  }}
+                >
+                  {isReassigning && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {t("settings.keywords.reassignButton")}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
