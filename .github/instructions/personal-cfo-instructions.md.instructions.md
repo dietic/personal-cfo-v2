@@ -7,7 +7,15 @@ applyTo: "**"
 These instructions are always loaded and must be followed:
 
 - `.github/instructions/personal-cfo-instructions.md.instructions.md` (this file)
-- `.github/instructions/AGENTS.md` (additional blueprint and design rules kept in lockstep with this file)
+- `.github/
+## Modules & UX Contract
+
+### 0) Dashboard
+
+- Welcome header with user's name
+- Cards summary, Budgets snapshot, Monthly expenses summary, Recurrent services summary, Recent transactions (last 5–10)
+
+### 1) Cardsons/AGENTS.md` (additional blueprint and design rules kept in lockstep with this file)
 
 **Simplicity, speed, premium feel.**
 
@@ -66,7 +74,7 @@ These instructions are always loaded and must be followed:
 **Domain:** personal-cfo.io
 **Tagline:** Track your money. See patterns. Act smarter.
 
-Personal CFO helps users improve personal finances. Users upload **PDF bank statements**, the system extracts transactions (AI), categorizes via **user-defined keyword rules**, and surfaces **budgets, alerts, and analytics**. Email verification is handled by **Supabase**.
+Personal CFO helps users improve personal finances. Users upload **PDF bank statements**, the system extracts transactions (AI), categorizes via **user-defined keyword rules**, and surfaces **budgets and analytics**. Email verification is handled by **Supabase**.
 
 **CRITICAL SECURITY NOTE:** PDFs are **NOT stored permanently**. Files are processed in memory/temp storage during extraction, then immediately deleted. Only metadata (file name, upload date, status) is persisted in the `statements` table to avoid handling sensitive user financial documents.
 
@@ -98,7 +106,6 @@ Personal CFO helps users improve personal finances. Users upload **PDF bank stat
   - Cards: 1
   - Statements per month: 2
   - Categories: 6 preset (first 6 are system-created and cannot be deleted; user cannot add more)
-  - Alerts: 2
   - Budgets: 2
   - Keyword categorization: enabled
 
@@ -107,7 +114,6 @@ Personal CFO helps users improve personal finances. Users upload **PDF bank stat
   - Cards: 5
   - Statements per month: unlimited
   - Categories: up to 25 custom (first 6 system categories + up to 19 user-created)
-  - Alerts: 6
   - Budgets: 10
   - Keyword categorization: enabled
 
@@ -116,13 +122,12 @@ Personal CFO helps users improve personal finances. Users upload **PDF bank stat
   - Cards: unlimited
   - Statements per month: unlimited
   - Categories: unlimited (first 6 system categories + unlimited user-created)
-  - Alerts: 10
   - Budgets: 15
   - Keyword categorization: enabled
 
 - **admin**
 
-  - Cards/statements/categories/alerts/budgets: unlimited
+  - Cards/statements/categories/budgets: unlimited
   - Access to **Admin Panel**
   - Can reset user passwords (to default), deactivate/activate accounts, view system health and job queues
 
@@ -130,7 +135,7 @@ Personal CFO helps users improve personal finances. Users upload **PDF bank stat
 
 - Entitlements are enforced in **server** code (never trust client) via `lib/plan.ts` helpers invoked inside API route handlers prior to writes.
 - Monthly statement usage for `free` is tracked with a `statements_monthly_usage` materialized view or a `COUNT(*)` query scoped to current calendar month; deny with 402-style app error.
-- Category counts and budgets/alerts counts enforced by totals per user.
+- Category counts and budgets counts enforced by totals per user.
 - **Plan downgrades:** When downgrading (e.g., Pro → Plus or Free), user-created categories beyond the limit are **deactivated** (marked `status='inactive'`). The first 6 system categories remain untouched and active. No grace periods.
 - RLS still applies; these checks are **in addition** to RLS.
 
@@ -168,12 +173,10 @@ Personal CFO helps users improve personal finances. Users upload **PDF bank stat
    Deleting a **statement** cascades: deletes its transactions.
    Editing transactions is allowed post-creation (no audit trail in v1).
 
-4. **Budgets, Analytics & Alerts**
+4. **Budgets & Analytics**
 
    - **Budgets:** current **calendar month** progress bars; resets on 1st of each month.
-
-- **Analytics:** 3 charts (6-month fixed window, non-exportable in v1) with **currency toggle** (PEN/USD/EUR minimum). Exchange rates: Primary https://v6.exchangerate-api.com/v6/${NEXT_PUBLIC_EXCHANGERATE_API_KEY}/latest/PEN with fallback https://api.exchangerate.fun/latest?base=PEN. Implement retry/fallback logic and short-term caching (e.g., 1-hour TTL) in `lib/currency.ts`.
-- **Alerts:** v1 supports threshold/rule-based notifications (budget overrun, unusual spikes). Alerts are calculated **real-time** and displayed as cards in the dashboard. Alert events stored in `alert_notifications` table for future use.
+   - **Analytics:** 3 charts (6-month fixed window, non-exportable in v1) with **currency toggle** (PEN/USD/EUR minimum). Exchange rates: Primary https://v6.exchangerate-api.com/v6/${NEXT_PUBLIC_EXCHANGERATE_API_KEY}/latest/PEN with fallback https://api.exchangerate.fun/latest?base=PEN. Implement retry/fallback logic and short-term caching (e.g., 1-hour TTL) in `lib/currency.ts`.
 
 5. **Keywords & Categories**
    Users maintain categories, keywords (bulk CRUD), and excluded keywords.
@@ -343,20 +346,7 @@ Key pages:
 - Card list (not table); each shows **current-month utilization** (progress bar / %), category, allocated amount, spent, remaining
 - **Plan checks:** enforce max budgets per plan
 
-### 6) Alerts (v1)
-
-- Rules:
-
-  - Budget Overrun (category monthly spend ≥ threshold)
-  - Unusual Spike (daily spend > rolling avg × factor)
-
-- Delivery: **in-app notifications displayed as cards in the dashboard** (v1)
-- Alerts are evaluated **real-time** (on transaction create/update)
-- Alert events stored in `alert_notifications` table (id, user_id, alert_id, triggered_at, message, read_at) for future email/push notifications
-- Management: list, create, enable/disable, delete
-- **Plan checks:** enforce max alerts per plan
-
-### 7) Settings (tabs)
+### 6) Settings (tabs)
 
 - Appearance: card color style (default palette vs bank colors)
 - Categories: table (category, emoji, status, created at, actions); CRUD
@@ -372,7 +362,7 @@ Key pages:
 - **Translations:** All UI strings from `locales/en.json` and `locales/es.json`; error messages also translated
 - **Number formatting:** Always use `1,000.00` format (locale-aware thousands separator with 2 decimals)
 
-### 8) Admin Panel (admins only)
+### 7) Admin Panel (admins only)
 
 - **User Management:**
   - View all users (table with email, plan, created_at, status)
@@ -404,8 +394,6 @@ Core tables:
 - `category_keywords` (id, user_id, category_id, keyword, created_at)
 - `excluded_keywords` (id, user_id, keyword, created_at)
 - `budgets` (id, user_id, category_id, amount_cents, currency, active boolean, created_at, period_start date, period_end date)
-- `alerts` (id, user_id, rule_type enum, params_json jsonb, active boolean, created_at, last_triggered_at timestamp)
-- `alert_notifications` (id, user_id, alert_id, triggered_at, message text, read_at timestamp NULL)
 
 **RLS pattern:** each table with `user_id` → policy `auth.uid() = user_id`.
 Admins: `profiles.is_admin = true` + plan `admin` for admin UI scope.
@@ -422,7 +410,6 @@ Validate inputs **before** DB ops:
 - `lib/validators/categories.ts`
 - `lib/validators/keywords.ts`
 - `lib/validators/budgets.ts`
-- `lib/validators/alerts.ts`
 
 ### Categorization Engine
 
@@ -485,7 +472,6 @@ API (examples):
 - Analytics: `GET /api/analytics/overview`, `GET /api/analytics/trends`
 - Budgets: `GET/POST/PATCH /api/budgets*`
 - Settings: `GET/POST /api/settings/categories*`, `GET/POST /api/settings/keywords*`, `GET/POST /api/settings/excluded*`
-- Alerts: `GET/POST/PATCH/DELETE /api/alerts*`
 
 **API responses (consistent):**
 
@@ -507,14 +493,13 @@ HTTP: 200/201, 400, 401, 404, 500.
 - `hooks/use-categories.ts`
 - `hooks/use-keywords.ts`
 - `hooks/use-excluded-keywords.ts`
-- `hooks/use-alerts.ts`
-- `lib/plan.ts` – plan detection and entitlement checks (cards/statements/categories/alerts/budgets)
+- `lib/plan.ts` – plan detection and entitlement checks (cards/statements/categories/budgets)
 - `lib/validators/*.ts`
 - `lib/categorization.ts`
 - `lib/currency.ts`
 - `lib/ai/parse-statement.ts` – **calls OpenAI** (ASK DIEGO FOR PROMPT)
 - `lib/pdf/extract.ts` – robust extraction; handles locked/encrypted detection, prefix stripping
-- `workers/tasks.py` – Celery tasks (extract, recategorize, alerts evaluation)
+- `workers/tasks.py` – Celery tasks (extract, recategorize)
 - `components/analytics/*`
 - `components/theme-toggle.tsx`, `components/theme-provider.tsx`
 
@@ -616,7 +601,7 @@ pnpm test             # Vitest unit tests
 
 - **Unit:** `tests/unit/` – categorization engine, currency utils, validators, date math, `lib/plan.ts` checks
 - **Integration:** `tests/integration/` – API routes (transactions CRUD; statements upload → extract → persist; plan limits)
-- **E2E (planned):** Playwright – upload→extract→transactions; budget progress; analytics charts + currency toggle; alerts fire; plan upgrade CTAs when limits reached
+- **E2E (planned):** Playwright – upload→extract→transactions; budget progress; analytics charts + currency toggle; plan upgrade CTAs when limits reached
 - No inline tests; all in `/tests`
 
 ## Environment Variables (Local & Vercel)
@@ -767,5 +752,5 @@ Every time you're about to implement a new module read the instructions and re-r
 - Bulk destructive actions (statements/transactions) must show confirm modals and reflect cascading effects clearly.
 - **Locked/Encrypted PDFs:** Detect and fail gracefully with actionable messaging; support retry via your external script when provided.
 - **Email verification:** Enforced by Supabase prior to granting access to authed areas.
-- **Plans & Enforcement:** all create/update APIs must call `lib/plan.ts` guards to enforce card/statement/category/alert/budget limits.
+- **Plans & Enforcement:** all create/update APIs must call `lib/plan.ts` guards to enforce card/statement/category/budget limits.
 - **UI References:** Take `ui-references` as the canonical visual reference; UI colors must match those images exactly.
