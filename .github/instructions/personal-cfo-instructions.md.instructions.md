@@ -375,7 +375,227 @@ Key pages:
 - **Banks Management:**
   - CRUD banks (name, logo_url, brand_color)
   - View usage stats per bank
+- **Chat Analytics:**
+  - View total queries this month, total tokens consumed, estimated cost
+  - Show queries by plan tier (Plus vs Pro vs Admin)
+  - Show average tokens per query, top users by query count
+  - Alert if monthly cost exceeds $100 threshold
 - No user impersonation in v1
+
+### 8) "Ask Your Finances" Chat
+
+**Purpose:** Let users query and act on their own financial data through natural language — a true financial co-pilot.
+
+**Access Control:**
+
+- **Free plan:** No access (show upgrade CTA when clicking bubble)
+- **Plus plan:** 50 queries/month (~$0.25/user/month cost to us)
+- **Pro plan:** 200 queries/month (~$1.00/user/month cost to us)
+- **Admin plan:** Unlimited queries
+- **Rate limit:** 10 queries per hour per user (prevent abuse)
+
+**UI Design:**
+
+- **Placement:** Floating chat bubble (bottom-right, z-50, accessible from all authenticated pages)
+- **Bubble:** Circular button with CFO icon + notification badge (shows unread count if applicable)
+- **Drawer:** Slide-up drawer on bubble click (full-screen on mobile, 400px width on desktop)
+- **Messages:** Two-column message list:
+  - **User messages:** Right-aligned, primary color background, white text
+  - **AI messages:** Left-aligned, muted background, with CFO icon avatar
+- **Input:** Textarea with send button; Enter to submit, Shift+Enter for newline
+- **Usage Indicator:** Show remaining queries: "12/50 queries left this month" (in drawer header)
+- **Empty State:** "Ask me about your finances!" with example queries:
+  - "How much did I spend on food last month?"
+  - "What's my biggest expense category this quarter?"
+  - "Am I on track with my budgets?"
+  - "Show me my income vs expenses for the last 3 months"
+
+**Interactions:**
+
+- **Keyboard shortcuts:** Cmd+K (Mac) / Ctrl+K (Win) to open, Esc to close
+- **Auto-scroll:** Scroll to latest message on new messages
+- **Copy response:** Copy-to-clipboard button on AI messages
+- **Loading state:** Typing indicator (3 animated dots) while AI responds
+- **Session-only history:** Messages cleared on page reload (not persisted in database)
+- **Mobile responsive:** Full-screen drawer on mobile, partial drawer on desktop
+
+**AI Model & Configuration:**
+
+- **Model:** GPT-4o-mini (cost-efficient: ~$0.0015 input / $0.006 output per 1K tokens)
+- **Max tokens:** 500 for response (control costs)
+- **Temperature:** 0.3 (more deterministic for financial data)
+- **Context window:** Last 6 months of transactions (limit 1000, ~2,000-3,000 tokens)
+- **System prompt:** (defined in `lib/ai/chat-prompt.ts`)
+  - "You are a financial assistant for Personal CFO. Only answer questions about the user's financial data."
+  - "Decline requests to perform external actions, generate code, or discuss unrelated topics."
+  - "Be concise, friendly, and data-driven. Use currency symbols and formatting."
+  - "If you don't have enough data to answer, say so and suggest what data the user might need."
+  - "Keep responses under 500 tokens. Use simple tables for data (markdown format)."
+  - "Always use the user's primary currency for amounts unless asked otherwise."
+
+**Context Builder:**
+
+- Fetch user's last 6 months of transactions (optimized query, limit 1000)
+- Include: Categories with spend totals, income vs expenses summary, top merchants, budget progress
+- Format as structured JSON for context window (~2,000-3,000 tokens)
+- Include user's timezone and primary_currency for correct date/currency formatting
+- Aggregate data server-side to minimize token usage:
+  - Total spend by category (top 10)
+  - Monthly spend trend (last 6 months)
+  - Income vs expenses (last 6 months)
+  - Budget status (active budgets with progress %)
+  - Top 10 merchants by spend
+
+**Security & Input Sanitization:**
+
+- **Input validation:**
+  - Max query length: 500 characters
+  - Strip HTML/script tags (XSS prevention)
+  - Block SQL injection patterns (e.g., `DROP`, `DELETE`, `--`, `/*`)
+  - Validate UTF-8 encoding
+  - Sanitize before sending to OpenAI
+- **Output validation:**
+  - Ensure AI response contains no executable code
+  - Filter out any user instructions in response
+  - Limit response length to 1000 characters (truncate if exceeded)
+  - Escape HTML in responses before rendering
+- **Safety prompt:**
+  - Enforce "read-only" mode: AI cannot create budgets, add transactions, or modify data
+  - Decline requests for external actions (e.g., "Send email", "Call my bank")
+  - Decline requests unrelated to finances (e.g., "Write me a poem", "What's the weather?")
+
+**Rate Limiting & Plan Enforcement:**
+
+- **Hourly rate limit:** 10 queries/hour per user (tracked in-memory or Redis)
+- **Monthly plan limits:**
+  - Plus: 50 queries/month
+  - Pro: 200 queries/month
+  - Admin: unlimited
+- **Enforcement:**
+  - Check limits in `POST /api/chat` handler before calling OpenAI
+  - Return 429 status with `retry-after` header when hourly limit exceeded
+  - Return 402 status with upgrade CTA when monthly plan limit exceeded
+  - Track usage in `chat_usage` table (user_id, query, response, tokens_used, created_at)
+- **Usage tracking:**
+  - Log every query with user_id, tokens_used, response_time, created_at
+  - Calculate monthly usage with `get_monthly_chat_usage(user_id)` function
+  - Show remaining queries in drawer header: "12/50 queries left this month"
+
+**Response Formatting:**
+
+- **Text responses:** Plain text with markdown support (bold, lists, tables)
+- **Simple tables:** Use markdown tables for data (max 5 rows, 3 columns):
+  - Example: "Top 3 categories by spend:"
+    | Category | Amount | % of Total |
+    |----------|--------|------------|
+    | Food | S/ 1,240 | 24% |
+    | Housing | S/ 980 | 19% |
+    | Transport| S/ 620 | 12% |
+- **Numbers:** Format with currency symbol and thousands separator (e.g., "S/ 1,240.00")
+- **Percentages:** Include trend indicators (e.g., "↑12% vs last month", "↓8% vs last month")
+- **Insights:** Add context when helpful:
+  - "You spent S/ 1,240 on food last month, which is ↑12% compared to September."
+  - "Your biggest expense category is Housing at S/ 980 (19% of total spend)."
+  - "You're on track with 2 of your 3 budgets. Food is at 85% with 5 days left."
+
+**Error Handling:**
+
+- **OpenAI API errors:**
+  - Network errors → "I'm having trouble connecting right now. Please try again in a moment."
+  - Rate limit errors → "Too many requests. Please wait before trying again."
+  - Invalid response → "I couldn't process that. Try rephrasing your question."
+- **Plan limit exceeded:**
+  - Free users → "Chat is available on Plus and Pro plans. Upgrade to start chatting!"
+  - Plus/Pro limit reached → "You've used all 50 queries this month. Upgrade to Pro for 200/month!"
+- **Rate limit exceeded:**
+  - "You've reached the hourly limit (10 queries). Please try again in [X] minutes."
+- **Insufficient data:**
+  - "I don't have enough data to answer that. Try uploading more statements or adding transactions manually."
+- **Off-topic queries:**
+  - "I can only help with your financial data. Try asking about spending, budgets, or income."
+
+**Cost Estimates & Monitoring:**
+
+- **Cost per query:** ~$0.002-$0.005 (GPT-4o-mini with 3,000-6,000 total tokens)
+- **Monthly cost scenarios:**
+  - Plus users (50 queries/month): ~$0.10-$0.25/user
+  - Pro users (200 queries/month): ~$0.40-$1.00/user
+  - Admin (unlimited, assume 500/month): ~$1.00-$2.50/admin
+- **Admin monitoring:**
+  - `/admin/chat-analytics` page shows:
+    - Total queries this month
+    - Total tokens consumed
+    - Estimated cost (tokens × $0.0006 per 1K tokens)
+    - Queries by plan tier
+    - Average tokens per query
+    - Top 10 users by query count
+  - Alert admin if monthly cost exceeds $100
+  - Alert admin if hourly rate limit violations spike
+
+**API Routes:**
+
+- `POST /api/chat` – Send query, get AI response
+  - Request: `{ query: string }`
+  - Response: `{ success: true, data: { response: string, tokensUsed: number, remainingQueries: number } }`
+  - Errors: 429 (rate limit), 402 (plan limit), 400 (invalid input), 500 (AI error)
+- `GET /api/chat/usage` – Get usage stats for current user
+  - Response: `{ queriesThisMonth: number, limit: number, remaining: number, resetDate: string }`
+- `DELETE /api/chat/history` – Clear session history (client-side only, no DB operation)
+
+**Database Schema:**
+
+- Table: `chat_usage`
+  - `id` (UUID, PK)
+  - `user_id` (UUID, FK to profiles, ON DELETE CASCADE)
+  - `query` (TEXT, sanitized user input)
+  - `response` (TEXT, AI response)
+  - `tokens_used` (INTEGER, total tokens consumed)
+  - `created_at` (TIMESTAMP WITH TIME ZONE)
+  - Index on `(user_id, created_at)` for usage queries
+- RLS policy: `auth.uid() = user_id`
+- Function: `get_monthly_chat_usage(user_id)` returns count of queries in current calendar month
+
+**i18n Translations:**
+
+- Add to `locales/en.json` and `locales/es.json`:
+  - `chat.bubble.label` – "Chat with CFO"
+  - `chat.title` – "Ask Your Finances"
+  - `chat.inputPlaceholder` – "Ask me about your finances..."
+  - `chat.send` – "Send"
+  - `chat.clear` – "Clear chat"
+  - `chat.examples.food` – "How much did I spend on food last month?"
+  - `chat.examples.biggest` – "What's my biggest expense category?"
+  - `chat.examples.budgets` – "Am I on track with my budgets?"
+  - `chat.examples.income` – "Show me income vs expenses"
+  - `chat.errors.network` – "Connection error. Try again."
+  - `chat.errors.rateLimit` – "Too many queries. Wait {minutes} minutes."
+  - `chat.errors.planLimit` – "Monthly limit reached. Upgrade for more!"
+  - `chat.errors.offTopic` – "I can only help with your finances."
+  - `chat.empty.title` – "Ask me anything about your finances!"
+  - `chat.empty.description` – "Try one of the examples below:"
+  - `chat.usage.remaining` – "{count}/{limit} queries left this month"
+  - `chat.usage.exceeded` – "You've used all {limit} queries"
+  - `chat.upgrade.title` – "Chat is a Plus/Pro feature"
+  - `chat.upgrade.description` – "Upgrade to unlock AI-powered financial insights"
+  - `chat.upgrade.cta` – "Upgrade Now"
+
+**Testing:**
+
+- Unit tests: `lib/ai/chat-prompt.ts` safety checks
+- Unit tests: `lib/ai/chat.ts` input sanitization (SQL injection, XSS prevention)
+- Unit tests: `lib/ai/context-builder.ts` token count validation
+- Integration tests: `POST /api/chat` (success, rate limit, plan limit, errors)
+- Integration tests: Free user access (should show upgrade CTA)
+- Integration tests: Token tracking (verify logged correctly in `chat_usage`)
+
+**No Features for v1:**
+
+- ❌ Response streaming (planned for v2)
+- ❌ Chat history persistence across sessions (session-only for v1)
+- ❌ Chat export (download conversation as PDF/text)
+- ❌ Voice input (future enhancement)
+- ❌ Multi-turn context (each query is independent; no conversation memory)
+- ❌ Actionable responses (e.g., "Create a budget for food at S/ 1,500") – read-only only
 
 ## Data & RLS (Postgres snake_case)
 
@@ -395,6 +615,9 @@ Core tables:
 - `category_keywords` (id, user_id, category_id, keyword, created_at)
 - `excluded_keywords` (id, user_id, keyword, created_at)
 - `budgets` (id, user_id, category_id, amount_cents, currency, active boolean, created_at, period_start date, period_end date)
+- `chat_usage` (id, user_id, query text, response text, tokens_used integer, created_at timestamp with time zone)
+  - Tracks chat query usage for plan enforcement and cost monitoring
+  - Index on `(user_id, created_at)` for efficient monthly usage queries
 
 **RLS pattern:** each table with `user_id` → policy `auth.uid() = user_id`.
 Admins: `profiles.is_admin = true` + plan `admin` for admin UI scope.
@@ -473,6 +696,7 @@ API (examples):
 - Analytics: `GET /api/analytics/overview`, `GET /api/analytics/trends`
 - Budgets: `GET/POST/PATCH /api/budgets*`
 - Settings: `GET/POST /api/settings/categories*`, `GET/POST /api/settings/keywords*`, `GET/POST /api/settings/excluded*`
+- Chat: `POST /api/chat`, `GET /api/chat/usage`, `DELETE /api/chat/history`
 
 **API responses (consistent):**
 
@@ -494,14 +718,23 @@ HTTP: 200/201, 400, 401, 404, 500.
 - `hooks/use-categories.ts`
 - `hooks/use-keywords.ts`
 - `hooks/use-excluded-keywords.ts`
-- `lib/plan.ts` – plan detection and entitlement checks (cards/statements/categories/budgets)
+- `hooks/use-chat.ts` – chat state management and data fetching
+- `lib/plan.ts` – plan detection and entitlement checks (cards/statements/categories/budgets/chat)
 - `lib/validators/*.ts`
 - `lib/categorization.ts`
 - `lib/currency.ts`
 - `lib/ai/parse-statement.ts` – **calls OpenAI** (ASK DIEGO FOR PROMPT)
+- `lib/ai/chat.ts` – OpenAI client for chat feature (GPT-4o-mini)
+- `lib/ai/chat-prompt.ts` – system prompt and safety rules for chat
+- `lib/ai/context-builder.ts` – builds user context (6 months transactions) for chat
 - `lib/pdf/extract.ts` – robust extraction; handles locked/encrypted detection, prefix stripping
 - `workers/tasks.py` – Celery tasks (extract, recategorize)
 - `components/analytics/*`
+- `components/chat/chat-bubble.tsx` – floating chat button
+- `components/chat/chat-drawer.tsx` – slide-up chat drawer
+- `components/chat/chat-messages.tsx` – message list (user vs AI styling)
+- `components/chat/chat-input.tsx` – textarea with send button
+- `components/chat/usage-indicator.tsx` – shows remaining queries
 - `components/theme-toggle.tsx`, `components/theme-provider.tsx`
 
 ## Development Workflow

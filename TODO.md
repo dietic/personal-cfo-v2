@@ -969,9 +969,189 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ---
 
-## Phase 22: Future Features (Post-v1)
+## Phase 22: "Ask Your Finances" Chat Feature
 
-### 22.1 Stripe Integration
+### 22.1 Database Schema & Migrations
+
+- 🔴 Create migration: `chat_usage` table
+  - `id` (UUID, PK)
+  - `user_id` (UUID, FK to profiles, with ON DELETE CASCADE)
+  - `query` (TEXT, sanitized user input)
+  - `response` (TEXT, AI response)
+  - `tokens_used` (INTEGER, total tokens consumed)
+  - `created_at` (TIMESTAMP WITH TIME ZONE)
+  - Add index on `(user_id, created_at)` for usage queries
+- 🔴 Add RLS policy: `chat_usage` (auth.uid() = user_id)
+- 🔴 Create function: `get_monthly_chat_usage(user_id)` for plan limit enforcement
+
+### 22.2 Plan Entitlements for Chat
+
+- 🔴 Update `lib/plan.ts` with chat limits:
+  - **Plus plan:** 50 queries/month (~$0.25/user/month)
+  - **Pro plan:** 200 queries/month (~$1.00/user/month)
+  - **Admin plan:** unlimited
+  - **Free plan:** No chat access (show upgrade CTA)
+- 🔴 Add rate limit: 10 queries per hour per user (prevent abuse)
+- 🔴 Create `canSendChatQuery(userId)` check function
+- 🔴 Create `getRemainingChatQueries(userId)` helper for UI display
+
+### 22.3 OpenAI Integration
+
+- 🔴 Add `OPENAI_API_KEY` to environment variables
+- 🔴 Create `lib/ai/chat.ts` with OpenAI client configuration
+  - Use **GPT-4o-mini** model for cost efficiency (~$0.002-$0.005 per query)
+  - Set max_tokens: 500 for response (control costs)
+  - Temperature: 0.3 (more deterministic for financial data)
+- 🔴 Implement safety system prompt in `lib/ai/chat-prompt.ts`:
+  - "You are a financial assistant for Personal CFO. Only answer questions about the user's financial data."
+  - "Decline requests to perform external actions, generate code, or discuss unrelated topics."
+  - "Be concise, friendly, and data-driven. Use currency symbols and formatting."
+  - "If you don't have enough data to answer, say so and suggest what data the user might need."
+- 🔴 Implement context builder:
+  - Fetch user's last 6 months of transactions (optimized query with limit)
+  - Include: categories, total spend, income, top merchants, budget status
+  - Format as structured JSON for context window (~2,000-3,000 tokens)
+- 🔴 Implement input sanitization:
+  - Strip SQL/code injection attempts
+  - Limit query length to 500 characters
+  - Validate UTF-8 encoding
+
+### 22.4 Chat API
+
+- 🔴 Create `app/api/chat/route.ts` (POST send query, GET usage stats)
+- 🔴 Create `app/api/chat/history/route.ts` (GET session history, DELETE clear session)
+- 🔴 Create `lib/validators/chat.ts` with Zod schemas
+- 🔴 Implement plan checks in POST handler (enforce monthly + hourly limits)
+- 🔴 Implement token tracking and logging
+- 🔴 Implement error handling:
+  - OpenAI API errors → friendly fallback message
+  - Rate limit exceeded → show retry-after time
+  - Plan limit exceeded → upgrade CTA
+- 🔴 Add response streaming support (optional enhancement for v2)
+
+### 22.5 Chat UI - Floating Bubble
+
+- 🔴 Create `components/chat/chat-bubble.tsx` (floating button, bottom-right, z-50)
+- 🔴 Create `components/chat/chat-drawer.tsx` (slide-up drawer on bubble click)
+- 🔴 Create `components/chat/chat-messages.tsx` (message list, user vs AI styling)
+- 🔴 Create `components/chat/chat-input.tsx` (textarea with send button, Enter to submit)
+- 🔴 Create `components/chat/usage-indicator.tsx` (show remaining queries: "12/50 left this month")
+- 🔴 Add loading states (typing indicator for AI response)
+- 🔴 Add empty state ("Ask me about your finances!" with example queries)
+- 🔴 Implement message bubbles:
+  - **User messages:** Right-aligned, primary color background
+  - **AI messages:** Left-aligned, muted background, with CFO icon
+- 🔴 Add auto-scroll to latest message
+- 🔴 Add session-only history (cleared on page reload, not persisted)
+- 🔴 Add keyboard shortcuts (Esc to close, Cmd+K to open)
+- 🔴 Add mobile responsiveness (full-screen drawer on mobile)
+
+### 22.6 Chat UI - Enhanced Interactions
+
+- 🔴 Add example queries in empty state:
+  - "How much did I spend on food last month?"
+  - "What's my biggest expense category this quarter?"
+  - "Am I on track with my budgets?"
+  - "Show me my income vs expenses for the last 3 months"
+- 🔴 Add simple tables in AI responses (optional):
+  - Top 3 categories with amounts
+  - Month-over-month comparison tables
+  - Budget progress summary tables
+- 🔴 Add copy-to-clipboard button for AI responses
+- 🔴 Add error messages with helpful guidance:
+  - "I need more transaction data to answer this. Try uploading more statements!"
+  - "I can only answer questions about your finances. Try asking about spending, budgets, or income."
+- 🔴 Add upgrade CTA for free users (modal when clicking bubble)
+
+### 22.7 Chat Context & Data Access
+
+- 🔴 Create `lib/ai/context-builder.ts`:
+  - Fetch last 6 months of transactions (limit 1000, sorted by date desc)
+  - Aggregate: Total spend, total income, spend by category, spend by month
+  - Include: Active budgets with progress, active categories, card names
+  - Include: Currency (use primary_currency from profile)
+  - Format as concise JSON (~2,000-3,000 tokens)
+- 🔴 Implement query intent detection (optional enhancement):
+  - Detect "spending" vs "income" vs "budget" queries
+  - Fetch only relevant context to reduce token usage
+- 🔴 Add timezone handling (use user's profile.timezone for date calculations)
+
+### 22.8 Rate Limiting & Security
+
+- 🔴 Implement hourly rate limit: 10 queries/hour per user
+- 🔴 Implement monthly plan limits: 50 (Plus), 200 (Pro), unlimited (Admin)
+- 🔴 Track usage in `chat_usage` table (query, response, tokens_used, created_at)
+- 🔴 Add rate limit middleware to `/api/chat` route
+- 🔴 Return 429 status with retry-after header when limits exceeded
+- 🔴 Implement input validation:
+  - Max query length: 500 characters
+  - Sanitize HTML/script tags
+  - Block SQL injection patterns
+  - Validate UTF-8 encoding
+- 🔴 Implement output validation:
+  - Ensure AI response contains no user instructions
+  - Filter out any code execution attempts
+  - Limit response length to 1000 characters
+
+### 22.9 i18n for Chat
+
+- 🔴 Add chat translations to `locales/en.json`:
+  - `chat.bubble.label`, `chat.title`, `chat.inputPlaceholder`
+  - `chat.send`, `chat.clear`, `chat.examples.*`
+  - `chat.errors.*`, `chat.empty.title`, `chat.empty.description`
+  - `chat.usage.remaining`, `chat.usage.exceeded`
+  - `chat.upgrade.title`, `chat.upgrade.description`, `chat.upgrade.cta`
+- 🔴 Add chat translations to `locales/es.json` (Spanish equivalents)
+- 🔴 Create `hooks/use-chat.ts` for data fetching and state management
+
+### 22.10 Monitoring & Cost Tracking
+
+- 🔴 Add logging for chat queries:
+  - Log every query with user_id, tokens_used, response_time
+  - Log OpenAI API errors and failures
+  - Log rate limit violations
+- 🔴 Create admin dashboard metrics:
+  - Total queries this month
+  - Total tokens consumed this month
+  - Estimated cost (tokens × $0.0006 for GPT-4o-mini)
+  - Queries by plan tier (Plus vs Pro vs Admin)
+  - Average tokens per query
+- 🔴 Add cost alerts:
+  - Email admin if monthly cost exceeds $100
+  - Email admin if hourly rate limit violations spike
+- 🔴 Create `/admin/chat-analytics` page:
+  - Show usage stats, cost projections, top users
+  - Show sample queries for debugging
+
+### 22.11 Tests
+
+- 🔴 Unit test: chat prompt safety (ensure no code execution, external actions declined)
+- 🔴 Unit test: input sanitization (SQL injection, XSS prevention)
+- 🔴 Unit test: context builder (verify 6-month window, token count)
+- 🔴 Unit test: plan limit enforcement (50 for Plus, 200 for Pro)
+- 🔴 Unit test: rate limiting (10/hour, monthly limits)
+- 🔴 Integration test: POST /api/chat (successful query, response format)
+- 🔴 Integration test: plan limit exceeded (Plus user after 50 queries)
+- 🔴 Integration test: rate limit exceeded (10 queries in 1 hour)
+- 🔴 Integration test: free user access (should show upgrade CTA)
+- 🔴 Integration test: OpenAI API error handling (fallback message)
+- 🔴 Integration test: token tracking (verify tokens logged correctly)
+
+### 22.12 Documentation
+
+- 🔴 Document chat feature in README.md
+- 🔴 Document OpenAI API setup and key configuration
+- 🔴 Document plan limits and cost estimates
+- 🔴 Document safety prompt and input sanitization
+- 🔴 Document rate limiting rules
+- 🔴 Add troubleshooting guide for common chat errors
+- 🔴 Add usage examples for users
+
+---
+
+## Phase 23: Future Features (Post-v1)
+
+### 23.1 Stripe Integration
 
 - ⏸️ Set up Stripe account (waiting for approval)
 - ⏸️ Create Stripe products and prices
@@ -980,7 +1160,7 @@ This document is the **single source of truth** for all features, tasks, and mil
 - ⏸️ Add webhook handlers for subscription events
 - ⏸️ Add billing page in Settings
 
-### 22.2 Email Notifications (v2)
+### 23.2 Email Notifications (v2)
 
 - ⏸️ Set up email service (SendGrid, Resend, etc.)
 - ⏸️ Create email templates
@@ -988,14 +1168,14 @@ This document is the **single source of truth** for all features, tasks, and mil
 - ⏸️ Send weekly/monthly summaries via email
 - ⏸️ Add email preferences in Settings
 
-### 22.3 Mobile App (Future)
+### 23.3 Mobile App (Future)
 
 - ⏸️ Research React Native vs Flutter
 - ⏸️ Design mobile-first UX
 - ⏸️ Implement mobile app
 - ⏸️ Update CORS policy for mobile API access
 
-### 22.4 Additional Features
+### 23.4 Additional Features
 
 - ⏸️ Recurring transactions detection
 - ⏸️ Export analytics as CSV/PNG
@@ -1003,8 +1183,11 @@ This document is the **single source of truth** for all features, tasks, and mil
 - ⏸️ Income tracking and forecasting
 - ⏸️ Multi-user accounts (family plans)
 - ⏸️ Integration with bank APIs (Plaid, etc.)
-- ⏸️ AI-powered spending insights
+- ⏸️ AI-powered spending insights (beyond chat)
 - ⏸️ Tax reporting module
+- ⏸️ Chat response streaming for better UX
+- ⏸️ Chat history persistence across sessions
+- ⏸️ Chat export (download conversation as PDF/text)
 
 ---
 
