@@ -262,15 +262,81 @@ Key pages:
 
 ### 4) Analytics
 
-- Chart A: Category Trends (year) – line chart Jan–Dec per category
-- Chart B: Monthly spend (last 6 months, **fixed window**) + YTD total
-- Chart C: Expenses per category (current month) – bar
-- **Currency toggle** for all charts (PEN/USD/EUR minimum) with **one currency displayed at a time**
-- **Exchange rates:** Use the following providers in order:
-  - Primary: `https://v6.exchangerate-api.com/v6/${NEXT_PUBLIC_EXCHANGERATE_API_KEY}/latest/PEN`
-  - Fallback: `https://api.exchangerate.fun/latest?base=PEN`
-  - Implement retry/fallback and cache exchange rates (1-hour TTL) in `lib/currency.ts`
-- **No export** functionality in v1 (CSV/PNG export planned for later)
+**Purpose:** Answer "Where did my money go?" and enable data-driven spending decisions.
+
+**Features (4 interactive tiles):**
+
+**A) Spending by Category (Last 30/90 days)**
+
+- **UI:** Card with donut chart + legend table (Category • Amount • % of total • Δ vs previous period)
+- **Header:** Date Range, Account filter, Currency toggle (PEN/USD/EUR minimum)
+- **Colors:** Use category brand colors from design tokens (consistent across app)
+- **Interactions:**
+  - Hover slice → Tooltip (🍔 Food — S/ 1,240 • 24% • +12%); slice expands with a11y focus ring
+  - Click slice/legend → Cross-filter page to category (removable chip in header)
+  - Legend toggle → Hide/show category (recalculate % for visible set)
+  - Keyboard → Arrow keys cycle; Enter locks filter; Esc clears
+- **Empty states:** No transactions → CTA to upload; Single category → meter + info banner
+- **API:** `GET /api/analytics/spend-by-category?from&to&account&currency` → `[{ categoryId, name, color, amount, pct, deltaPctPrev, txCount }]`
+- **Performance:** Pre-aggregate `SUM(amount)` by `category_id`; p95 < 150ms for ≤100k tx
+
+**B) Spending Over Time**
+
+- **UI:** Card with line chart (toggle Weekly/Monthly/Quarterly) + optional 3-month moving average overlay
+- **Summary chips:** Current period total, Δ vs previous, Top category
+- **Interactions:**
+  - Hover point → Tooltip (Aug 2025 — S/ 3,420 • Top: Food • 112 tx)
+  - Click point → Cross-filter to that period
+  - Brush selection (drag) → Set custom date range
+  - Double-click → Reset zoom
+- **Empty states:** <10 transactions → Suggest 90 days for clearer trend
+- **API:** `GET /api/analytics/spend-over-time?granularity=month|week&from&to&account&currency` → `[{ period, amount, txCount, topCategory: { id, name, amount } }]`
+- **Timezone:** Respect `profile.timezone`; store UTC, render local; gaps render as zero (don't interpolate)
+
+**C) Income vs Expenses**
+
+- **UI:** Card with stacked bar chart (Income top, Expenses below baseline) + Net line overlay
+- **View toggles:** Periodicity (Week/Month), "Absolute" vs "Normalized per day"
+- **Interactions:**
+  - Hover bar → Tooltip (Aug 2025 — Income S/ 2,200 • Expenses S/ 1,860 • Net +S/ 340)
+  - Click bar → Cross-filter to that period
+  - Shift+Click → Detail drawer (top income sources, top expense categories, last 10 transactions)
+  - Toggle "Show Categories" → Convert expense segment to stacked sub-bars (top 3 + "Other")
+- **Classification:** Income (amount > 0 or category family "Income"); Expense (all others); normalize sign to positive magnitudes
+- **API:** `GET /api/analytics/income-vs-expenses?granularity=month|week&from&to&account&currency` → `[{ period, income, expenses, net }]`
+- **Edge cases:** Refunds → Annotate tooltip; Mixed currencies → Convert using daily FX at tx date (cache)
+
+**D) Net Cashflow (KPI + Sparkline)**
+
+- **UI:** Large KPI number (Net Cashflow) + delta pill + 7-30 day sparkline beneath
+- **Display:** Net +S/ X,XXX; Delta +/-% vs previous (green/red); Secondary stats (Income/Expenses)
+- **Interactions:**
+  - Hover sparkline point → Tooltip (2025-08-12 — Net +S/ 180 • Top tx: Salary)
+  - Click point → Filter to that day/week
+  - Click KPI → Toggle This ↔ Previous period (animate roll-up)
+  - 2+ consecutive negative months → CTA "See drivers →" (side panel with top 3 categories/merchants, budget links)
+- **API:** `GET /api/analytics/net-cashflow?from&to&account&currency` → `{ net, income, expenses, deltaPctPrev, sparkline: [{ date, net }] }`
+- **Bins:** <7 days → daily sparkline; otherwise weekly
+
+**Global Behaviors (all tiles):**
+
+- **Cross-filtering:** Any click updates all tiles + URL (`?from&to&category&period`) within ~150ms (debounced)
+- **Persistent filters:** State restored on refresh; shareable link
+- **Currency:** Use `lib/currency.ts` with hourly FX cache; convert to `primary_currency`
+- **i18n:** Locale-aware dates/numbers; show currency code in tooltips
+- **Loading:** Skeleton loaders (aria-busy on cards)
+- **Empty states:** No data → CTAs with guidance
+- **Errors:** Non-blocking toasts; card-level retry button
+- **A11y:** Tabbable elements; tooltips mirrored to `aria-live="polite"`; screen reader tables for charts
+- **Performance:** Pre-aggregate queries with indexes; p95 < 150ms for ≤100k transactions
+
+**Exchange rates:**
+
+- Primary: `https://v6.exchangerate-api.com/v6/${NEXT_PUBLIC_EXCHANGERATE_API_KEY}/latest/PEN`
+- Fallback: `https://api.exchangerate.fun/latest?base=PEN`
+- Implement retry/fallback and cache (1-hour TTL) in `lib/currency.ts`
+
+**No export in v1** (CSV/PNG planned for later).
 
 ### 5) Budgets
 

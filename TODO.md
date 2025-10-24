@@ -1,4 +1,30 @@
-# Personal CFO - Developme### 0.2 Supabase Setup
+# Personal CFO - Development TODO
+
+This document is the **single source of truth** for all features, tasks, and milestones. Update this file as you complete tasks.
+
+**Status Legend:**
+
+- 🔴 Not Started
+- 🟡 In Progress
+- 🟢 Completed
+- ⏸️ Blocked/Paused
+
+---
+
+## Phase 0: Project Setup & Foundation
+
+### 0.1 Repository & Environment Setup
+
+- 🟢 Initialize Next.js 15 project with TypeScript
+- 🟢 Configure Tailwind CSS with shadcn/ui
+- 🟢 Install and configure shadcn/ui components
+- 🟢 Set up ESLint with strict TypeScript rules
+- 🔴 Configure Prettier for code formatting
+- 🔴 Set up environment variables structure (`.env.local.example`)
+- 🟢 Create `.gitignore` (exclude `.env.local`, `node_modules`, `.next`, etc.)
+- 🟢 Initialize Git repository with proper branching strategy
+
+### 0.2 Supabase Setup
 
 - 🟢 Create Supabase project
 - 🟢 Configure Supabase client libraries (`lib/supabase.ts`, `lib/supabase-browser.ts`)
@@ -11,9 +37,10 @@
 
 - 🔴 Create `lib/env.ts` for environment variable validation
 - 🟢 Create `lib/logger.ts` for structured logging
-- 🔴 Create `lib/errors.ts` for error h### 14.1 Landing Page
-
-- 🟢 Create `/` page (Hero, Value Proposition, Features, Pricing, CTA, Footer)
+- 🔴 Create `lib/errors.ts` for error handling utilities
+- 🟢 Create `lib/validators/` folder with base Zod schemas
+- 🟢 Set up `middleware.ts` for route protection
+- 🟢 Configure Next.js (`next.config.ts`) (App Router + settings)
 - 🟢 Create `components/landing/hero.tsx`
 - 🟢 Create `components/landing/features.tsx`
 - 🟢 Create `components/landing/pricing.tsx` (show Free/Plus/Pro plans)
@@ -56,9 +83,9 @@
 
 ### 0.2 Supabase Setup
 
-- � Create Supabase project
-- � Configure Supabase client libraries (`lib/supabase.ts`, `lib/supabase-browser.ts`)
-- � Set up Supabase environment variables (`.env.local.example` + docs)
+- 🟢 Create Supabase project
+- 🟢 Configure Supabase client libraries (`lib/supabase.ts`, `lib/supabase-browser.ts`)
+- 🟢 Set up Supabase environment variables (`.env.local.example` + docs)
 - ⏸️ Configure Supabase Storage bucket for temp uploads (v1 processes PDFs in memory; no storage needed)
 - 🟢 Set up RLS policies scaffold (implemented in migrations)
 - 🔴 Enable email verification in Supabase Auth settings
@@ -66,11 +93,11 @@
 ### 0.3 Core Infrastructure
 
 - 🔴 Create `lib/env.ts` for environment variable validation
-- � Create `lib/logger.ts` for structured logging
+- 🟢 Create `lib/logger.ts` for structured logging
 - 🔴 Create `lib/errors.ts` for error handling utilities
-- � Create `lib/validators/` folder with base Zod schemas
-- � Set up `middleware.ts` for route protection
-- � Configure Next.js (`next.config.ts`) (App Router + settings)
+- 🟢 Create `lib/validators/` folder with base Zod schemas
+- 🟢 Set up `middleware.ts` for route protection
+- 🟢 Configure Next.js (`next.config.ts`) (App Router + settings)
 
 ### 0.4 i18n Setup
 
@@ -166,17 +193,17 @@
 
 ### 2.2 Auth Logic
 
-- � Create `lib/auth.ts` with `requireAuth()` server helper
-- � Create `hooks/use-auth.ts` client hook
-- � Implement session management with Supabase Auth
-- � Add logout functionality
+- 🟢 Create `lib/auth.ts` with `requireAuth()` server helper
+- 🟢 Create `hooks/use-auth.ts` client hook
+- 🟢 Implement session management with Supabase Auth
+- 🟢 Add logout functionality
 - 🔴 Handle email verification status checks
 
 ### 2.3 Middleware
 
-- � Protect routes: `/dashboard`, `/cards`, `/transactions`, `/statements`, `/analytics`, `/budgets`, `/settings`, `/admin`
-- � Redirect unauthenticated users to `/login?redirect=<path>`
-- � Redirect authenticated users from `/login` to `/dashboard`
+- 🟢 Protect routes: `/dashboard`, `/cards`, `/transactions`, `/statements`, `/analytics`, `/budgets`, `/settings`, `/admin`
+- 🟢 Redirect unauthenticated users to `/login?redirect=<path>`
+- 🟢 Redirect authenticated users from `/login` to `/dashboard`
 - 🔴 Check email verification status on protected routes
 
 ### 2.4 Profile Management
@@ -192,18 +219,18 @@
 
 ### 3.1 Plan Utilities
 
-- � Create `lib/plan.ts` with plan entitlement constants
-- � Create `getPlanEntitlements(plan)` function
-- � Create `canCreateCard(userId)` check
-- � Create `canUploadStatement(userId)` check (monthly limit for free)
+- 🟢 Create `lib/plan.ts` with plan entitlement constants
+- 🟢 Create `getPlanEntitlements(plan)` function
+- 🟢 Create `canCreateCard(userId)` check
+- 🟢 Create `canUploadStatement(userId)` check (monthly limit for free)
 - 🔴 Create `canCreateCategory(userId)` check
 - 🔴 Create `canCreateBudget(userId)` check
 - 🔴 Create `canCreateAlert(userId)` check
 
 ### 3.2 Plan Enforcement in APIs
 
-- � Add plan checks to `POST /api/cards`
-- � Add plan checks to `POST /api/statements`
+- 🟢 Add plan checks to `POST /api/cards`
+- 🟢 Add plan checks to `POST /api/statements`
 - 🔴 Add plan checks to `POST /api/settings/categories`
 - 🔴 Add plan checks to `POST /api/budgets`
 - 🔴 Add plan checks to `POST /api/alerts`
@@ -221,22 +248,22 @@
 
 ### 4.1 Cards API
 
-- � Create `app/api/cards/route.ts` (GET all, POST create)
-- � Create `app/api/cards/[id]/route.ts` (GET one, PATCH update, DELETE)
-- � Create `lib/validators/cards.ts` with Zod schemas
-- � Implement plan checks in POST handler
-- � Add RLS validation
+- 🟢 Create `app/api/cards/route.ts` (GET all, POST create)
+- 🟢 Create `app/api/cards/[id]/route.ts` (GET one, PATCH update, DELETE)
+- 🟢 Create `lib/validators/cards.ts` with Zod schemas
+- 🟢 Implement plan checks in POST handler
+- 🟢 Add RLS validation
 
 ### 4.2 Cards UI
 
-- � Create `/cards` page with table/grid view
-- � Create `components/cards/cards-list.tsx` (card grid view)
-- � Create `components/cards/card-form.tsx` (modal or drawer)
-- � Create `components/cards/delete-card-dialog.tsx`
-- � Add bank dropdown (populated from `banks` table)
-- � Add due date picker (optional field)
-- � Add loading/error/empty states
-- � Create `hooks/use-cards.ts` for data fetching
+- 🟢 Create `/cards` page with table/grid view
+- 🟢 Create `components/cards/cards-list.tsx` (card grid view)
+- 🟢 Create `components/cards/card-form.tsx` (modal or drawer)
+- 🟢 Create `components/cards/delete-card-dialog.tsx`
+- 🟢 Add bank dropdown (populated from `banks` table)
+- 🟢 Add due date picker (optional field)
+- 🟢 Add loading/error/empty states
+- 🟢 Create `hooks/use-cards.ts` for data fetching
 
 ### 4.3 Cards Tests
 
@@ -251,22 +278,22 @@
 
 ### 5.1 Transactions API
 
-- � Create `app/api/transactions/route.ts` (GET with filters, POST create)
-- � Create `app/api/transactions/[id]/route.ts` (GET one, PATCH update, DELETE)
-- � Create `app/api/transactions/bulk-delete/route.ts` (DELETE multiple by ids) - basic delete implemented, bulk endpoint pending
+- 🟢 Create `app/api/transactions/route.ts` (GET with filters, POST create)
+- 🟢 Create `app/api/transactions/[id]/route.ts` (GET one, PATCH update, DELETE)
+- 🟢 Create `app/api/transactions/bulk-delete/route.ts` (DELETE multiple by ids) - basic delete implemented, bulk endpoint pending
 - 🔴 Create `app/api/transactions/recategorize/route.ts` (PATCH bulk re-categorize)
-- � Create `lib/validators/transactions.ts` with Zod schemas
+- 🟢 Create `lib/validators/transactions.ts` with Zod schemas
 
 ### 5.2 Transactions UI
 
-- � Create `/transactions` page with table view
-- � Create `components/transactions/transactions-table.tsx`
-- � Create `components/transactions/transaction-form.tsx` (manual add/edit)
-- � Create `components/transactions/filters-dialog.tsx` (date range, category, card, currency)
-- � Create `components/transactions/transactions-toolbar.tsx` (select, delete, re-categorize)
-- � Add sortable columns (date, amount, category, card)
-- � Add pagination
-- � Create `hooks/use-transactions.ts` for data fetching
+- 🟢 Create `/transactions` page with table view
+- 🟢 Create `components/transactions/transactions-table.tsx`
+- 🟢 Create `components/transactions/transaction-form.tsx` (manual add/edit)
+- 🟢 Create `components/transactions/filters-dialog.tsx` (date range, category, card, currency)
+- 🟢 Create `components/transactions/transactions-toolbar.tsx` (select, delete, re-categorize)
+- 🟢 Add sortable columns (date, amount, category, card)
+- 🟢 Add pagination
+- 🟢 Create `hooks/use-transactions.ts` for data fetching
 - 🟢 Ensure full i18n coverage for transactions (placeholders, loading states, row actions)
 
 ### 5.3 Transactions Tests
@@ -352,59 +379,59 @@
 
 ### 7.1 Statements API
 
-- � Create `app/api/statements/route.ts` (GET all, POST upload)
-- � Create `app/api/statements/[id]/route.ts` (GET one, DELETE)
+- 🟢 Create `app/api/statements/route.ts` (GET all, POST upload)
+- 🟢 Create `app/api/statements/[id]/route.ts` (GET one, DELETE)
 - 🔴 Create `app/api/statements/[id]/retry/route.ts` (POST retry extraction)
 - 🔴 Create `app/api/statements/[id]/recategorize/route.ts` (POST re-categorize transactions)
-- � Create `app/api/statements/bulk-delete/route.ts`
-- � Create `lib/validators/statements.ts` with Zod schemas
-- � Implement plan checks (free: 2/month limit)
+- 🟢 Create `app/api/statements/bulk-delete/route.ts`
+- 🟢 Create `lib/validators/statements.ts` with Zod schemas
+- 🟢 Implement plan checks (free: 2/month limit)
 - 🔴 Implement rate limiting (10 uploads/minute per user)
 
 ### 7.2 PDF Processing Infrastructure
 
-- � Create `lib/pdf/extract.ts` for PDF text extraction
-- � Add PDF encryption/lock detection
-- � Add text prefix artifact stripping
-- � Implement MIME type validation (`application/pdf`)
-- � Create temp file handling (process in memory, delete immediately)
-- � Add retry logic (max 2 retries)
+- 🟢 Create `lib/pdf/extract.ts` for PDF text extraction
+- 🟢 Add PDF encryption/lock detection
+- 🟢 Add text prefix artifact stripping
+- 🟢 Implement MIME type validation (`application/pdf`)
+- 🟢 Create temp file handling (process in memory, delete immediately)
+- 🟢 Add retry logic (max 2 retries)
 
 ### 7.3 AI Extraction (OpenAI)
 
-- � Create `lib/ai/parse-statement.ts` (prompt implemented)
-- � Integrate OpenAI API for transaction extraction
-- � Parse JSON response from AI
-- � Validate extracted transactions
-- � Handle low-confidence extractions (mark as failed)
+- 🟢 Create `lib/ai/parse-statement.ts` (prompt implemented)
+- 🟢 Integrate OpenAI API for transaction extraction
+- 🟢 Parse JSON response from AI
+- 🟢 Validate extracted transactions
+- 🟢 Handle low-confidence extractions (mark as failed)
 
 ### 7.4 Background Jobs Setup
 
-- � Choose queue system (Inngest with dev fallback to inline processing)
+- 🟢 Choose queue system (Inngest with dev fallback to inline processing)
 - ⏸️ Set up Redis (not needed; using Inngest)
-- � Create background processing infrastructure via `lib/inngest/`
-- � Create statement extraction task (`lib/inngest/functions/process-statement.ts`)
+- 🟢 Create background processing infrastructure via `lib/inngest/`
+- 🟢 Create statement extraction task (`lib/inngest/functions/process-statement.ts`)
 - 🔴 Create re-categorization task
-- � Add job status updates (processing → completed/failed)
-- � Add retry mechanism with backoff (Inngest retry count tracked)
+- 🟢 Add job status updates (processing → completed/failed)
+- 🟢 Add retry mechanism with backoff (Inngest retry count tracked)
 
 ### 7.5 Statements UI
 
-- � Create `/statements` page with table view
-- � Create `components/statements/statements-table.tsx`
-- � Create `components/statements/statement-upload-dialog.tsx` (drag-and-drop + click to browse)
+- 🟢 Create `/statements` page with table view
+- 🟢 Create `components/statements/statements-table.tsx`
+- 🟢 Create `components/statements/statement-upload-dialog.tsx` (drag-and-drop + click to browse)
   - **File validation:** PDF only (application/pdf MIME type)
   - **Upload methods:** Drag-and-drop zone + click to browse file picker
   - **User guidance:** Show helpful notes about file requirements and processing expectations
   - **Card selection:** Dropdown to associate statement with a card
   - **Password protection:** Prompt for password if PDF is locked
-- � Create `components/statements/statements-toolbar.tsx` with status badges
+- 🟢 Create `components/statements/statements-toolbar.tsx` with status badges
 - 🔴 Add retry button for failed statements
-- � Add bulk delete with confirmation (`components/statements/delete-statement-dialog.tsx`)
+- 🟢 Add bulk delete with confirmation (`components/statements/delete-statement-dialog.tsx`)
 - 🔴 Add re-categorize button (single/bulk)
-- � Create `hooks/use-statements.ts`
-- � Show upload progress indicator (toasts and realtime updates)
-- � Show helpful error messages for locked PDFs
+- 🟢 Create `hooks/use-statements.ts`
+- 🟢 Show upload progress indicator (toasts and realtime updates)
+- 🟢 Show helpful error messages for locked PDFs
 - 🟢 Create `components/statements/statement-realtime-listener.tsx` for realtime status updates
 
 ### 7.6 Tests
@@ -462,48 +489,149 @@
 ### 9.1 Exchange Rate Integration
 
 - 🔴 Research free exchange rate APIs (exchangerate-api.io, currencyapi.com, etc.)
-- � Create `lib/currency.ts` with exchange rate utilities
-- � Implement `getExchangeRate(from, to)` function (basic implementation exists)
+- 🟢 Create `lib/currency.ts` with exchange rate utilities
+- 🟢 Implement `getExchangeRate(from, to)` function (basic implementation exists)
 - 🔴 Add caching for exchange rates (1-hour TTL)
 - 🔴 Handle API errors gracefully (fallback to cached rates)
 
-### 9.2 Analytics API
+### 9.2 Spending by Category API
 
-- 🔴 Create `app/api/analytics/category-trends/route.ts` (Chart A: Jan-Dec per category)
-- 🔴 Create `app/api/analytics/monthly-spend/route.ts` (Chart B: last 6 months + YTD)
-- 🔴 Create `app/api/analytics/category-breakdown/route.ts` (Chart C: current month per category)
-- 🔴 Add currency parameter to all endpoints
-- 🔴 Implement server-side currency conversion
+- 🔴 Create `app/api/analytics/spend-by-category/route.ts`
+- 🔴 Query params: `from`, `to`, `account` (optional card filter), `currency`
+- 🔴 Response: Array of `{ categoryId, name, color, amount, pct, deltaPctPrev, txCount }`
+- 🔴 Pre-aggregate `SUM(amount)` by `category_id` with index on `(user_id, transaction_date, category_id)`
+- 🔴 Implement server-side currency conversion (convert to `primary_currency`)
+- 🔴 Calculate previous period comparison (same length window immediately preceding `from/to`)
+- 🔴 Handle deleted categories: attribute historic spend to "Deleted Category (date)"
+- 🔴 Add `lib/validators/analytics.ts` with Zod schemas for query params
 
-### 9.3 Analytics Logic
+### 9.3 Spending Over Time API
 
-- 🔴 Create `lib/analytics.ts` with aggregation utilities
-- 🔴 Implement category trends calculation (12 months, group by month)
-- 🔴 Implement monthly spend calculation (last 6 months fixed window)
-- 🔴 Implement YTD total calculation
-- 🔴 Implement category breakdown (current month only)
+- 🔴 Create `app/api/analytics/spend-over-time/route.ts`
+- 🔴 Query params: `granularity` (month|week), `from`, `to`, `account`, `currency`
+- 🔴 Response: Array of `{ period, amount, txCount, topCategory: { id, name, amount } }`
+- 🔴 Group by `date_trunc(granularity, transaction_date at time zone profile.tz)` with covering index
+- 🔴 Respect user timezone (store UTC, render in `profile.timezone`)
+- 🔴 Gaps (no spend) render as zero; don't interpolate
 - 🔴 Apply currency conversion to all calculations
 
-### 9.4 Analytics UI
+### 9.4 Income vs Expenses API
 
-- 🔴 Create `/analytics` page with 3 charts
-- 🔴 Create `components/analytics/currency-toggle.tsx` (PEN/USD/EUR minimum)
-- 🔴 Create `components/analytics/category-trends-chart.tsx` (line chart, recharts)
-- 🔴 Create `components/analytics/monthly-spend-chart.tsx` (bar chart)
-- 🔴 Create `components/analytics/category-breakdown-chart.tsx` (bar chart)
-- 🔴 Add loading states for charts
-- 🔴 Add empty states (no data messages)
-- 🔴 Create `hooks/use-analytics.ts`
-- 🔴 Handle currency toggle (re-fetch data with new currency)
+- 🔴 Create `app/api/analytics/income-vs-expenses/route.ts`
+- 🔴 Query params: `granularity` (month|week), `from`, `to`, `account`, `currency`
+- 🔴 Response: Array of `{ period, income, expenses, net }`
+- 🔴 Classify transactions: Income (amount > 0 or category family "Income"), Expense (amount < 0 or all non-income)
+- 🔴 Normalize sign server-side to positive magnitudes in response
+- 🔴 Handle refunds: Detect negative expense next to positive charge and annotate in response
+- 🔴 Convert currencies using daily FX at transaction date (cache table or hourly FX cache)
 
-### 9.5 Tests
+### 9.5 Net Cashflow API
 
-- 🔴 Unit test: exchange rate utilities
-- 🔴 Unit test: analytics calculations
+- 🔴 Create `app/api/analytics/net-cashflow/route.ts`
+- 🔴 Query params: `from`, `to`, `account`, `currency`
+- 🔴 Response: `{ net, income, expenses, deltaPctPrev, sparkline: [{ date, net }] }`
+- 🔴 If `from/to` spans <7 days, use daily sparkline; otherwise weekly bins
+- 🔴 Single aggregation query; sparkline grouped by day/week with index on `(user_id, transaction_date)`
+- 🔴 Show info banner if income or expenses are zero for period
+
+### 9.6 Analytics Logic & Utilities
+
+- 🔴 Create `lib/analytics.ts` with aggregation utilities
+- 🔴 Implement spending by category calculation (pre-aggregation with SQL, category color from design tokens)
+- 🔴 Implement spending over time calculation (weekly/monthly/quarterly granularity)
+- 🔴 Implement income vs expenses classification and net calculation
+- 🔴 Implement net cashflow with sparkline generation
+- 🔴 Apply currency conversion to all calculations (use `lib/currency.ts`)
+- 🔴 Implement dynamic insights generation (optional, future enhancement):
+  - Top 3 categories % of total
+  - MoM growth trends
+  - Spike detection for spending over time
+  - Consecutive negative months warning
+
+### 9.7 Analytics UI - Spending by Category
+
+- 🔴 Create `/analytics` page with 4 card tiles
+- 🔴 Create `components/analytics/spend-by-category.tsx`
+- 🔴 Tile layout: Card with header actions (Date Range, Account, Currency) + Donut chart + Legend table
+- 🔴 Legend table columns: Category • Amount • % of total • Δ vs previous period
+- 🔴 Use category brand colors from design tokens; consistent across app
+- 🔴 Interactions:
+  - Hover chart slice: Tooltip with category, amount, %, delta; slice expands 2-3px (a11y focus ring)
+  - Click slice or legend row: Cross-filter page to that category (show removable chip in header)
+  - Legend toggle: Hide/show category (recalculate % of total for visible set)
+  - Keyboard: Arrow keys cycle slices; Enter locks filter; Esc clears selection
+- 🔴 Empty/sparse states: No transactions → CTA to upload; Single category → meter (progress bar) + info banner
+- 🔴 Dynamic insights (optional): Top 3 categories % message, category delta alerts
+- 🔴 A11y: Donut slices tabbable; tooltips mirrored into `aria-live="polite"`; legend rows have `aria-controls`
+
+### 9.8 Analytics UI - Spending Over Time
+
+- 🔴 Create `components/analytics/spend-over-time.tsx`
+- 🔴 Tile layout: Card with multi-period Line chart (Monthly default; toggle Weekly/Monthly/Quarterly)
+- 🔴 Overlay: Optional 3-month moving average line (toggle)
+- 🔴 Summary chips: Current period total, Δ vs previous, Top category this period
+- 🔴 Interactions:
+  - Hover data point: Tooltip with period, amount, top category, tx count
+  - Click data point: Cross-filter page to that period (locks `from/to`)
+  - Brush selection (drag): Set custom date range, updates header filters
+  - Legend category mini-toggle: Optional "By Category" sub-view (stacked area)
+  - Double-click canvas: Reset zoom/range
+- 🔴 Empty/sparse states: <10 transactions → suggest 90 days for clearer trend
+- 🔴 Dynamic insights (optional): MoM growth %, notable spikes with dates
+- 🔴 A11y: Every point accessible via keyboard; tooltip content mirrored to invisible table with caption
+
+### 9.9 Analytics UI - Income vs Expenses
+
+- 🔴 Create `components/analytics/income-vs-expenses.tsx`
+- 🔴 Tile layout: Card with stacked bar chart per period (Income top, Expenses below baseline) + Net line overlay
+- 🔴 View toggles: Periodicity (Week/Month), "Absolute" vs "Normalized per day"
+- 🔴 Interactions:
+  - Hover bar segment: Tooltip with period, income, expenses, net
+  - Click bar: Cross-filter page to that period
+  - Shift+Click bar: Open detail drawer (top income sources, top expense categories, last 10 transactions)
+  - Toggle chip "Show Categories": Convert expense segment to stacked sub-bars by top 3 + "Other"
+- 🔴 Empty/sparse states: No data messages with guidance
+- 🔴 Dynamic insights (optional): Positive net X/Y months (median), net turning negative alerts
+- 🔴 A11y: Bar stacks have `role="img"` + data table fallback with caption
+
+### 9.10 Analytics UI - Net Cashflow
+
+- 🔴 Create `components/analytics/net-cashflow.tsx`
+- 🔴 Tile layout: Large KPI number with delta pill + 7-30 day sparkline beneath
+- 🔴 KPI: Net Cashflow (Selected Range): +S/ X,XXX; Delta pill: +/- % vs previous period (green/red)
+- 🔴 Secondary stats: Income S/ X,XXX • Expenses S/ X,XXX
+- 🔴 Color logic: Green if net ≥ 0; Red if < 0
+- 🔴 Interactions:
+  - Hover sparkline point: Tooltip with date, net, top transaction
+  - Click sparkline point: Filter page to that day/week
+  - Click KPI: Toggle comparison This period ↔ Previous period (animate number roll-up)
+  - 2+ consecutive negative months: Show CTA "See drivers →" with side panel (top 3 categories/merchants, quick budget links)
+- 🔴 Empty/sparse states: Info banner if income or expenses zero
+- 🔴 A11y: KPI announced with `aria-live="polite"`; sparkline has offscreen table for screen readers
+
+### 9.11 Analytics UI - Shared Components & Logic
+
+- 🔴 Create `components/analytics/currency-toggle.tsx` (PEN/USD/EUR minimum, shared across all tiles)
+- 🔴 Create `components/analytics/date-range-picker.tsx` (shared header control: Last 30/90 days, Custom)
+- 🔴 Create `components/analytics/account-filter.tsx` (optional card/account filter dropdown)
+- 🔴 Create `hooks/use-analytics.ts` for data fetching (spend-by-category, spend-over-time, income-vs-expenses, net-cashflow)
+- 🔴 Add loading states (use Skeleton loaders, set `aria-busy` on cards)
+- 🔴 Add empty states (no data messages with CTAs)
+- 🔴 Implement cross-filtering: Any click selection updates all tiles and URL (`?from&to&category&period`) within ~150ms (debounced)
+- 🔴 Persistent filters: State restored on refresh, shareable as link
+- 🔴 Error handling: Non-blocking toasts; card-level retry button (`onRetry` refetches endpoint)
+- 🔴 i18n & Formats: Use locale for dates/numbers; respect `profiles.primary_currency`; show currency code in tooltips
+- 🔴 Performance: Pre-aggregate queries with SQL indexes; p95 < 150ms for ≤100k transactions
+
+### 9.12 Tests
+
+- 🔴 Unit test: exchange rate utilities (cache, fallback)
+- 🔴 Unit test: analytics calculations (spend-by-category, spend-over-time, income-vs-expenses, net-cashflow)
 - 🔴 Unit test: currency conversion in analytics
-- 🔴 Integration test: GET /api/analytics/category-trends
-- 🔴 Integration test: GET /api/analytics/monthly-spend
-- 🔴 Integration test: currency toggle (different currencies)
+- 🔴 Integration test: GET /api/analytics/spend-by-category (with filters, currency toggle)
+- 🔴 Integration test: GET /api/analytics/spend-over-time (granularity, timezone handling)
+- 🔴 Integration test: GET /api/analytics/income-vs-expenses (income/expense classification)
+- 🔴 Integration test: GET /api/analytics/net-cashflow (sparkline generation)
 
 ---
 
@@ -564,15 +692,15 @@
 
 ### 11.2 Dashboard UI
 
-- � Create `/dashboard` page (main landing after login)
-- � Create `components/dashboard/welcome-header.tsx`
-- � Create `components/dashboard/cards-summary.tsx` (count, quick add CTA)
-- � Create `components/dashboard/alerts-summary.tsx` (notification cards)
-- � Create `components/dashboard/budgets-snapshot.tsx` (top 3 budgets with progress)
-- � Create `components/dashboard/monthly-expenses-summary.tsx` (current month total)
-- � Create `components/dashboard/recurrent-services-summary.tsx` (optional, detect recurring transactions)
-- � Create `components/dashboard/recent-transactions.tsx` (last 5-10)
-- � Add loading/empty states (Skeleton loaders implemented)
+- 🟢 Create `/dashboard` page (main landing after login)
+- 🟢 Create `components/dashboard/welcome-header.tsx`
+- 🟢 Create `components/dashboard/cards-summary.tsx` (count, quick add CTA)
+- 🟢 Create `components/dashboard/alerts-summary.tsx` (notification cards)
+- 🟢 Create `components/dashboard/budgets-snapshot.tsx` (top 3 budgets with progress)
+- 🟢 Create `components/dashboard/monthly-expenses-summary.tsx` (current month total)
+- 🟢 Create `components/dashboard/recurrent-services-summary.tsx` (optional, detect recurring transactions)
+- 🟢 Create `components/dashboard/recent-transactions.tsx` (last 5-10)
+- 🟢 Add loading/empty states (Skeleton loaders implemented)
 - 🔴 Create `hooks/use-dashboard.ts` (currently components fetch their own data)
 
 ---
@@ -661,18 +789,18 @@
 
 ### 14.1 Landing Page
 
-- � Create `/` page (Hero, Value Proposition, Features, Pricing, CTA, Footer)
-- � Create `components/landing/hero.tsx`
-- � Create `components/landing/features.tsx`
-- � Create `components/landing/pricing.tsx` (show Free/Plus/Pro plans)
-- � Create `components/landing/cta.tsx` ("Join Waiting List" CTA)
-- � Create `components/landing/footer.tsx` (links, social, copyright)
-- � Add responsive design (mobile-first)
-- � Add micro-animations (scroll reveals, hover effects)
+- 🟢 Create `/` page (Hero, Value Proposition, Features, Pricing, CTA, Footer)
+- 🟢 Create `components/landing/hero.tsx`
+- 🟢 Create `components/landing/features.tsx`
+- 🟢 Create `components/landing/pricing.tsx` (show Free/Plus/Pro plans)
+- 🟢 Create `components/landing/cta.tsx` ("Join Waiting List" CTA)
+- 🟢 Create `components/landing/footer.tsx` (links, social, copyright)
+- 🟢 Add responsive design (mobile-first)
+- 🟢 Add micro-animations (scroll reveals, hover effects)
 
 ### 14.2 Public Navigation
 
-- � Create `components/landing/navbar.tsx` (with language toggle, theme toggle, brand)
+- 🟢 Create `components/landing/navbar.tsx` (with language toggle, theme toggle, brand)
 - 🔴 Create `components/nav/auth-nav.tsx` (Dashboard, Logout, User menu)
 - 🟢 Fix landing navbar mobile overflow by adding responsive mobile menu (Sheet) and hiding desktop actions under md
 - 🔴 Change mobile menu isotype to white variant (use white asset in dark theme or ensure contrast in mobile sheet)
@@ -710,10 +838,10 @@
 
 ### 16.1 Logging Infrastructure
 
-- � Create `lib/logger.ts` with structured logging (JSON format)
-- � Add log levels: info, warn, error
-- � Replace all `console.log` with structured logger
-- � Add context to logs (user_id, request_id, etc.)
+- 🟢 Create `lib/logger.ts` with structured logging (JSON format)
+- 🟢 Add log levels: info, warn, error
+- 🟢 Replace all `console.log` with structured logger
+- 🟢 Add context to logs (user_id, request_id, etc.)
 
 ### 16.2 Error Tracking
 
