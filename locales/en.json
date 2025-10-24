@@ -115,8 +115,10 @@
     "confirm": "Confirm",
     "close": "Close",
     "all": "All",
+    "retry": "Retry",
     "moreOptions": "More options",
-    "search": "Search"
+    "search": "Search",
+    "done": "Done"
   },
   "dashboard": {
     "navigation": {
@@ -174,7 +176,8 @@
       "title": "Recent Transactions",
       "noTransactions": "No transactions yet",
       "uploadStatement": "Upload Statement",
-      "viewAll": "View All Transactions"
+      "viewAll": "View All Transactions",
+      "seeAll": "See all"
     }
   },
   "settings": {
@@ -205,6 +208,11 @@
         "color": "Color",
         "type": "Type",
         "actions": "Actions"
+      },
+      "colorPicker": {
+        "selectColor": "Select a color",
+        "customColor": "Custom color",
+        "customColorEllipsis": "Custom color..."
       }
     },
     "keywords": {
@@ -214,14 +222,37 @@
       "add": "Add Keyword",
       "editTitle": "Edit Keyword",
       "createTitle": "Create Keyword",
+      "created": "Keyword created successfully",
+      "updated": "Keyword updated successfully",
+      "autoCategorized": "{count} uncategorized transactions were automatically categorized",
       "deleteTitle": "Delete Keyword",
       "deleteDesc": "Are you sure you want to delete this keyword?",
+      "retrying": "Retrying categorization...",
+      "reassign": "Reassign",
+      "reassignTitle": "Reassign Keyword",
+      "reassignKeyword": "Keyword",
+      "fromCategory": "From Category",
+      "toCategory": "To Category",
+      "reassignButton": "Reassign Keyword",
+      "reassignSuccess": "Keyword reassigned successfully. Transactions are being recategorized in the background.",
       "keyword": "Keyword",
       "keywordPh": "e.g. Starbucks, Uber, Netflix",
       "empty": "No keywords yet",
       "table": {
         "keyword": "Keyword",
+        "status": "Status",
+        "categorizing": "Categorizing",
+        "active": "Active",
+        "failed": "Failed",
         "actions": "Actions"
+      },
+      "toasts": {
+        "categorizeDoneTitle": "Keyword \"{keyword}\" finished categorizing",
+        "categorizeDoneDesc": "{count} transactions categorized",
+        "activeTitle": "Keyword \"{keyword}\" is now active",
+        "activeDesc": "No matching transactions found",
+        "failedTitle": "Keyword \"{keyword}\" failed to categorize",
+        "failedDesc": "{reason}"
       }
     },
     "excluded": {
@@ -341,6 +372,12 @@
     "status": "Status",
     "uploadedAt": "Uploaded at",
     "fileType": "File type",
+    "fileTypes": {
+      "pdf": "PDF",
+      "csv": "CSV",
+      "png": "PNG",
+      "jpg": "JPG"
+    },
     "noStatements": "No statements yet",
     "searchPlaceholder": "Search statements...",
     "bulkDelete": "Delete selected",

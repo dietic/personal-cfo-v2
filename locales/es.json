@@ -114,8 +114,10 @@
     "update": "Actualizar",
     "confirm": "Confirmar",
     "close": "Cerrar",
+    "retry": "Reintentar",
     "search": "Buscar",
-    "moreOptions": "Más opciones"
+    "moreOptions": "Más opciones",
+    "done": "Listo"
   },
   "dashboard": {
     "navigation": {
@@ -173,7 +175,8 @@
       "title": "Transacciones Recientes",
       "noTransactions": "No hay transacciones aún",
       "uploadStatement": "Subir Estado de Cuenta",
-      "viewAll": "Ver Todas las Transacciones"
+      "viewAll": "Ver Todas las Transacciones",
+      "seeAll": "Ver todo"
     }
   },
   "settings": {
@@ -204,6 +207,11 @@
         "color": "Color",
         "type": "Tipo",
         "actions": "Acciones"
+      },
+      "colorPicker": {
+        "selectColor": "Selecciona un color",
+        "customColor": "Color personalizado",
+        "customColorEllipsis": "Color personalizado..."
       }
     },
     "keywords": {
@@ -213,14 +221,37 @@
       "add": "Agregar palabra clave",
       "editTitle": "Editar palabra clave",
       "createTitle": "Crear palabra clave",
+      "created": "Palabra clave creada exitosamente",
+      "updated": "Palabra clave actualizada exitosamente",
+      "autoCategorized": "{count} transacciones sin categoría fueron categorizadas automáticamente",
       "deleteTitle": "Eliminar palabra clave",
       "deleteDesc": "¿Seguro que deseas eliminar esta palabra clave?",
+      "retrying": "Reintentando categorización...",
+      "reassign": "Reasignar",
+      "reassignTitle": "Reasignar Palabra Clave",
+      "reassignKeyword": "Palabra clave",
+      "fromCategory": "Desde Categoría",
+      "toCategory": "Hacia Categoría",
+      "reassignButton": "Reasignar Palabra Clave",
+      "reassignSuccess": "Palabra clave reasignada exitosamente. Las transacciones se están recategorizando en segundo plano.",
       "keyword": "Palabra clave",
       "keywordPh": "ej. Starbucks, Uber, Netflix",
       "empty": "Aún no hay palabras clave",
       "table": {
         "keyword": "Palabra clave",
+        "status": "Estado",
+        "categorizing": "Categorizando",
+        "active": "Activa",
+        "failed": "Fallida",
         "actions": "Acciones"
+      },
+      "toasts": {
+        "categorizeDoneTitle": "La palabra clave \"{keyword}\" terminó de categorizarse",
+        "categorizeDoneDesc": "Se categorizaron {count} transacciones",
+        "activeTitle": "La palabra clave \"{keyword}\" ahora está activa",
+        "activeDesc": "No se encontraron transacciones coincidentes",
+        "failedTitle": "La palabra clave \"{keyword}\" no se pudo categorizar",
+        "failedDesc": "{reason}"
       }
     },
     "excluded": {
@@ -340,6 +371,12 @@
     "status": "Estado",
     "uploadedAt": "Fecha de subida",
     "fileType": "Tipo de archivo",
+    "fileTypes": {
+      "pdf": "PDF",
+      "csv": "CSV",
+      "png": "PNG",
+      "jpg": "JPG"
+    },
     "noStatements": "Aún no hay estados",
     "searchPlaceholder": "Buscar estados...",
     "bulkDelete": "Eliminar seleccionados",
