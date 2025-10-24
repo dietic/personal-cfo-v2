@@ -26,7 +26,7 @@ export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
 
   if (isLoading) {
     return (
-      <Card className="sm:col-span-2 lg:col-span-2" aria-busy>
+      <Card aria-busy>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
             {t("dashboard.budgets.title")}
@@ -50,7 +50,7 @@ export function BudgetsSnapshot({ budgets, isLoading }: BudgetsSnapshotProps) {
   const topBudgets = budgets.slice(0, 3);
 
   return (
-    <Card className="sm:col-span-2 lg:col-span-2">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">
           {t("dashboard.budgets.title")}

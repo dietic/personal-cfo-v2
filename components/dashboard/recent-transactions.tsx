@@ -33,7 +33,7 @@ export function RecentTransactions({
 
   if (isLoading) {
     return (
-      <Card className="lg:col-span-4" aria-busy>
+      <Card aria-busy>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs font-medium md:text-sm">
             {t("dashboard.transactions.title")}
@@ -52,7 +52,7 @@ export function RecentTransactions({
   }
 
   return (
-    <Card className="lg:col-span-4">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xs font-medium md:text-sm">
           {t("dashboard.transactions.title")}
@@ -91,7 +91,7 @@ export function RecentTransactions({
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-medium md:text-sm">
-                      {transaction.merchant || transaction.description}
+                      {transaction.description}
                     </p>
                     <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground md:gap-2 md:text-xs">
                       <span>
@@ -138,9 +138,9 @@ export function RecentTransactions({
                 </div>
               </div>
             ))}
-            <Link href="/transactions">
-              <Button variant="ghost" size="sm" className="mt-3 w-full md:mt-4">
-                {t("dashboard.transactions.viewAll")}
+            <Link href="/transactions" className="mt-3 block md:mt-4">
+              <Button variant="ghost" size="sm" className="w-full">
+                {t("dashboard.transactions.seeAll")}
               </Button>
             </Link>
           </div>
