@@ -548,21 +548,25 @@ This document is the **single source of truth** for all features, tasks, and mil
   - Spike detection for spending over time
   - Consecutive negative months warning
 
-### 9.7 Analytics UI - Spending by Category
+### 9.7 Analytics UI - Spend by Month (Replaced Spend by Category)
 
-- 🔴 Create `/analytics` page with 4 card tiles
-- 🔴 Create `components/analytics/spend-by-category.tsx`
-- 🔴 Tile layout: Card with header actions (Date Range, Account, Currency) + Donut chart + Legend table
-- 🔴 Legend table columns: Category • Amount • % of total • Δ vs previous period
-- 🔴 Use category brand colors from design tokens; consistent across app
-- 🔴 Interactions:
-  - Hover chart slice: Tooltip with category, amount, %, delta; slice expands 2-3px (a11y focus ring)
-  - Click slice or legend row: Cross-filter page to that category (show removable chip in header)
-  - Legend toggle: Hide/show category (recalculate % of total for visible set)
-  - Keyboard: Arrow keys cycle slices; Enter locks filter; Esc clears selection
-- 🔴 Empty/sparse states: No transactions → CTA to upload; Single category → meter (progress bar) + info banner
-- 🔴 Dynamic insights (optional): Top 3 categories % message, category delta alerts
-- 🔴 A11y: Donut slices tabbable; tooltips mirrored into `aria-live="polite"`; legend rows have `aria-controls`
+- � Create `/analytics` page with 4 card tiles
+- � Create `components/analytics/spend-by-category.tsx` (renamed to Spend by Month)
+- � Tile layout: Card with category dropdown + Area chart showing monthly spending trend
+- 🟢 Category selector: Dropdown to select single category from active categories
+- 🟢 Auto-selects first active category on load
+- � Fetches transactions for selected category and aggregates by month
+- 🟢 Area chart with gradient fill using category color
+- 🟢 Shows total spend for category in header
+- 🟢 Removed currency filter from fetch (gets all transactions, converts later)
+- 🟢 Fixed date format issue (extracts date part from ISO string)
+- � Increased page size to 1000 to ensure all transactions fetched
+- 🟢 Added console logging for debugging
+- 🟢 Interactive tooltip on hover showing month and amount
+- � Empty/sparse states: No data message with helpful guidance
+- � Responsive: Dropdown stacks on mobile, inline on desktop
+- 🔴 Cross-filtering functionality (optional for v2)
+- 🔴 Dynamic insights (optional)
 
 ### 9.8 Analytics UI - Spending Over Time
 
@@ -693,12 +697,14 @@ This document is the **single source of truth** for all features, tasks, and mil
 - 🟢 Create `/dashboard` page (main landing after login)
 - 🟢 Create `components/dashboard/welcome-header.tsx`
 - 🟢 Create `components/dashboard/cards-summary.tsx` (count, quick add CTA)
-- 🟢 Create `components/dashboard/alerts-summary.tsx` (notification cards)
+- 🟢 Removed `components/dashboard/alerts-summary.tsx` (not needed in v1)
 - 🟢 Create `components/dashboard/budgets-snapshot.tsx` (top 3 budgets with progress)
 - 🟢 Create `components/dashboard/monthly-expenses-summary.tsx` (current month total)
-- 🟢 Create `components/dashboard/recurrent-services-summary.tsx` (optional, detect recurring transactions)
-- 🟢 Create `components/dashboard/recent-transactions.tsx` (last 5-10)
+- 🟢 Removed `components/dashboard/recurrent-services-summary.tsx` (not needed in v1)
+- 🟢 Create `components/dashboard/recent-transactions.tsx` (last 5, shows description, wired to API)
 - 🟢 Add loading/empty states (Skeleton loaders implemented)
+- 🟢 Layout: Budgets and Recent Transactions on same row (grid-cols-2)
+- 🔴 Wire budgets data from API (placeholder for now)
 - 🔴 Create `hooks/use-dashboard.ts` (currently components fetch their own data)
 
 ---
@@ -1133,3 +1139,37 @@ This document is the **single source of truth** for all features, tasks, and mil
 - 🟢 Style(colorful): Added custom CSS for react-colorful to match shadcn/ui theme
   - Integrated with design tokens (border-radius, colors)
   - Responsive to light/dark modes
+
+### Delta – 2025-10-24 (later)
+
+- 🟢 Feat(dashboard): Removed alerts and recurrent services cards
+  - Removed `components/dashboard/alerts-summary.tsx` (not needed in v1)
+  - Removed `components/dashboard/recurrent-services-summary.tsx` (not needed in v1)
+  - Updated dashboard layout to grid-cols-2 for budgets and recent transactions row
+- 🟢 Feat(dashboard): Wired recent transactions to API
+  - Recent transactions now fetches last 5 transactions from `/api/transactions?pageSize=5`
+  - Changed display to show `description` instead of `merchant`
+  - Button text changed to "See all" with proper i18n (en: "See all", es: "Ver todo")
+  - Added loading state while fetching
+- 🟢 UX(dashboard): Improved layout structure
+  - Budgets and Recent Transactions now share same row (grid-cols-2)
+  - Removed col-span classes from individual components
+  - Cleaner, more balanced dashboard layout
+- 🟢 Feat(analytics): Replaced donut chart with monthly spend by category
+  - Completely rewrote `components/analytics/spend-by-category.tsx` from donut to area chart
+  - Added category dropdown selector with auto-selection of first active category
+  - Fetches transactions for selected category and aggregates by month
+  - Area chart with gradient fill using category color from selected category
+  - Shows total spend for category in header
+- 🟢 Fix(analytics): Resolved empty chart data bug
+  - Removed currency filter from transaction fetch (was excluding multi-currency transactions)
+  - Fixed date format extraction (split ISO string to get YYYY-MM-DD part)
+  - Increased pageSize to 1000 to ensure all transactions are fetched
+  - Added console logging for debugging transaction count
+- 🟢 UX(analytics): Enhanced chart interactions
+  - Interactive tooltip on hover showing month and amount
+  - Responsive category selector (full width on mobile)
+  - Empty state message with helpful guidance when no data
+- 🟢 Chore(i18n): Added dashboard translations
+  - Added `dashboard.transactions.seeAll` in en.json and es.json
+  - All dashboard components now fully translated
