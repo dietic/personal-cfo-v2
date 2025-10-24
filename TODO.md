@@ -496,43 +496,43 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 9.2 Spending by Category API
 
-- 🔴 Create `app/api/analytics/spend-by-category/route.ts`
-- 🔴 Query params: `from`, `to`, `account` (optional card filter), `currency`
-- 🔴 Response: Array of `{ categoryId, name, color, amount, pct, deltaPctPrev, txCount }`
+- � Create `app/api/analytics/spend-by-category/route.ts`
+- � Query params: `from`, `to`, `account` (optional card filter), `currency`
+- � Response: Array of `{ categoryId, name, color, amount, pct, deltaPctPrev, txCount }`
 - 🔴 Pre-aggregate `SUM(amount)` by `category_id` with index on `(user_id, transaction_date, category_id)`
-- 🔴 Implement server-side currency conversion (convert to `primary_currency`)
-- 🔴 Calculate previous period comparison (same length window immediately preceding `from/to`)
+- � Implement server-side currency conversion (convert to `primary_currency`)
+- � Calculate previous period comparison (same length window immediately preceding `from/to`)
 - 🔴 Handle deleted categories: attribute historic spend to "Deleted Category (date)"
-- 🔴 Add `lib/validators/analytics.ts` with Zod schemas for query params
+- � Add `lib/validators/analytics.ts` with Zod schemas for query params
 
 ### 9.3 Spending Over Time API
 
-- 🔴 Create `app/api/analytics/spend-over-time/route.ts`
-- 🔴 Query params: `granularity` (month|week), `from`, `to`, `account`, `currency`
-- 🔴 Response: Array of `{ period, amount, txCount, topCategory: { id, name, amount } }`
+- � Create `app/api/analytics/spend-over-time/route.ts`
+- � Query params: `granularity` (month|week), `from`, `to`, `account`, `currency`
+- � Response: Array of `{ period, periodLabel, amount, txCount, topCategory: { id, name, amount } }`
 - 🔴 Group by `date_trunc(granularity, transaction_date at time zone profile.tz)` with covering index
-- 🔴 Respect user timezone (store UTC, render in `profile.timezone`)
-- 🔴 Gaps (no spend) render as zero; don't interpolate
-- 🔴 Apply currency conversion to all calculations
+- � Respect user timezone (stored UTC; using UTC bins; profile.timezone fetched — finalize local rendering later)
+- � Gaps (no spend) render as zero; don't interpolate
+- � Apply currency conversion to all calculations
 
 ### 9.4 Income vs Expenses API
 
-- 🔴 Create `app/api/analytics/income-vs-expenses/route.ts`
-- 🔴 Query params: `granularity` (month|week), `from`, `to`, `account`, `currency`
-- 🔴 Response: Array of `{ period, income, expenses, net }`
-- 🔴 Classify transactions: Income (amount > 0 or category family "Income"), Expense (amount < 0 or all non-income)
-- 🔴 Normalize sign server-side to positive magnitudes in response
+- � Create `app/api/analytics/income-vs-expenses/route.ts`
+- � Query params: `granularity` (month|week), `from`, `to`, `account`, `currency`
+- � Response: Array of `{ period, periodLabel, income, expenses, net }`
+- � Classify transactions: Income (amount > 0 or category family "Income"), Expense (others)
+- � Normalize sign server-side to positive magnitudes in response
 - 🔴 Handle refunds: Detect negative expense next to positive charge and annotate in response
-- 🔴 Convert currencies using daily FX at transaction date (cache table or hourly FX cache)
+- � Convert currencies using exchange rates util (hourly cache pending)
 
 ### 9.5 Net Cashflow API
 
-- 🔴 Create `app/api/analytics/net-cashflow/route.ts`
-- 🔴 Query params: `from`, `to`, `account`, `currency`
-- 🔴 Response: `{ net, income, expenses, deltaPctPrev, sparkline: [{ date, net }] }`
-- 🔴 If `from/to` spans <7 days, use daily sparkline; otherwise weekly bins
-- 🔴 Single aggregation query; sparkline grouped by day/week with index on `(user_id, transaction_date)`
-- 🔴 Show info banner if income or expenses are zero for period
+- � Create `app/api/analytics/net-cashflow/route.ts`
+- � Query params: `from`, `to`, `account`, `currency`
+- � Response: `{ net, income, expenses, deltaPctPrev, sparkline: [{ date, net }] }`
+- � Daily vs weekly sparkline by window size
+- � Single aggregation query optimization pending
+- � Info banner logic to add later
 
 ### 9.6 Analytics Logic & Utilities
 
@@ -611,17 +611,15 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ### 9.11 Analytics UI - Shared Components & Logic
 
-- 🔴 Create `components/analytics/currency-toggle.tsx` (PEN/USD/EUR minimum, shared across all tiles)
-- 🔴 Create `components/analytics/date-range-picker.tsx` (shared header control: Last 30/90 days, Custom)
-- 🔴 Create `components/analytics/account-filter.tsx` (optional card/account filter dropdown)
-- 🔴 Create `hooks/use-analytics.ts` for data fetching (spend-by-category, spend-over-time, income-vs-expenses, net-cashflow)
-- 🔴 Add loading states (use Skeleton loaders, set `aria-busy` on cards)
-- 🔴 Add empty states (no data messages with CTAs)
-- 🔴 Implement cross-filtering: Any click selection updates all tiles and URL (`?from&to&category&period`) within ~150ms (debounced)
-- 🔴 Persistent filters: State restored on refresh, shareable as link
-- 🔴 Error handling: Non-blocking toasts; card-level retry button (`onRetry` refetches endpoint)
-- 🔴 i18n & Formats: Use locale for dates/numbers; respect `profiles.primary_currency`; show currency code in tooltips
-- 🔴 Performance: Pre-aggregate queries with SQL indexes; p95 < 150ms for ≤100k transactions
+- � Create `components/analytics/currency-toggle.tsx`
+- � Create `components/analytics/date-range-picker.tsx` (presets + active state)
+- � Create `components/analytics/account-filter.tsx`
+- � Create `hooks/use-analytics.ts`
+- � Add loading/empty states
+- � Implement cross-filtering and URL persistence
+- � Error handling: improve toasts + per-card retry later
+- � Formats: currency formatting; `periodLabel` for axes
+- 🔴 Performance: SQL pre-aggregation and p95 target pending
 
 ### 9.12 Tests
 
@@ -1089,3 +1087,20 @@ This document is the **single source of truth** for all features, tasks, and mil
   - Transactions/Statements now render skeleton rows instead of plain spinner text
   - Cards list and dashboard widgets (alerts, budgets, cards, expenses, recent txs, recurring) show polished skeletons
   - Added `aria-busy` on loading Cards and dashboard Cards
+
+### Delta – 2025-10-23 (later)
+
+- 🟢 Fix(analytics): Align time-series bins to period starts
+  - Updated `lib/analytics.ts::generatePeriodBins` to normalize to start-of-day/week/month/quarter
+  - Resolved empty charts where data existed but keys didn’t match aggregation periods
+- 🟢 Feat(analytics): Added `periodLabel` for weekly/monthly labels
+  - Month: "Jan 2025"; Week: "W1..W5" within month; Quarter: `Qn YYYY`
+  - Applied to Spend Over Time and Income vs Expenses responses and components
+- 🟢 Feat(analytics): Independent Week/Month toggles per chart
+- 🟢 Fix(validation): Relaxed date parsing in `lib/validators/analytics.ts` to accept ISO and YYYY-MM-DD
+- 🟢 UX(controls): Date range presets show active state with tolerance; outputs full ISO strings
+- 🟢 Cleanup: Removed temporary migration endpoint; avoided test migrations
+- 🟡 Follow-ups:
+  - Respect `profiles.timezone` in binning (currently UTC; timezone fetched)
+  - Add analytics tests (unit + integration)
+  - Performance pass for pre-aggregation/index tuning
