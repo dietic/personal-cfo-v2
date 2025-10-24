@@ -134,10 +134,10 @@ This document is the **single source of truth** for all features, tasks, and mil
 - 🟢 Create migration: `categories` table (is_preset, status enum) (Applied via 20251021000003)
 - 🟢 Create migration: `category_keywords` table (Applied via 20251021000003)
 - 🟢 Create migration: `excluded_keywords` table (Applied via 20251021000003)
-- 🟢 Create migration: `budgets` table (period_start, period_end) (Applied via 20251021000005)
-- 🟢 Create migration: `alerts` table (Applied via 20251021000005)
-- 🟢 Create migration: `alert_notifications` table (Applied via 20251021000005)
+- 🟢 Create migration: `budgets` table (period_start, period_end) (Applied via 20251021000005, renamed to 20251021000005_create_budgets.sql)
 - ⏸️ Create migration: `plans` table (optional, if not using static config)
+
+> **Note:** Alerts tables removed - feature not needed for v1
 
 ### 1.2 RLS Policies
 
@@ -149,9 +149,9 @@ This document is the **single source of truth** for all features, tasks, and mil
 - 🟢 Add RLS policy: `category_keywords` (auth.uid() = user_id)
 - 🟢 Add RLS policy: `excluded_keywords` (auth.uid() = user_id)
 - 🟢 Add RLS policy: `budgets` (auth.uid() = user_id)
-- 🟢 Add RLS policy: `alerts` (auth.uid() = user_id)
-- 🟢 Add RLS policy: `alert_notifications` (auth.uid() = user_id)
 - 🟢 Add RLS policy: `banks` (public read, admin write)
+
+> **Note:** Alert RLS policies removed - feature not needed for v1
 
 ### 1.3 Database Indexes
 
@@ -225,7 +225,8 @@ This document is the **single source of truth** for all features, tasks, and mil
 - 🟢 Create `canUploadStatement(userId)` check (monthly limit for free)
 - 🔴 Create `canCreateCategory(userId)` check
 - 🔴 Create `canCreateBudget(userId)` check
-- 🔴 Create `canCreateAlert(userId)` check
+
+> **Note:** `canCreateAlert` removed - feature not needed for v1
 
 ### 3.2 Plan Enforcement in APIs
 
@@ -233,7 +234,8 @@ This document is the **single source of truth** for all features, tasks, and mil
 - 🟢 Add plan checks to `POST /api/statements`
 - 🔴 Add plan checks to `POST /api/settings/categories`
 - 🔴 Add plan checks to `POST /api/budgets`
-- 🔴 Add plan checks to `POST /api/alerts`
+
+> **Note:** Alert plan checks removed - feature not needed for v1
 
 ### 3.3 Plan Upgrade/Downgrade Logic
 
@@ -637,50 +639,9 @@ This document is the **single source of truth** for all features, tasks, and mil
 
 ---
 
-## Phase 10: Alerts Module
+## Phase 10: ~~Alerts Module~~ (REMOVED - Feature not needed for v1)
 
-### 10.1 Alerts API
-
-- 🔴 Create `app/api/alerts/route.ts` (GET all, POST create)
-- 🔴 Create `app/api/alerts/[id]/route.ts` (GET one, PATCH update, DELETE)
-- 🔴 Create `app/api/alerts/notifications/route.ts` (GET recent notifications)
-- 🔴 Create `lib/validators/alerts.ts` with Zod schemas
-- 🔴 Implement plan checks (max alerts per plan)
-
-### 10.2 Alerts Logic
-
-- 🔴 Create `lib/alerts.ts` with alert evaluation logic
-- 🔴 Implement Budget Overrun rule (category monthly spend ≥ threshold)
-- 🔴 Implement Unusual Spike rule (daily spend > rolling avg × factor)
-- 🔴 Create alert evaluation function (called on transaction create/update)
-- 🔴 Store triggered alerts in `alert_notifications` table
-
-### 10.3 Alerts UI
-
-- 🔴 Create `/settings/alerts` page (alert management)
-- 🔴 Create `components/alerts/alerts-table.tsx`
-- 🔴 Create `components/alerts/alert-form.tsx` (modal/drawer)
-- 🔴 Create `components/alerts/alert-delete-dialog.tsx`
-- 🔴 Create `components/dashboard/alert-notification-card.tsx` (displays on dashboard)
-- 🔴 Add rule type selector (Budget Overrun, Unusual Spike)
-- 🔴 Add params input (threshold, factor, category)
-- 🔴 Add enable/disable toggle
-- 🔴 Create `hooks/use-alerts.ts`
-
-### 10.4 Real-Time Alert Evaluation
-
-- 🔴 Add alert evaluation to transaction creation flow
-- 🔴 Add alert evaluation to transaction update flow
-- 🔴 Create background job for periodic alert checks (optional, if not real-time)
-- 🔴 Send alert notifications to `alert_notifications` table
-- 🔴 Update `last_triggered_at` timestamp on alerts
-
-### 10.5 Tests
-
-- 🔴 Unit test: Budget Overrun rule
-- 🔴 Unit test: Unusual Spike rule
-- 🔴 Integration test: POST /api/alerts (plan limits)
-- 🔴 Integration test: alert triggers on transaction create
+**Note:** The Alerts feature has been removed from scope. All related code, migrations, translations, and documentation have been cleaned up. Alerts tables, API endpoints, UI components, and plan entitlements have been removed.
 
 ---
 
@@ -689,7 +650,6 @@ This document is the **single source of truth** for all features, tasks, and mil
 ### 11.1 Dashboard API
 
 - 🔴 Create `app/api/dashboard/summary/route.ts` (cards count, recent transactions, budget snapshot, monthly expenses)
-- 🔴 Create `app/api/dashboard/alerts/route.ts` (recent alert notifications)
 - 🔴 Optimize queries for performance (use indexes, joins)
 
 ### 11.2 Dashboard UI
