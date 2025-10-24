@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { useState } from "react";
@@ -32,6 +33,7 @@ export function CategoryColorPicker({
   onChange,
   label,
 }: ColorPickerProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [showCustom, setShowCustom] = useState(false);
 
@@ -56,7 +58,9 @@ export function CategoryColorPicker({
         </PopoverTrigger>
         <PopoverContent className="w-64" align="start">
           <div className="space-y-3">
-            <div className="text-sm font-medium">Select a color</div>
+            <div className="text-sm font-medium">
+              {t("settings.categories.colorPicker.selectColor")}
+            </div>
             <div className="grid grid-cols-6 gap-2">
               {PRESET_COLORS.map((color) => (
                 <button
@@ -91,11 +95,13 @@ export function CategoryColorPicker({
                   type="button"
                   onClick={() => setShowCustom(true)}
                 >
-                  Custom color...
+                  {t("settings.categories.colorPicker.customColorEllipsis")}
                 </Button>
               ) : (
                 <div className="space-y-2">
-                  <Label htmlFor="custom-color">Custom color</Label>
+                  <Label htmlFor="custom-color">
+                    {t("settings.categories.colorPicker.customColor")}
+                  </Label>
                   <div className="flex gap-2">
                     <input
                       id="custom-color"
@@ -113,7 +119,7 @@ export function CategoryColorPicker({
                         setOpen(false);
                       }}
                     >
-                      Done
+                      {t("common.done")}
                     </Button>
                   </div>
                 </div>
