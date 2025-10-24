@@ -421,5 +421,45 @@
       "passwordSubmit": "Desbloquear y Subir",
       "passwordCancel": "Cancelar"
     }
+  },
+  "chat": {
+    "bubble": {
+      "label": "Hablar con CFO"
+    },
+    "title": "Pregunta a tus Finanzas",
+    "inputPlaceholder": "Pregúntame sobre tus finanzas...",
+    "send": "Enviar",
+    "clear": "Limpiar chat",
+    "examples": {
+      "title": "Intenta preguntar:",
+      "food": "¿Cuánto gasté en comida el mes pasado?",
+      "biggest": "¿Cuál es mi categoría de gasto más grande?",
+      "budgets": "¿Estoy cumpliendo mis presupuestos?",
+      "income": "Muéstrame ingresos vs gastos"
+    },
+    "errors": {
+      "network": "Error de conexión. Intenta de nuevo.",
+      "rateLimit": "Demasiadas consultas. Espera {minutes} minutos.",
+      "planLimit": "Límite mensual alcanzado. ¡Actualiza para más!",
+      "offTopic": "Solo puedo ayudarte con tus finanzas.",
+      "generic": "Algo salió mal. Por favor intenta de nuevo."
+    },
+    "empty": {
+      "title": "¡Pregúntame lo que quieras sobre tus finanzas!",
+      "description": "Puedo ayudarte a analizar gastos, rastrear presupuestos y entender tus patrones financieros."
+    },
+    "usage": {
+      "remaining": "{count}/{limit} consultas restantes este mes",
+      "exceeded": "Has usado todas las {limit} consultas",
+      "unlimited": "Consultas ilimitadas"
+    },
+    "upgrade": {
+      "title": "El chat es una función Plus/Pro",
+      "description": "Actualiza para desbloquear información financiera impulsada por IA y obtener respuestas personalizadas sobre tus gastos.",
+      "cta": "Actualizar Ahora"
+    },
+    "typing": "Escribiendo...",
+    "you": "Tú",
+    "assistant": "Asistente CFO"
   }
 }

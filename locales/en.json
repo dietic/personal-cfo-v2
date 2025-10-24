@@ -422,5 +422,45 @@
       "passwordSubmit": "Unlock and Upload",
       "passwordCancel": "Cancel"
     }
+  },
+  "chat": {
+    "bubble": {
+      "label": "Chat with CFO"
+    },
+    "title": "Ask Your Finances",
+    "inputPlaceholder": "Ask me about your finances...",
+    "send": "Send",
+    "clear": "Clear chat",
+    "examples": {
+      "title": "Try asking:",
+      "food": "How much did I spend on food last month?",
+      "biggest": "What's my biggest expense category?",
+      "budgets": "Am I on track with my budgets?",
+      "income": "Show me income vs expenses"
+    },
+    "errors": {
+      "network": "Connection error. Try again.",
+      "rateLimit": "Too many queries. Wait {minutes} minutes.",
+      "planLimit": "Monthly limit reached. Upgrade for more!",
+      "offTopic": "I can only help with your finances.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "empty": {
+      "title": "Ask me anything about your finances!",
+      "description": "I can help you analyze spending, track budgets, and understand your financial patterns."
+    },
+    "usage": {
+      "remaining": "{count}/{limit} queries left this month",
+      "exceeded": "You've used all {limit} queries",
+      "unlimited": "Unlimited queries"
+    },
+    "upgrade": {
+      "title": "Chat is a Plus/Pro feature",
+      "description": "Upgrade to unlock AI-powered financial insights and get personalized answers about your spending.",
+      "cta": "Upgrade Now"
+    },
+    "typing": "Typing...",
+    "you": "You",
+    "assistant": "CFO Assistant"
   }
 }

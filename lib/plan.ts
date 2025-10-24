@@ -10,6 +10,7 @@ export interface PlanEntitlements {
   statementsPerMonth: number;
   categories: number;
   budgets: number;
+  chatQueriesPerMonth: number;
   keywordCategorization: boolean;
 }
 
@@ -19,6 +20,7 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     statementsPerMonth: 2,
     categories: 6,
     budgets: 2,
+    chatQueriesPerMonth: 0,
     keywordCategorization: true,
   },
   plus: {
@@ -26,6 +28,7 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     statementsPerMonth: Infinity,
     categories: 25,
     budgets: 10,
+    chatQueriesPerMonth: 50,
     keywordCategorization: true,
   },
   pro: {
@@ -33,6 +36,7 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     statementsPerMonth: Infinity,
     categories: Infinity,
     budgets: 15,
+    chatQueriesPerMonth: 200,
     keywordCategorization: true,
   },
   admin: {
@@ -40,6 +44,7 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     statementsPerMonth: Infinity,
     categories: Infinity,
     budgets: Infinity,
+    chatQueriesPerMonth: Infinity,
     keywordCategorization: true,
   },
 };
@@ -111,4 +116,28 @@ export function getRemainingCount(
   if (typeof limit !== "number") return 0;
   if (!isFinite(limit)) return Infinity;
   return Math.max(0, limit - currentCount);
+}
+
+/**
+ * Check if user can send a chat query based on current month count and plan
+ */
+export function canSendChatQuery(
+  plan: Plan,
+  currentMonthCount: number
+): boolean {
+  const entitlements = getPlanEntitlements(plan);
+  return currentMonthCount < entitlements.chatQueriesPerMonth;
+}
+
+/**
+ * Get remaining chat queries for the current month
+ */
+export function getRemainingChatQueries(
+  plan: Plan,
+  currentMonthCount: number
+): number {
+  const entitlements = getPlanEntitlements(plan);
+  const limit = entitlements.chatQueriesPerMonth;
+  if (!isFinite(limit)) return Infinity;
+  return Math.max(0, limit - currentMonthCount);
 }
