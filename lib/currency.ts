@@ -130,3 +130,160 @@ export function getCurrencySymbol(currency: Currency): string {
   };
   return symbols[currency];
 }
+
+/**
+ * Exchange rate cache
+ * Format: { rates: ExchangeRates, fetchedAt: timestamp }
+ */
+let exchangeRateCache: {
+  rates: ExchangeRates | null;
+  fetchedAt: number;
+} = {
+  rates: null,
+  fetchedAt: 0,
+};
+
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+/**
+ * Fetch exchange rates from primary API
+ * Primary: https://v6.exchangerate-api.com/v6/${API_KEY}/latest/PEN
+ */
+async function fetchFromPrimaryAPI(): Promise<ExchangeRates> {
+  const apiKey = process.env["NEXT_PUBLIC_EXCHANGERATE_API_KEY"];
+  if (!apiKey) {
+    throw new Error("NEXT_PUBLIC_EXCHANGERATE_API_KEY not configured");
+  }
+
+  const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/PEN`;
+  const response = await fetch(url, {
+    next: { revalidate: 3600 }, // Cache for 1 hour in Next.js
+  });
+
+  if (!response.ok) {
+    throw new Error(`Primary API failed: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+
+  if (data.result !== "success") {
+    throw new Error(`Primary API returned error: ${data["error-type"] || "unknown"}`);
+  }
+
+  return {
+    base: "PEN",
+    rates: data.conversion_rates,
+    timestamp: Date.now(),
+  };
+}
+
+/**
+ * Fetch exchange rates from fallback API
+ * Fallback: https://api.exchangerate.fun/latest?base=PEN
+ */
+async function fetchFromFallbackAPI(): Promise<ExchangeRates> {
+  const url = "https://api.exchangerate.fun/latest?base=PEN";
+  const response = await fetch(url, {
+    next: { revalidate: 3600 },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Fallback API failed: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+
+  if (!data.rates) {
+    throw new Error("Fallback API returned invalid data");
+  }
+
+  return {
+    base: "PEN",
+    rates: data.rates,
+    timestamp: Date.now(),
+  };
+}
+
+/**
+ * Get exchange rates with caching and fallback logic
+ * @returns ExchangeRates object with PEN as base currency
+ * @throws Error if both primary and fallback APIs fail
+ */
+export async function getExchangeRates(): Promise<ExchangeRates> {
+  const now = Date.now();
+
+  // Check cache validity (1-hour TTL)
+  if (
+    exchangeRateCache.rates &&
+    now - exchangeRateCache.fetchedAt < CACHE_TTL_MS
+  ) {
+    return exchangeRateCache.rates;
+  }
+
+  // Try primary API first
+  try {
+    const rates = await fetchFromPrimaryAPI();
+    exchangeRateCache = { rates, fetchedAt: now };
+    return rates;
+  } catch (primaryError) {
+    console.error("Primary exchange rate API failed:", primaryError);
+
+    // Try fallback API
+    try {
+      const rates = await fetchFromFallbackAPI();
+      exchangeRateCache = { rates, fetchedAt: now };
+      return rates;
+    } catch (fallbackError) {
+      console.error("Fallback exchange rate API failed:", fallbackError);
+
+      // If we have stale cache, return it as last resort
+      if (exchangeRateCache.rates) {
+        console.warn("Using stale exchange rate cache");
+        return exchangeRateCache.rates;
+      }
+
+      // Both APIs failed and no cache available
+      throw new Error(
+        "Failed to fetch exchange rates from all sources. Please try again later."
+      );
+    }
+  }
+}
+
+/**
+ * Get exchange rate for a specific currency pair
+ * @param from Source currency
+ * @param to Target currency
+ * @returns Exchange rate multiplier
+ */
+export async function getExchangeRate(
+  from: Currency,
+  to: Currency
+): Promise<number> {
+  if (from === to) return 1;
+
+  const rates = await getExchangeRates();
+
+  // If base currency matches source, use rate directly
+  if (rates.base === from) {
+    const rate = rates.rates[to];
+    if (!rate) throw new Error(`No exchange rate found for ${to}`);
+    return rate;
+  }
+
+  // If base currency matches target, divide by rate
+  if (rates.base === to) {
+    const rate = rates.rates[from];
+    if (!rate) throw new Error(`No exchange rate found for ${from}`);
+    return 1 / rate;
+  }
+
+  // Otherwise, convert through base currency
+  const fromRate = rates.rates[from];
+  const toRate = rates.rates[to];
+  if (!fromRate || !toRate) {
+    throw new Error(`Missing exchange rates for ${from} or ${to}`);
+  }
+
+  return toRate / fromRate;
+}
