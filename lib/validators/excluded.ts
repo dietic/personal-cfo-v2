@@ -31,9 +31,7 @@ export const updateExcludedKeywordSchema = z.object({
 export type CreateExcludedKeywordInput = z.infer<
   typeof createExcludedKeywordSchema
 >;
-export type BulkCreateExcludedInput = z.infer<
-  typeof bulkCreateExcludedSchema
->;
+export type BulkCreateExcludedInput = z.infer<typeof bulkCreateExcludedSchema>;
 export type UpdateExcludedKeywordInput = z.infer<
   typeof updateExcludedKeywordSchema
 >;

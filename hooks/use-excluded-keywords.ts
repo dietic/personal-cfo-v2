@@ -60,8 +60,13 @@ export function useExcludedKeywords() {
   });
 
   const updateMut = useMutation({
-    mutationFn: ({ id, input }: { id: string; input: UpdateExcludedKeywordInput }) =>
-      updateExcluded(id, input),
+    mutationFn: ({
+      id,
+      input,
+    }: {
+      id: string;
+      input: UpdateExcludedKeywordInput;
+    }) => updateExcluded(id, input),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["excluded"] }),
   });
 

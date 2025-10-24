@@ -1104,3 +1104,32 @@ This document is the **single source of truth** for all features, tasks, and mil
   - Respect `profiles.timezone` in binning (currently UTC; timezone fetched)
   - Add analytics tests (unit + integration)
   - Performance pass for pre-aggregation/index tuning
+
+### Delta – 2025-10-24
+
+- 🟢 Feat(settings): Complete Settings UI restructure with matching table patterns
+  - Rewrote Categories, Keywords, and Excluded tabs using proper shadcn Table components
+  - Wrapped tables inside Card with CardHeader + CardContent
+  - Moved Items per page into Card header section (next to pager)
+  - Added three-dot DropdownMenu for row actions (Edit/Delete)
+  - Implemented skeleton loading states for all tables
+  - Simplified Settings page layout (tabs outside card wrapper)
+- 🟢 Feat(settings/categories): Enhanced category form with emoji and color pickers
+  - Integrated emoji-picker-react (Theme.AUTO, height 400, no preview)
+  - Added 6 preset color circles (h-7 w-7, no borders, ring on selection)
+  - Implemented custom color picker using react-colorful (HexColorPicker)
+  - Added hex input field with color preview swatch
+  - Minimal UI sizing (text-base emoji, h-7 w-7 circles)
+- 🟢 Chore(database): Migrated category colors from Tailwind names to hex values
+  - Created migration 20251024000001_update_category_colors_to_hex.sql
+  - Executed UPDATE via Supabase MCP (all 12 categories converted)
+  - Updated seed data to insert hex colors for default categories
+  - Table now displays only color swatch without text label
+- 🟢 UX(forms): Added loading states to category form buttons
+  - Submit button shows Loader2 icon when creating/updating
+  - Both Cancel and Submit buttons disabled during operations
+  - Matches pattern from Cards form implementation
+- 🟢 Chore(deps): Installed emoji-picker-react v4.14.2 and react-colorful v5.6.1
+- 🟢 Style(colorful): Added custom CSS for react-colorful to match shadcn/ui theme
+  - Integrated with design tokens (border-radius, colors)
+  - Responsive to light/dark modes

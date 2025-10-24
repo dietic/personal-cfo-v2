@@ -49,14 +49,19 @@ async function updateCategory(
 }
 
 async function deleteCategory(id: string): Promise<void> {
-  const res = await fetch(`/api/settings/categories/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/settings/categories/${id}`, {
+    method: "DELETE",
+  });
   if (!res.ok) throw new Error((await res.json()).error || "Delete failed");
 }
 
 export function useCategories() {
   const qc = useQueryClient();
 
-  const query = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
+  const query = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
 
   const createMut = useMutation({
     mutationFn: createCategory,
@@ -87,4 +92,3 @@ export function useCategories() {
     isDeleting: deleteMut.isPending,
   };
 }
- 

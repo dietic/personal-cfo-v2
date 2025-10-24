@@ -103,7 +103,9 @@ export async function POST(req: NextRequest) {
       const isUnique = (insertError as { code?: string }).code === "23505";
       return NextResponse.json(
         {
-          error: isUnique ? "Duplicate category name" : "Failed to create category",
+          error: isUnique
+            ? "Duplicate category name"
+            : "Failed to create category",
           details: insertError.message,
         },
         { status: isUnique ? 409 : 500 }
@@ -121,4 +123,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
- 

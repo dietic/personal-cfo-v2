@@ -94,7 +94,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true, data: data ?? [] }, { status: 201 });
+    return NextResponse.json(
+      { success: true, data: data ?? [] },
+      { status: 201 }
+    );
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -37,12 +37,17 @@ export async function PATCH(
 
     if (error) {
       if ((error as { code?: string }).code === "PGRST116") {
-        return NextResponse.json({ error: "Category not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Category not found" },
+          { status: 404 }
+        );
       }
       const isUnique = (error as { code?: string }).code === "23505";
       return NextResponse.json(
         {
-          error: isUnique ? "Duplicate category name" : "Failed to update category",
+          error: isUnique
+            ? "Duplicate category name"
+            : "Failed to update category",
           details: error.message,
         },
         { status: isUnique ? 409 : 500 }
@@ -81,7 +86,10 @@ export async function DELETE(
 
     if (error) {
       if ((error as { code?: string }).code === "PGRST116") {
-        return NextResponse.json({ error: "Category not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Category not found" },
+          { status: 404 }
+        );
       }
       return NextResponse.json(
         { error: "Failed to delete category", details: error.message },

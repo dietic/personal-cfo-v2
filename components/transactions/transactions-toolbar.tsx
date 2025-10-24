@@ -18,7 +18,7 @@ import { useCards } from "@/hooks/use-cards";
 import { useCategories } from "@/hooks/use-categories";
 import { useTranslation } from "@/hooks/use-translation";
 import type { Currency } from "@/lib/currency";
-import { Plus, SlidersHorizontal, Upload } from "lucide-react";
+import { Plus, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 
 export type Filters = {
@@ -209,10 +209,6 @@ export function TransactionsToolbar({
         </div>
       </div>
       <div className="flex items-end justify-end gap-2">
-        <Button variant="secondary" size="sm" onClick={onImport}>
-          <Upload className="mr-2 h-4 w-4" />{" "}
-          {t("transactions.importStatement")}
-        </Button>
         <Button size="sm" onClick={onOpenAdd}>
           <Plus className="mr-2 h-4 w-4" /> {t("transactions.addTransaction")}
         </Button>

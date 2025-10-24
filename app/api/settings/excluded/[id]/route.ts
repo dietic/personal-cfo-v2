@@ -33,11 +33,19 @@ export async function PATCH(
 
     if (error) {
       if ((error as { code?: string }).code === "PGRST116") {
-        return NextResponse.json({ error: "Excluded keyword not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Excluded keyword not found" },
+          { status: 404 }
+        );
       }
       const isUnique = (error as { code?: string }).code === "23505";
       return NextResponse.json(
-        { error: isUnique ? "Duplicate keyword" : "Failed to update excluded keyword", details: error.message },
+        {
+          error: isUnique
+            ? "Duplicate keyword"
+            : "Failed to update excluded keyword",
+          details: error.message,
+        },
         { status: isUnique ? 409 : 500 }
       );
     }
@@ -73,7 +81,10 @@ export async function DELETE(
 
     if (error) {
       if ((error as { code?: string }).code === "PGRST116") {
-        return NextResponse.json({ error: "Excluded keyword not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Excluded keyword not found" },
+          { status: 404 }
+        );
       }
       return NextResponse.json(
         { error: "Failed to delete excluded keyword", details: error.message },

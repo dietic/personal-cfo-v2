@@ -33,11 +33,17 @@ export async function PATCH(
 
     if (error) {
       if ((error as { code?: string }).code === "PGRST116") {
-        return NextResponse.json({ error: "Keyword not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Keyword not found" },
+          { status: 404 }
+        );
       }
       const isUnique = (error as { code?: string }).code === "23505";
       return NextResponse.json(
-        { error: isUnique ? "Duplicate keyword" : "Failed to update keyword", details: error.message },
+        {
+          error: isUnique ? "Duplicate keyword" : "Failed to update keyword",
+          details: error.message,
+        },
         { status: isUnique ? 409 : 500 }
       );
     }
@@ -73,7 +79,10 @@ export async function DELETE(
 
     if (error) {
       if ((error as { code?: string }).code === "PGRST116") {
-        return NextResponse.json({ error: "Keyword not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Keyword not found" },
+          { status: 404 }
+        );
       }
       return NextResponse.json(
         { error: "Failed to delete keyword", details: error.message },

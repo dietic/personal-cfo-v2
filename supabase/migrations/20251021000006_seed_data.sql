@@ -25,12 +25,12 @@ RETURNS TRIGGER AS $$
 BEGIN
   -- Insert 6 preset categories for the new user
   INSERT INTO public.categories (user_id, name, emoji, color, is_preset, status) VALUES
-    (NEW.id, 'Food', '🍔', 'orange', TRUE, 'active'),
-    (NEW.id, 'Housing', '🏠', 'slate', TRUE, 'active'),
-    (NEW.id, 'Transportation', '🚗', 'teal', TRUE, 'active'),
-    (NEW.id, 'Income', '💵', 'indigo', TRUE, 'active'),
-    (NEW.id, 'Entertainment', '🎮', 'purple', TRUE, 'active'),
-    (NEW.id, 'Shopping', '🛒', 'blue', TRUE, 'active');
+    (NEW.id, 'Food', '🍔', '#f97316', TRUE, 'active'),
+    (NEW.id, 'Housing', '🏠', '#64748b', TRUE, 'active'),
+    (NEW.id, 'Transportation', '🚗', '#14b8a6', TRUE, 'active'),
+    (NEW.id, 'Income', '💵', '#6366f1', TRUE, 'active'),
+    (NEW.id, 'Entertainment', '🎮', '#a855f7', TRUE, 'active'),
+    (NEW.id, 'Shopping', '🛒', '#3b82f6', TRUE, 'active');
 
   RETURN NEW;
 END;

@@ -65,12 +65,14 @@ export function useKeywords(categoryId: string | null) {
   const updateMut = useMutation({
     mutationFn: ({ id, input }: { id: string; input: UpdateKeywordInput }) =>
       updateKeyword(id, input),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["keywords", categoryId] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["keywords", categoryId] }),
   });
 
   const deleteMut = useMutation({
     mutationFn: (id: string) => deleteKeyword(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["keywords", categoryId] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["keywords", categoryId] }),
   });
 
   return {
