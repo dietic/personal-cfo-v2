@@ -1,6 +1,6 @@
 /**
  * Plan Entitlements & Enforcement
- * Enforces plan limits on cards, statements, categories, alerts, and budgets
+ * Enforces plan limits on cards, statements, categories, and budgets
  */
 
 export type Plan = "free" | "plus" | "pro" | "admin";
@@ -9,7 +9,6 @@ export interface PlanEntitlements {
   cards: number;
   statementsPerMonth: number;
   categories: number;
-  alerts: number;
   budgets: number;
   keywordCategorization: boolean;
 }
@@ -19,7 +18,6 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     cards: 1,
     statementsPerMonth: 2,
     categories: 6,
-    alerts: 2,
     budgets: 2,
     keywordCategorization: true,
   },
@@ -27,7 +25,6 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     cards: 5,
     statementsPerMonth: Infinity,
     categories: 25,
-    alerts: 6,
     budgets: 10,
     keywordCategorization: true,
   },
@@ -35,7 +32,6 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     cards: Infinity,
     statementsPerMonth: Infinity,
     categories: Infinity,
-    alerts: 10,
     budgets: 15,
     keywordCategorization: true,
   },
@@ -43,7 +39,6 @@ const PLAN_ENTITLEMENTS: Record<Plan, PlanEntitlements> = {
     cards: Infinity,
     statementsPerMonth: Infinity,
     categories: Infinity,
-    alerts: Infinity,
     budgets: Infinity,
     keywordCategorization: true,
   },
@@ -101,14 +96,6 @@ export function canCreateCategory(
 export function canCreateBudget(plan: Plan, currentCount: number): boolean {
   const entitlements = getPlanEntitlements(plan);
   return currentCount < entitlements.budgets;
-}
-
-/**
- * Check if user can create an alert based on current count and plan
- */
-export function canCreateAlert(plan: Plan, currentCount: number): boolean {
-  const entitlements = getPlanEntitlements(plan);
-  return currentCount < entitlements.alerts;
 }
 
 /**
