@@ -27,10 +27,6 @@
         "title": "Clear Insights",
         "description": "Beautiful charts that actually make sense. Track spending patterns across multiple currencies."
       },
-      "alerts": {
-        "title": "Stay Informed",
-        "description": "Get notified about budget overruns and unusual spending before it becomes a problem."
-      },
       "cards": {
         "title": "Multi-Card Support",
         "description": "Track unlimited cards and accounts in one place. See your complete financial picture."
@@ -53,8 +49,7 @@
         "feature2": "1 card",
         "feature3": "6 preset categories",
         "feature4": "2 budgets",
-        "feature5": "2 alerts",
-        "feature6": "Basic analytics"
+        "feature5": "Basic analytics"
       },
       "plus": {
         "name": "Plus",
@@ -63,10 +58,9 @@
         "feature2": "Up to 5 cards",
         "feature3": "Up to 25 categories",
         "feature4": "10 budgets",
-        "feature5": "6 alerts",
-        "feature6": "Advanced analytics",
-        "feature7": "Email support",
-        "feature8": "Export data (CSV)"
+        "feature5": "Advanced analytics",
+        "feature6": "Email support",
+        "feature7": "Export data (CSV)"
       },
       "pro": {
         "name": "Pro",
@@ -75,10 +69,9 @@
         "feature2": "Unlimited cards",
         "feature3": "Unlimited categories",
         "feature4": "15 budgets",
-        "feature5": "10 alerts",
-        "feature6": "Priority support",
-        "feature7": "API access (coming soon)",
-        "feature8": "Custom reports"
+        "feature5": "Priority support",
+        "feature6": "API access (coming soon)",
+        "feature7": "Custom reports"
       }
     },
     "cta": {
@@ -128,7 +121,6 @@
       "statements": "Statements",
       "analytics": "Analytics",
       "budgets": "Budgets",
-      "alerts": "Alerts",
       "settings": "Settings",
       "admin": "Admin"
     },
@@ -148,13 +140,6 @@
       "noCards": "No cards yet",
       "addFirstCard": "Add First Card",
       "creditCard": "Credit Card"
-    },
-    "alerts": {
-      "title": "Active Alerts",
-      "noPending": "All clear",
-      "pending": "Notifications pending",
-      "viewAlerts": "View Alerts",
-      "manageAlerts": "Manage Alerts"
     },
     "expenses": {
       "title": "Monthly Expenses",

@@ -27,10 +27,6 @@
         "title": "Información Clara",
         "description": "Gráficos hermosos que realmente tienen sentido. Rastrea patrones de gasto en múltiples monedas."
       },
-      "alerts": {
-        "title": "Mantente Informado",
-        "description": "Recibe notificaciones sobre excesos de presupuesto y gastos inusuales antes de que sea un problema."
-      },
       "cards": {
         "title": "Múltiples Tarjetas",
         "description": "Rastrea tarjetas y cuentas ilimitadas en un solo lugar. Ve tu panorama financiero completo."
@@ -53,8 +49,7 @@
         "feature2": "1 tarjeta",
         "feature3": "6 categorías predefinidas",
         "feature4": "2 presupuestos",
-        "feature5": "2 alertas",
-        "feature6": "Analítica básica"
+        "feature5": "Analítica básica"
       },
       "plus": {
         "name": "Plus",
@@ -63,10 +58,9 @@
         "feature2": "Hasta 5 tarjetas",
         "feature3": "Hasta 25 categorías",
         "feature4": "10 presupuestos",
-        "feature5": "6 alertas",
-        "feature6": "Analítica avanzada",
-        "feature7": "Soporte por email",
-        "feature8": "Exportar datos (CSV)"
+        "feature5": "Analítica avanzada",
+        "feature6": "Soporte por email",
+        "feature7": "Exportar datos (CSV)"
       },
       "pro": {
         "name": "Pro",
@@ -75,10 +69,9 @@
         "feature2": "Tarjetas ilimitadas",
         "feature3": "Categorías ilimitadas",
         "feature4": "15 presupuestos",
-        "feature5": "10 alertas",
-        "feature6": "Soporte prioritario",
-        "feature7": "Acceso API (próximamente)",
-        "feature8": "Reportes personalizados"
+        "feature5": "Soporte prioritario",
+        "feature6": "Acceso API (próximamente)",
+        "feature7": "Reportes personalizados"
       }
     },
     "cta": {
@@ -127,7 +120,6 @@
       "statements": "Estados de cuenta",
       "analytics": "Analítica",
       "budgets": "Presupuestos",
-      "alerts": "Alertas",
       "settings": "Configuración",
       "admin": "Admin"
     },
@@ -147,13 +139,6 @@
       "noCards": "No tienes tarjetas aún",
       "addFirstCard": "Agregar primera tarjeta",
       "creditCard": "Tarjeta de crédito"
-    },
-    "alerts": {
-      "title": "Alertas Activas",
-      "noPending": "Todo en orden",
-      "pending": "Notificaciones pendientes",
-      "viewAlerts": "Ver Alertas",
-      "manageAlerts": "Gestionar Alertas"
     },
     "expenses": {
       "title": "Gastos Mensuales",
