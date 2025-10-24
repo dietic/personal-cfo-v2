@@ -9,6 +9,7 @@
  */
 
 import { extractTransactionsWithAI } from "@/lib/ai/parse-statement";
+import { categorizeTransaction } from "@/lib/categorization";
 import { inngest } from "@/lib/inngest";
 import { logger } from "@/lib/logger";
 import type { Database } from "@/types/database";
@@ -102,9 +103,49 @@ export async function processStatementCore(
     }
   }
 
-  // 3) Insert transactions
+  // 3) Fetch user's category keywords for auto-categorization
+  const keywords: Array<{ category_id: string; keyword: string }> = [];
+  {
+    const supabase = getSupabase();
+    const { data } = await (
+      supabase as unknown as {
+        from: (table: string) => {
+          select: (columns: string) => {
+            eq: (
+              column: string,
+              value: string
+            ) => {
+              order: (
+                column: string,
+                options: { ascending: boolean }
+              ) => Promise<{
+                data: Array<{ category_id: string; keyword: string }> | null;
+              }>;
+            };
+          };
+        };
+      }
+    )
+      .from("category_keywords")
+      .select("category_id, keyword")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: true }); // First created = first priority
+
+    if (data) {
+      keywords.push(...data);
+    }
+  }
+
+  // 4) Categorize and insert transactions
   const transactionsToInsert = transactions.map((txn) => {
     const transactionDate = new Date(txn.date);
+
+    // Auto-categorize based on keywords
+    const category_id = categorizeTransaction(
+      { description: txn.description, merchant: txn.merchant },
+      keywords
+    );
+
     return {
       user_id: userId,
       statement_id: statementId,
@@ -115,7 +156,7 @@ export async function processStatementCore(
       amount_cents: -Math.abs(Math.round(txn.amount * 100)),
       currency: txn.currency,
       type: "expense" as const,
-      category_id: null,
+      category_id, // ← Auto-assigned via categorization engine!
     };
   });
 
@@ -136,7 +177,18 @@ export async function processStatementCore(
     }
   }
 
-  // 4) Mark statement as completed
+  // Log categorization stats
+  const categorizedCount = transactionsToInsert.filter(
+    (t) => t.category_id !== null
+  ).length;
+  logger.info("inngest.process_statement.categorization_stats", {
+    statementId,
+    total: transactionsToInsert.length,
+    categorized: categorizedCount,
+    uncategorized: transactionsToInsert.length - categorizedCount,
+  });
+
+  // 5) Mark statement as completed
   {
     const supabase = getSupabase();
     await (
@@ -220,46 +272,97 @@ export const processStatement = inngest.createFunction(
       }
     });
 
-    // Step 3: Insert transactions
-    const transactionCount = await step.run("insert-transactions", async () => {
-      // quiet info
-
-      const transactionsToInsert = transactions.map((txn) => {
-        const transactionDate = new Date(txn.date);
-
-        return {
-          user_id: userId,
-          statement_id: statementId,
-          card_id: cardId,
-          merchant: txn.merchant,
-          description: txn.description,
-          transaction_date: transactionDate.toISOString().split("T")[0], // YYYY-MM-DD
-          amount_cents: -Math.abs(Math.round(txn.amount * 100)), // Convert to cents as negative (expense)
-          currency: txn.currency,
-          type: "expense" as const,
-          category_id: null, // Will be categorized later via keywords
-        };
-      });
-
+    // Step 3: Fetch category keywords for auto-categorization
+    const keywords = await step.run("fetch-keywords", async () => {
       const supabase = getSupabase();
-      const { error: txnError } = await (
+      const { data } = await (
         supabase as unknown as {
           from: (table: string) => {
-            insert: (data: unknown) => Promise<{ error: Error | null }>;
+            select: (columns: string) => {
+              eq: (
+                column: string,
+                value: string
+              ) => {
+                order: (
+                  column: string,
+                  options: { ascending: boolean }
+                ) => Promise<{
+                  data: Array<{ category_id: string; keyword: string }> | null;
+                }>;
+              };
+            };
           };
         }
       )
-        .from("transactions")
-        .insert(transactionsToInsert);
+        .from("category_keywords")
+        .select("category_id, keyword")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: true }); // First created = first priority
 
-      if (txnError) {
-        throw new Error(`Failed to insert transactions: ${txnError.message}`);
-      }
-
-      return transactionsToInsert.length;
+      return (data || []) as Array<{ category_id: string; keyword: string }>;
     });
 
-    // Step 4: Mark statement as completed
+    // Step 4: Categorize and insert transactions
+    const { transactionCount, categorizedCount } = await step.run(
+      "categorize-and-insert-transactions",
+      async () => {
+        const transactionsToInsert = transactions.map((txn) => {
+          const transactionDate = new Date(txn.date);
+
+          // Auto-categorize based on keywords
+          const category_id = categorizeTransaction(
+            { description: txn.description, merchant: txn.merchant },
+            keywords
+          );
+
+          return {
+            user_id: userId,
+            statement_id: statementId,
+            card_id: cardId,
+            merchant: txn.merchant,
+            description: txn.description,
+            transaction_date: transactionDate.toISOString().split("T")[0], // YYYY-MM-DD
+            amount_cents: -Math.abs(Math.round(txn.amount * 100)), // Convert to cents as negative (expense)
+            currency: txn.currency,
+            type: "expense" as const,
+            category_id, // ← Auto-assigned via categorization engine!
+          };
+        });
+
+        const supabase = getSupabase();
+        const { error: txnError } = await (
+          supabase as unknown as {
+            from: (table: string) => {
+              insert: (data: unknown) => Promise<{ error: Error | null }>;
+            };
+          }
+        )
+          .from("transactions")
+          .insert(transactionsToInsert);
+
+        if (txnError) {
+          throw new Error(`Failed to insert transactions: ${txnError.message}`);
+        }
+
+        const categorizedCount = transactionsToInsert.filter(
+          (t) => t.category_id !== null
+        ).length;
+
+        logger.info("inngest.function.categorization_stats", {
+          statementId,
+          total: transactionsToInsert.length,
+          categorized: categorizedCount,
+          uncategorized: transactionsToInsert.length - categorizedCount,
+        });
+
+        return {
+          transactionCount: transactionsToInsert.length,
+          categorizedCount,
+        };
+      }
+    );
+
+    // Step 5: Mark statement as completed
     await step.run("mark-completed", async () => {
       const supabase = getSupabase();
       await (
@@ -281,13 +384,15 @@ export const processStatement = inngest.createFunction(
       logger.info("inngest.function.completed", {
         statementId,
         transactionCount,
+        categorizedCount,
       });
     });
 
     return {
       statementId,
       transactionCount,
-      status: "completed",
+      categorizedCount,
+      status: "completed" as const,
     };
   }
 );
