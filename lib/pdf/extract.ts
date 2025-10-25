@@ -64,21 +64,21 @@ export async function extractTextFromPDF(
   }
 
   // Use system-level qpdf to validate password (no node_modules)
-  try {
-    const ok = await validateWithQpdf(fileBuffer, password);
-    // if (ok === "ok") return { success: true, text: "[UNLOCK_ONLY_STUB]" };
-    if (ok === "need_password")
-      return {
-        success: false,
-        text: "",
-        error: "PDF is password protected. Please provide the password.",
-      };
-    if (ok === "incorrect_password")
-      return { success: false, text: "", error: "incorrect_password" };
-    // If qpdf result is unknown, proceed to try text extraction; pdftotext errors will surface.
-  } catch (_e: unknown) {
-    // If qpdf is not available, continue to attempt text extraction directly.
-  }
+  // try {
+  //   const ok = await validateWithQpdf(fileBuffer, password);
+  //   if (ok === "ok") return { success: true, text: "[UNLOCK_ONLY_STUB]" };
+  //   if (ok === "need_password")
+  //     return {
+  //       success: false,
+  //       text: "",
+  //       error: "PDF is password protected. Please provide the password.",
+  //     };
+  //   if (ok === "incorrect_password")
+  //     return { success: false, text: "", error: "incorrect_password" };
+  //   // If qpdf result is unknown, proceed to try text extraction; pdftotext errors will surface.
+  // } catch (_e: unknown) {
+  //   // If qpdf is not available, continue to attempt text extraction directly.
+  // }
 
   // Actual text extraction using system `pdftotext` (Poppler)
   try {
