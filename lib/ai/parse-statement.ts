@@ -154,7 +154,12 @@ When standardizing merchant names:
   - "APPARKA CLINICA", "APPARKA GUARDIA CIVIL", "APPARKA SEDE XYZ" → "Apparka"
   - "RAPPI RESTAURANTES", "COOLBOX TIENDA 123", "SMARTFIT LOS OLIVOS" → "Rappi", "Coolbox", "Smartfit"
   - This rule applies unless the suffix forms a distinct, widely known sub-brand (keep "Uber Eats", "Google Play").
-- Descriptor stop-list (strip when following a brand token; ignore accents/case): clinica, restaurante(s), farmacia(s), guardia civil, comisaria, sede, sucursal, agencia, tienda, local, sede central, oficina, mall, centro comercial, larcomar, miraflores, san isidro, san borja, surco, los olivos, independencia, callao, arequipa, trujillo, chiclayo, cusco, piura, loja, lima, peru, pe, s.a., sac, eirl, sa, suc, store, store numbers.
+- **CRITICAL: Remove transaction type suffixes and country codes:** Many bank statements append transaction type indicators or country codes after merchant names. These must be stripped from the merchant field. Examples:
+  - "Smart Fit Peru MIRAFLORES PE CONSUMO" → "Smart Fit Peru MIRAFLORES" (remove "PE CONSUMO")
+  - "STARBUCKS LIMA PE COMPRA" → "Starbucks Lima" (remove "PE COMPRA")
+  - "WALMART PERU PE DEBITO" → "Walmart Peru" (remove "PE DEBITO")
+  - Common suffixes to remove: "PE CONSUMO", "PE COMPRA", "PE DEBITO", "USD CONSUMO", "EUR COMPRA", "CONSUMO", "COMPRA", "DEBITO", "CREDITO", "PURCHASE", "DEBIT", "CREDIT"
+- Descriptor stop-list (strip when following a brand token; ignore accents/case): clinica, restaurante(s), farmacia(s), guardia civil, comisaria, sede, sucursal, agencia, tienda, local, sede central, oficina, mall, centro comercial, larcomar, miraflores, san isidro, san borja, surco, los olivos, independencia, callao, arequipa, trujillo, chiclayo, cusco, piura, loja, lima, peru, pe, s.a., sac, eirl, sa, suc, store, store numbers, consumo, compra, debito, credito, purchase, debit, credit.
 - Handle local brand noise and branches: remove neighborhood/district names and store numbers; keep just the brand (e.g., "COOLBOX MIRAFLORES" → "Coolbox"; "SAGA FALABELLA LARCOMAR" → "Saga Falabella").
 - Prefer the more specific sub-brand when unambiguous (e.g., "Uber Eats" over "Uber" if "EATS" appears; "Google Play" over "Google" if "GOOGLE*" + app/billing pattern).
 - Use proper capitalization (e.g., "Makro" not "MAKRO").
