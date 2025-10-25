@@ -66,7 +66,7 @@ export async function extractTextFromPDF(
   // Use system-level qpdf to validate password (no node_modules)
   try {
     const ok = await validateWithQpdf(fileBuffer, password);
-    if (ok === "ok") return { success: true, text: "[UNLOCK_ONLY_STUB]" };
+    // if (ok === "ok") return { success: true, text: "[UNLOCK_ONLY_STUB]" };
     if (ok === "need_password")
       return {
         success: false,
