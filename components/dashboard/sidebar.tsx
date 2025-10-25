@@ -5,7 +5,6 @@ import { useLocale } from "@/contexts/locale-context";
 import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import {
-  AlertCircle,
   CreditCard,
   FileText,
   Globe,
@@ -27,7 +26,6 @@ const navigation = [
   { name: "statements", href: "/statements", icon: FileText },
   { name: "analytics", href: "/analytics", icon: LineChart },
   { name: "budgets", href: "/budgets", icon: Target },
-  { name: "alerts", href: "/alerts", icon: AlertCircle },
 ];
 
 const bottomNavigation = [
@@ -45,7 +43,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="hidden md:flex h-full w-64 flex-col border-r bg-card">
+    <div className="hidden md:flex h-full w-64 flex-col border-r bg-card relative z-10">
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
         <Link
