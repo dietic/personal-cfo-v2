@@ -1,58 +1,68 @@
 "use client";
 
 import { ChatWidget } from "@/components/chat";
-import { ChatBubble } from "@/components/chat/chat-bubble";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
-import { useTranslation } from "@/hooks/use-translation";
-import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function ChatProvider() {
-  const { profile } = useAuth();
-  const { t } = useTranslation();
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const { profile, loading, refreshProfile } = useAuth();
+  const [serverEligible, setServerEligible] = useState<boolean | null>(null);
 
-  // Don't render anything if no profile
+  // Ensure we have the latest plan (handles server-side plan changes)
+  useEffect(() => {
+    refreshProfile().catch(() => void 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // On refresh, double-check plan from the server in case client state is stale
+  useEffect(() => {
+    if (loading) return;
+    // If client already says eligible (non-free), skip network check
+    if (profile && profile.plan !== "free") {
+      setServerEligible(true);
+      return;
+    }
+    let cancelled = false;
+    fetch("/api/me", { cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        const json = (await res.json()) as {
+          success: boolean;
+          data: { profile: { plan: "free" | "plus" | "pro" | "admin" } };
+        };
+        return json.data.profile.plan;
+      })
+      .then((plan) => {
+        if (cancelled) return;
+        if (!plan) {
+          setServerEligible(false);
+        } else {
+          setServerEligible(plan !== "free");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setServerEligible(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [loading, profile]);
+
+  // Compute eligibility without hooks to keep hook order stable across renders
+  const eligible = (() => {
+    if (profile && profile.plan !== "free") return true;
+    if (serverEligible !== null) return serverEligible;
+    return false;
+  })();
+
+  // While loading auth/profile, don't render anything
+  if (loading) return null;
+
+  // If profile is not available, do not render the chat yet
   if (!profile) return null;
 
-  // Free plan users see upgrade modal
-  if (profile.plan === "free") {
-    return (
-      <>
-        <ChatBubble onClick={() => setShowUpgradeModal(true)} />
-        <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{t("chat.upgrade.title")}</DialogTitle>
-              <DialogDescription>
-                {t("chat.upgrade.description")}
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowUpgradeModal(false)}
-              >
-                Cancel
-              </Button>
-              <Link href="/settings?tab=billing">
-                <Button>{t("chat.upgrade.cta")}</Button>
-              </Link>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </>
-    );
-  }
+  // Hide chat entirely for free plan users (no bubble, no modal)
+  if (!eligible) return null;
 
   // Plus, Pro, and Admin users get full chat access
   return <ChatWidget />;
