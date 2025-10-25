@@ -1339,3 +1339,15 @@ This document is the **single source of truth** for all features, tasks, and mil
   - Added `relative z-0` to main layout container
   - Chat bubble (`z-40`) now properly floats above all content
   - Chat drawer (`z-50`) appears on top when open
+
+### Delta – 2025-10-25
+
+- 🟢 Feat(statements): Add conditional polling and keep Realtime
+  - `hooks/use-statements.ts`: Refetch every 10s only when one or more statements are in `processing`; no polling otherwise. Supabase Realtime listener remains for push updates.
+- 🟢 UX(statements): Remove JS alerts and reprompt password
+  - `components/statements/statement-upload-dialog.tsx`: Removed `alert()` calls. On incorrect password, reopen the password dialog with a localized error and clear the password input.
+  - `locales/en.json` and `locales/es.json`: Added `statements.upload.errorIncorrectPassword`.
+- 🟢 Chore(inngest): Simplify background function notifications
+  - `lib/inngest/functions/process-statement.ts`: Removed Supabase Realtime broadcast helper/calls. Rely on DB status updates (processing → completed/failed) to drive UI via Realtime + conditional polling.
+- 🟢 Build: Project compiles and passes lint/type checks
+  - Verified with production build. Intermittent route collection errors observed earlier were resolved after subsequent runs.
