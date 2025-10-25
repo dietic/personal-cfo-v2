@@ -22,21 +22,17 @@ interface ChatDrawerProps {
 
 export function ChatDrawer({ open, onClose }: ChatDrawerProps) {
   const { t } = useTranslation();
-  const { messages, isLoading, sendMessage, clearMessages, usage } = useChat();
+  const { messages, isLoading, sendMessage, usage } = useChat();
 
   const handleSend = async (query: string) => {
     await sendMessage(query);
-  };
-
-  const handleClear = () => {
-    clearMessages();
   };
 
   return (
     <Sheet open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <SheetContent
         side="right"
-        className="flex w-full flex-col p-0 sm:max-w-md"
+        className="flex w-full flex-col p-0 sm:max-w-md [&>button]:hidden"
       >
         <SheetHeader className="border-b px-6 py-4">
           <div className="flex items-center justify-between">
@@ -48,16 +44,6 @@ export function ChatDrawer({ open, onClose }: ChatDrawerProps) {
             </div>
             <div className="flex items-center gap-2">
               <UsageIndicator usage={usage} />
-              {messages.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClear}
-                  className="h-8 text-xs"
-                >
-                  {t("chat.clear")}
-                </Button>
-              )}
               <Button
                 variant="ghost"
                 size="icon"
@@ -73,7 +59,7 @@ export function ChatDrawer({ open, onClose }: ChatDrawerProps) {
 
         <ChatMessages messages={messages} isLoading={isLoading} />
 
-        <div className="border-t p-4">
+        <div className="p-4">
           <ChatInput onSend={handleSend} disabled={isLoading} />
         </div>
       </SheetContent>

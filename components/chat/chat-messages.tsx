@@ -5,6 +5,8 @@ import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import { Bot, User } from "lucide-react";
 import { useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatMessagesProps {
   messages: ChatMessage[];
@@ -78,9 +80,74 @@ export function ChatMessages({
                 : "bg-muted text-foreground"
             )}
           >
-            <p className="whitespace-pre-wrap break-words text-sm">
-              {message.content}
-            </p>
+            {message.role === "user" ? (
+              <p className="whitespace-pre-wrap break-words text-sm">
+                {message.content}
+              </p>
+            ) : (
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    table: ({ ...props }) => (
+                      <table
+                        className="w-full border-collapse text-sm"
+                        {...props}
+                      />
+                    ),
+                    thead: ({ ...props }) => (
+                      <thead className="border-b" {...props} />
+                    ),
+                    tbody: ({ ...props }) => <tbody {...props} />,
+                    tr: ({ ...props }) => (
+                      <tr className="border-b" {...props} />
+                    ),
+                    th: ({ ...props }) => (
+                      <th
+                        className="px-2 py-1 text-left font-semibold"
+                        {...props}
+                      />
+                    ),
+                    td: ({ ...props }) => (
+                      <td className="px-2 py-1" {...props} />
+                    ),
+                    p: ({ ...props }) => (
+                      <p className="mb-2 last:mb-0" {...props} />
+                    ),
+                    ul: ({ ...props }) => (
+                      <ul className="mb-2 ml-4 list-disc" {...props} />
+                    ),
+                    ol: ({ ...props }) => (
+                      <ol className="mb-2 ml-4 list-decimal" {...props} />
+                    ),
+                    li: ({ ...props }) => <li className="mb-1" {...props} />,
+                    strong: ({ ...props }) => (
+                      <strong className="font-semibold" {...props} />
+                    ),
+                    code: ({ className, children, ...props }) => {
+                      const isInline = !className?.includes("language-");
+                      return isInline ? (
+                        <code
+                          className="rounded bg-muted-foreground/10 px-1 py-0.5 font-mono text-xs"
+                          {...props}
+                        >
+                          {children}
+                        </code>
+                      ) : (
+                        <code
+                          className="block rounded bg-muted-foreground/10 p-2 font-mono text-xs"
+                          {...props}
+                        >
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+            )}
             <p className="mt-1 text-xs opacity-70">
               {message.timestamp.toLocaleTimeString([], {
                 hour: "2-digit",
