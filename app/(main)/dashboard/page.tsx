@@ -62,73 +62,90 @@ export default function DashboardPage() {
   const currentMonthExpensesCents = 0;
   const previousMonthExpensesCents = 0;
 
-  // Fetch budgets
+  // Fetch budgets and recent transactions in parallel (not sequential)
   useEffect(() => {
-    async function fetchBudgets() {
-      try {
-        setBudgetsLoading(true);
-        // TODO: Replace with actual budgets API endpoint when available
-        // const response = await fetch("/api/budgets");
-        // const data = await response.json();
-        // setBudgets(data.data || []);
-        setBudgets([]);
-      } catch (error) {
-        console.error("Failed to fetch budgets:", error);
-        setBudgets([]);
-      } finally {
-        setBudgetsLoading(false);
-      }
+    // Only fetch data if we have a user profile
+    if (!profile) {
+      setBudgetsLoading(false);
+      setTransactionsLoading(false);
+      return;
     }
 
-    fetchBudgets();
-  }, []);
-
-  // Fetch recent transactions
-  useEffect(() => {
-    async function fetchRecentTransactions() {
+    async function fetchAllData() {
       try {
+        setBudgetsLoading(true);
         setTransactionsLoading(true);
-        const response = await fetch("/api/transactions?pageSize=5&page=1");
-        const result = await response.json();
 
-        if (result.success && result.data) {
-          // Map API response to component format
-          const mapped: Transaction[] = result.data.map(
-            (tx: {
-              id: string;
-              merchant?: string;
-              description?: string;
-              transaction_date: string;
-              categories?: { name: string; emoji: string } | null;
-              cards?: { name: string } | null;
-              currency: string;
-              amount_cents: number;
-              type: "income" | "expense";
-            }) => ({
-              id: tx.id,
-              merchant: tx.merchant || "",
-              description: tx.description || "",
-              transaction_date: tx.transaction_date,
-              category_name: tx.categories?.name || null,
-              category_emoji: tx.categories?.emoji || null,
-              card_name: tx.cards?.name || null,
-              currency: tx.currency,
-              amount_cents: Math.abs(tx.amount_cents),
-              type: tx.type,
-            })
-          );
-          setRecentTransactions(mapped);
-        }
-      } catch (error) {
-        console.error("Failed to fetch recent transactions:", error);
-        setRecentTransactions([]);
+        // Run both fetches in parallel instead of sequential
+        const [budgetsResult, transactionsResult] = await Promise.all([
+          // Budgets fetch
+          (async () => {
+            try {
+              // TODO: Replace with actual budgets API endpoint when available
+              // const response = await fetch("/api/budgets");
+              // const data = await response.json();
+              // return data.data || [];
+              return [];
+            } catch (error) {
+              console.error("Failed to fetch budgets:", error);
+              return [];
+            }
+          })(),
+
+          // Transactions fetch
+          (async () => {
+            try {
+              const response = await fetch(
+                "/api/transactions?pageSize=5&page=1"
+              );
+              const result = await response.json();
+
+              if (result.success && result.data) {
+                // Map API response to component format
+                return result.data.map(
+                  (tx: {
+                    id: string;
+                    merchant?: string;
+                    description?: string;
+                    transaction_date: string;
+                    categories?: { name: string; emoji: string } | null;
+                    cards?: { name: string } | null;
+                    currency: string;
+                    amount_cents: number;
+                    type: "income" | "expense";
+                  }) => ({
+                    id: tx.id,
+                    merchant: tx.merchant || "",
+                    description: tx.description || "",
+                    transaction_date: tx.transaction_date,
+                    category_name: tx.categories?.name || null,
+                    category_emoji: tx.categories?.emoji || null,
+                    card_name: tx.cards?.name || null,
+                    currency: tx.currency,
+                    amount_cents: Math.abs(tx.amount_cents),
+                    type: tx.type,
+                  })
+                );
+              }
+              return [];
+            } catch (error) {
+              console.error("Failed to fetch recent transactions:", error);
+              return [];
+            }
+          })(),
+        ]);
+
+        // Update state with results
+        setBudgets(budgetsResult);
+        setRecentTransactions(transactionsResult);
       } finally {
+        setBudgetsLoading(false);
         setTransactionsLoading(false);
       }
     }
 
-    fetchRecentTransactions();
-  }, []);
+    fetchAllData();
+  }, [profile]);
 
   return (
     <div className="space-y-4 md:space-y-6">
