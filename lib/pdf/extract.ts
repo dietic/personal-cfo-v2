@@ -53,12 +53,6 @@ export async function extractTextFromPDF(
     hasPassword: Boolean(password),
   });
 
-  // Minimal behavior to support UI flow:
-  // - If PDF appears encrypted and no password provided → report password-required error
-  // - If password provided (we're not really decrypting here) → pretend success with stub text
-  // - If not encrypted → pretend success with stub text
-
-  // Lock/unlock validation only — use pdf-parse to test password without keeping extracted text
   // First, check if file appears encrypted and no password was provided
   const encrypted = await isPDFEncrypted(fileBuffer);
   if (encrypted && !password) {
@@ -69,7 +63,7 @@ export async function extractTextFromPDF(
     };
   }
 
-  // Prefer system-level qpdf for password validation without node_modules
+  // Use system-level qpdf to validate password (no node_modules)
   try {
     const ok = await validateWithQpdf(fileBuffer, password);
     if (ok === "ok") return { success: true, text: "[UNLOCK_ONLY_STUB]" };
@@ -81,22 +75,41 @@ export async function extractTextFromPDF(
       };
     if (ok === "incorrect_password")
       return { success: false, text: "", error: "incorrect_password" };
-    // unknown
-    return { success: false, text: "", error: "PDF validation failed" };
+    // If qpdf result is unknown, proceed to try text extraction; pdftotext errors will surface.
   } catch (_e: unknown) {
-    // Fallback: if qpdf is not available, do best-effort detection
-    const encrypted = await isPDFEncrypted(fileBuffer);
-    if (encrypted && !password) {
+    // If qpdf is not available, continue to attempt text extraction directly.
+  }
+
+  // Actual text extraction using system `pdftotext` (Poppler)
+  try {
+    const text = await extractTextWithPdftotext(fileBuffer, password);
+    const cleaned = normalizeExtractedText(text);
+    if (!cleaned || cleaned.trim().length === 0) {
+      return { success: false, text: "", error: "Empty or unreadable PDF" };
+    }
+    return { success: true, text: cleaned };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    // Map common errors to user-friendly ones
+    if (/password/i.test(message) && !password) {
       return {
         success: false,
         text: "",
         error: "PDF is password protected. Please provide the password.",
       };
     }
-    // Without qpdf and without node_modules, we cannot truly verify correctness.
-    // For the current flow (lock/unlock only), assume success when a password was provided to unblock UX.
-    // This is a temporary behavior until a proper validator is provisioned in the environment.
-    return { success: true, text: "[UNLOCK_ONLY_STUB]" };
+    if (/incorrect password|invalid password/i.test(message)) {
+      return { success: false, text: "", error: "incorrect_password" };
+    }
+    if (/ENOENT|pdftotext not found|command not found/i.test(message)) {
+      return {
+        success: false,
+        text: "",
+        error:
+          "PDF text extraction tool (pdftotext) is not available on the server",
+      };
+    }
+    return { success: false, text: "", error: `Extraction failed: ${message}` };
   }
 }
 
@@ -163,6 +176,42 @@ function runCommand(
       resolve({ code: code ?? 0, stdout: out, stderr: err })
     );
   });
+}
+
+/**
+ * Extract text using the system `pdftotext` binary (Poppler)
+ * - Preserves layout
+ * - UTF-8 encoding
+ * - No page breaks between pages
+ */
+async function extractTextWithPdftotext(
+  buffer: Buffer,
+  password?: string
+): Promise<string> {
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "pcfo-pdf-"));
+  const tmpFile = path.join(tmpDir, `in.pdf`);
+  try {
+    await fs.writeFile(tmpFile, buffer);
+    const args: string[] = ["-layout", "-enc", "UTF-8", "-nopgbrk"]; // preserve layout & encoding
+    if (password) {
+      args.push("-upw", password);
+    }
+    args.push(tmpFile, "-"); // output to stdout
+
+    const { code, stdout, stderr } = await runCommand("pdftotext", args);
+    if (code !== 0) {
+      const out = `${stdout}\n${stderr}`;
+      throw new Error(out || "pdftotext failed");
+    }
+    return stdout;
+  } catch (e) {
+    throw e instanceof Error ? e : new Error(String(e));
+  } finally {
+    try {
+      await fs.unlink(tmpFile);
+      await fs.rmdir(tmpDir);
+    } catch {}
+  }
 }
 
 /**
