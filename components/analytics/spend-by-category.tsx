@@ -92,13 +92,6 @@ export function SpendByCategoryTile({ filters }: SpendByCategoryTileProps) {
         const json = await res.json();
         const transactions = json.data || [];
 
-        console.log(
-          "Fetched transactions for category:",
-          selectedCategoryId,
-          "Count:",
-          transactions.length
-        );
-
         // Aggregate by month
         const monthMap: Record<string, number> = {};
 
@@ -136,7 +129,7 @@ export function SpendByCategoryTile({ filters }: SpendByCategoryTileProps) {
           .sort((a, b) => a.month.localeCompare(b.month));
 
         setMonthlyData(monthlyArray);
-      } catch (err) {
+      } catch {
         setError("Failed to load spending data");
         setMonthlyData([]);
       } finally {

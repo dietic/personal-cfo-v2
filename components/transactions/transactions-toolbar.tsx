@@ -37,12 +37,7 @@ interface Props {
   onImport?: () => void;
 }
 
-export function TransactionsToolbar({
-  filters,
-  onChange,
-  onOpenAdd,
-  onImport,
-}: Props) {
+export function TransactionsToolbar({ filters, onChange, onOpenAdd }: Props) {
   const { t } = useTranslation();
   const { cards } = useCards();
   const { data: categories = [] } = useCategories();

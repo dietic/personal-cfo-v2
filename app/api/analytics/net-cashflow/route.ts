@@ -9,6 +9,7 @@
  * - Delta vs previous period
  * - Sparkline data (daily or weekly bins)
  */
+export const runtime = "nodejs";
 
 import {
   calculatePercentageChange,
@@ -18,12 +19,14 @@ import {
   roundToTwoDecimals,
 } from "@/lib/analytics";
 import { requireAuth } from "@/lib/auth";
+import { analyticsCacheKey, withCache } from "@/lib/cache";
 import {
   convertCurrencyFromMinorUnits,
   fromMinorUnits,
   getExchangeRates,
   type Currency,
 } from "@/lib/currency";
+import { logger } from "@/lib/logger";
 import { NetCashflowQuerySchema } from "@/lib/validators/analytics";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -55,162 +58,173 @@ export async function GET(request: NextRequest) {
 
     const { from, to, account, currency } = validation.data;
 
-    // Get exchange rates for currency conversion
-    const rates = await getExchangeRates();
+    const cacheKey = analyticsCacheKey({
+      userId: user.id,
+      endpoint: "net-cashflow",
+      params: { from, to, account: account || "", currency },
+    });
 
-    // Parse dates
-    const fromDate = new Date(from);
-    const toDate = new Date(to);
+    const compute = async () => {
+      // Get exchange rates for currency conversion
+      const rates = await getExchangeRates();
 
-    // Determine sparkline granularity
-    const sparklineGranularity = getSparklineGranularity(fromDate, toDate);
+      // Parse dates
+      const fromDate = new Date(from);
+      const toDate = new Date(to);
 
-    // Build query for current period transactions
-    let query = supabase
-      .from("transactions")
-      .select(
-        "id, amount_cents, currency, type, transaction_date, category_id, categories(name)"
-      )
-      .eq("user_id", user.id)
-      .gte("transaction_date", from)
-      .lte("transaction_date", to)
-      .order("transaction_date", { ascending: true });
+      // Determine sparkline granularity
+      const sparklineGranularity = getSparklineGranularity(fromDate, toDate);
 
-    // Apply optional account filter
-    if (account) {
-      query = query.eq("card_id", account);
-    }
+      // Build query for current period transactions
+      let query = supabase
+        .from("transactions")
+        .select(
+          "id, amount_cents, currency, type, transaction_date, category_id, categories(name)"
+        )
+        .eq("user_id", user.id)
+        .gte("transaction_date", from)
+        .lte("transaction_date", to)
+        .order("transaction_date", { ascending: true });
 
-    const { data: transactions, error: txError } = await query;
-
-    if (txError) {
-      console.error("Error fetching transactions:", txError);
-      return NextResponse.json(
-        { error: true, message: "Failed to fetch transaction data" },
-        { status: 500 }
-      );
-    }
-
-    // Type guard for transactions
-    type TransactionWithCategory = {
-      id: string;
-      amount_cents: number;
-      currency: string;
-      type: "income" | "expense";
-      transaction_date: string;
-      category_id: string | null;
-      categories: { name: string } | null;
-    };
-    const typedTransactions = (transactions || []) as TransactionWithCategory[];
-
-    // Calculate totals for current period
-    let totalIncomeCents = 0;
-    let totalExpensesCents = 0;
-
-    // Aggregate for sparkline
-    const sparklineMap = new Map<string, number>();
-
-    for (const tx of typedTransactions) {
-      // Convert to target currency
-      const amountInTarget = convertCurrencyFromMinorUnits(
-        Math.abs(tx.amount_cents),
-        tx.currency as Currency,
-        currency,
-        rates
-      );
-
-      // Classify transaction
-      const categoryName = tx.categories?.name;
-      const classification = classifyTransaction(
-        { ...tx, currency: tx.currency as Currency },
-        categoryName
-      );
-
-      // Update totals
-      if (classification === "income") {
-        totalIncomeCents += amountInTarget;
-      } else {
-        totalExpensesCents += amountInTarget;
+      // Apply optional account filter
+      if (account) {
+        query = query.eq("card_id", account);
       }
 
-      // Update sparkline
-      const sparklineDate = getSparklineDate(
-        tx.transaction_date,
-        sparklineGranularity
-      );
-      const currentNet = sparklineMap.get(sparklineDate) || 0;
-      const contribution =
-        classification === "income" ? amountInTarget : -amountInTarget;
-      sparklineMap.set(sparklineDate, currentNet + contribution);
-    }
+      const { data: transactions, error: txError } = await query;
 
-    const totalIncome = fromMinorUnits(totalIncomeCents);
-    const totalExpenses = fromMinorUnits(totalExpensesCents);
-    const netCashflow = totalIncome - totalExpenses;
-
-    // Get previous period data for comparison
-    const prevPeriod = getPreviousPeriod(fromDate, toDate);
-    let prevQuery = supabase
-      .from("transactions")
-      .select("id, amount_cents, currency, type, category_id, categories(name)")
-      .eq("user_id", user.id)
-      .gte("transaction_date", prevPeriod.from.toISOString())
-      .lte("transaction_date", prevPeriod.to.toISOString());
-
-    if (account) {
-      prevQuery = prevQuery.eq("card_id", account);
-    }
-
-    const { data: prevTransactions } = await prevQuery;
-
-    // Calculate previous period net
-    let prevIncomeCents = 0;
-    let prevExpensesCents = 0;
-
-    for (const tx of (prevTransactions || []) as TransactionWithCategory[]) {
-      const amountInTarget = convertCurrencyFromMinorUnits(
-        Math.abs(tx.amount_cents),
-        tx.currency as Currency,
-        currency,
-        rates
-      );
-
-      const categoryName = tx.categories?.name;
-      const classification = classifyTransaction(
-        { ...tx, currency: tx.currency as Currency },
-        categoryName
-      );
-
-      if (classification === "income") {
-        prevIncomeCents += amountInTarget;
-      } else {
-        prevExpensesCents += amountInTarget;
+      if (txError) {
+        throw new Error(`Failed to fetch transaction data: ${txError.message}`);
       }
-    }
 
-    const prevNet = fromMinorUnits(prevIncomeCents - prevExpensesCents);
-    const deltaPctPrev = calculatePercentageChange(netCashflow, prevNet);
+      // Type guard for transactions
+      type TransactionWithCategory = {
+        id: string;
+        amount_cents: number;
+        currency: string;
+        type: "income" | "expense";
+        transaction_date: string;
+        category_id: string | null;
+        categories: { name: string } | null;
+      };
+      const typedTransactions = (transactions ||
+        []) as TransactionWithCategory[];
 
-    // Build sparkline array
-    const sparkline = Array.from(sparklineMap.entries())
-      .map(([date, netCents]) => ({
-        date,
-        net: roundToTwoDecimals(fromMinorUnits(netCents)),
-      }))
-      .sort((a, b) => a.date.localeCompare(b.date));
+      // Calculate totals for current period
+      let totalIncomeCents = 0;
+      let totalExpensesCents = 0;
 
-    return NextResponse.json({
-      success: true,
-      data: {
+      // Aggregate for sparkline
+      const sparklineMap = new Map<string, number>();
+
+      for (const tx of typedTransactions) {
+        // Convert to target currency
+        const amountInTarget = convertCurrencyFromMinorUnits(
+          Math.abs(tx.amount_cents),
+          tx.currency as Currency,
+          currency,
+          rates
+        );
+
+        // Classify transaction
+        const categoryName = tx.categories?.name;
+        const classification = classifyTransaction(
+          { ...tx, currency: tx.currency as Currency },
+          categoryName
+        );
+
+        // Update totals
+        if (classification === "income") {
+          totalIncomeCents += amountInTarget;
+        } else {
+          totalExpensesCents += amountInTarget;
+        }
+
+        // Update sparkline
+        const sparklineDate = getSparklineDate(
+          tx.transaction_date,
+          sparklineGranularity
+        );
+        const currentNet = sparklineMap.get(sparklineDate) || 0;
+        const contribution =
+          classification === "income" ? amountInTarget : -amountInTarget;
+        sparklineMap.set(sparklineDate, currentNet + contribution);
+      }
+
+      const totalIncome = fromMinorUnits(totalIncomeCents);
+      const totalExpenses = fromMinorUnits(totalExpensesCents);
+      const netCashflow = totalIncome - totalExpenses;
+
+      // Get previous period data for comparison
+      const prevPeriod = getPreviousPeriod(fromDate, toDate);
+      let prevQuery = supabase
+        .from("transactions")
+        .select(
+          "id, amount_cents, currency, type, category_id, categories(name)"
+        )
+        .eq("user_id", user.id)
+        .gte("transaction_date", prevPeriod.from.toISOString())
+        .lte("transaction_date", prevPeriod.to.toISOString());
+
+      if (account) {
+        prevQuery = prevQuery.eq("card_id", account);
+      }
+
+      const { data: prevTransactions } = await prevQuery;
+
+      // Calculate previous period net
+      let prevIncomeCents = 0;
+      let prevExpensesCents = 0;
+
+      for (const tx of (prevTransactions || []) as TransactionWithCategory[]) {
+        const amountInTarget = convertCurrencyFromMinorUnits(
+          Math.abs(tx.amount_cents),
+          tx.currency as Currency,
+          currency,
+          rates
+        );
+
+        const categoryName = tx.categories?.name;
+        const classification = classifyTransaction(
+          { ...tx, currency: tx.currency as Currency },
+          categoryName
+        );
+
+        if (classification === "income") {
+          prevIncomeCents += amountInTarget;
+        } else {
+          prevExpensesCents += amountInTarget;
+        }
+      }
+
+      const prevNet = fromMinorUnits(prevIncomeCents - prevExpensesCents);
+      const deltaPctPrev = calculatePercentageChange(netCashflow, prevNet);
+
+      // Build sparkline array
+      const sparkline = Array.from(sparklineMap.entries())
+        .map(([date, netCents]) => ({
+          date,
+          net: roundToTwoDecimals(fromMinorUnits(netCents)),
+        }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      return {
         net: roundToTwoDecimals(netCashflow),
         income: roundToTwoDecimals(totalIncome),
         expenses: roundToTwoDecimals(totalExpenses),
         deltaPctPrev: roundToTwoDecimals(deltaPctPrev),
         sparkline,
-      },
-    });
-  } catch (error) {
-    console.error("Net cashflow API error:", error);
+      };
+    };
+
+    const data = await withCache(cacheKey, 60_000, compute);
+
+    return NextResponse.json(
+      { success: true, data },
+      { headers: { "Cache-Control": "private, max-age=60" } }
+    );
+  } catch (err) {
+    logger.error("Net cashflow API error", { err });
     return NextResponse.json(
       { error: true, message: "Internal server error" },
       { status: 500 }

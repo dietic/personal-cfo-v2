@@ -33,6 +33,15 @@ export function SpendOverTimeTile({
 }: SpendOverTimeTileProps) {
   const { data, isLoading, error } = useSpendOverTime(filters);
 
+  // Derived values (lightweight computation)
+  const total = (data ?? []).reduce((sum, d) => sum + d.amount, 0);
+  const avg = data && data.length > 0 ? total / data.length : 0;
+  const chartData = (data ?? []).map((d) => ({
+    period: d.periodLabel,
+    amount: d.amount,
+    average: avg,
+  }));
+
   if (error) {
     return (
       <Card className="overflow-hidden">
@@ -87,14 +96,7 @@ export function SpendOverTimeTile({
     );
   }
 
-  const total = data.reduce((sum, d) => sum + d.amount, 0);
-  const avg = total / data.length;
-
-  const chartData = data.map((d) => ({
-    period: d.periodLabel,
-    amount: d.amount,
-    average: avg,
-  }));
+  // values computed above
 
   return (
     <Card className="overflow-hidden">

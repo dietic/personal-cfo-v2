@@ -9,6 +9,7 @@
  * - Respects user timezone
  * - Fills gaps with zeros
  */
+export const runtime = "nodejs";
 
 import {
   classifyTransaction,
@@ -18,12 +19,14 @@ import {
   roundToTwoDecimals,
 } from "@/lib/analytics";
 import { requireAuth } from "@/lib/auth";
+import { analyticsCacheKey, withCache } from "@/lib/cache";
 import {
   convertCurrencyFromMinorUnits,
   fromMinorUnits,
   getExchangeRates,
   type Currency,
 } from "@/lib/currency";
+import { logger } from "@/lib/logger";
 import { IncomeVsExpensesQuerySchema } from "@/lib/validators/analytics";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -56,164 +59,170 @@ export async function GET(request: NextRequest) {
 
     const { from, to, account, currency, granularity } = validation.data;
 
-    // Get user's timezone from profile
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("timezone")
-      .eq("id", user.id)
-      .single();
-
-    const timezone =
-      (profile as { timezone?: string } | null)?.timezone || "UTC";
-
-    // Get exchange rates for currency conversion
-    const rates = await getExchangeRates();
-
-    // Parse dates
-    const fromDate = new Date(from);
-    const toDate = new Date(to);
-
-    // Build query for transactions (all types)
-    let query = supabase
-      .from("transactions")
-      .select(
-        "id, amount_cents, currency, type, transaction_date, category_id, categories(name)"
-      )
-      .eq("user_id", user.id)
-      .gte("transaction_date", from)
-      .lte("transaction_date", to)
-      .order("transaction_date", { ascending: true });
-
-    // Apply optional account filter
-    if (account) {
-      query = query.eq("card_id", account);
-    }
-
-    const { data: transactions, error: txError } = await query;
-
-    if (txError) {
-      console.error("Error fetching transactions:", txError);
-      return NextResponse.json(
-        { error: true, message: "Failed to fetch transaction data" },
-        { status: 500 }
-      );
-    }
-
-    // Type guard for transactions
-    type TransactionWithCategory = {
-      id: string;
-      amount_cents: number;
-      currency: string;
-      type: "income" | "expense";
-      transaction_date: string;
-      category_id: string | null;
-      categories: { name: string } | null;
-    };
-    const typedTransactions = (transactions || []) as TransactionWithCategory[];
-
-    // Generate all expected period bins
-    const bins = generatePeriodBins(fromDate, toDate, granularity, timezone);
-
-    // Helper function to get period start for a date
-    const getPeriodStart = (dateStr: string): string => {
-      const date = new Date(dateStr);
-      switch (granularity) {
-        case "week":
-          // Start of week (Sunday)
-          const dayOfWeek = date.getUTCDay();
-          const weekStart = new Date(date);
-          weekStart.setUTCDate(date.getUTCDate() - dayOfWeek);
-          weekStart.setUTCHours(0, 0, 0, 0);
-          return weekStart.toISOString();
-        case "month":
-          return new Date(
-            Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)
-          ).toISOString();
-        case "quarter":
-          const quarterStart = Math.floor(date.getUTCMonth() / 3) * 3;
-          return new Date(
-            Date.UTC(date.getUTCFullYear(), quarterStart, 1)
-          ).toISOString();
-        default:
-          return dateStr;
-      }
-    };
-
-    // Aggregate transactions by period
-    const periodMap = new Map<
-      string,
-      {
-        period: string;
-        incomeCents: number;
-        expensesCents: number;
-      }
-    >();
-
-    for (const tx of typedTransactions) {
-      const periodStart = getPeriodStart(tx.transaction_date);
-
-      // Convert to target currency
-      const amountInTarget = convertCurrencyFromMinorUnits(
-        Math.abs(tx.amount_cents), // Always use absolute value
-        tx.currency as Currency,
-        currency,
-        rates
-      );
-
-      if (!periodMap.has(periodStart)) {
-        periodMap.set(periodStart, {
-          period: periodStart,
-          incomeCents: 0,
-          expensesCents: 0,
-        });
-      }
-
-      const existing = periodMap.get(periodStart)!;
-
-      // Classify transaction as income or expense
-      const categoryName = tx.categories?.name;
-      const classification = classifyTransaction(
-        { ...tx, currency: tx.currency as Currency },
-        categoryName
-      );
-
-      if (classification === "income") {
-        existing.incomeCents += amountInTarget;
-      } else {
-        existing.expensesCents += amountInTarget;
-      }
-    }
-
-    // Build result with income, expenses, and net
-    const periodData = Array.from(periodMap.values()).map((p) => {
-      const income = fromMinorUnits(p.incomeCents);
-      const expenses = fromMinorUnits(p.expensesCents);
-      const net = income - expenses;
-
-      return {
-        period: p.period,
-        periodLabel: formatPeriodLabel(p.period, granularity, bins),
-        income: roundToTwoDecimals(income),
-        expenses: roundToTwoDecimals(expenses),
-        net: roundToTwoDecimals(net),
-      };
+    const cacheKey = analyticsCacheKey({
+      userId: user.id,
+      endpoint: "income-vs-expenses",
+      params: { from, to, account: account || "", currency, granularity },
     });
 
-    // Fill gaps with zeros
-    const completeData = fillTimeSeriesGaps(periodData, bins, {
-      periodLabel: "",
-      income: 0,
-      expenses: 0,
-      net: 0,
-    }).map((item) => ({
-      ...item,
-      periodLabel:
-        item.periodLabel || formatPeriodLabel(item.period, granularity, bins),
-    }));
+    const compute = async () => {
+      // Note: Previously fetched user timezone from profile, but bins are
+      // aligned using UTC to match server-side aggregation. If timezone
+      // alignment is needed later, re-introduce and pass TZ through.
 
-    return NextResponse.json({ success: true, data: completeData });
-  } catch (error) {
-    console.error("Income vs expenses API error:", error);
+      // Get exchange rates for currency conversion
+      const rates = await getExchangeRates();
+
+      // Parse dates
+      const fromDate = new Date(from);
+      const toDate = new Date(to);
+
+      // Build query for transactions (all types)
+      let query = supabase
+        .from("transactions")
+        .select(
+          "id, amount_cents, currency, type, transaction_date, category_id, categories(name)"
+        )
+        .eq("user_id", user.id)
+        .gte("transaction_date", from)
+        .lte("transaction_date", to)
+        .order("transaction_date", { ascending: true });
+
+      // Apply optional account filter
+      if (account) {
+        query = query.eq("card_id", account);
+      }
+
+      const { data: transactions, error: txError } = await query;
+
+      if (txError) {
+        throw new Error(`Failed to fetch transaction data: ${txError.message}`);
+      }
+
+      // Type guard for transactions
+      type TransactionWithCategory = {
+        id: string;
+        amount_cents: number;
+        currency: string;
+        type: "income" | "expense";
+        transaction_date: string;
+        category_id: string | null;
+        categories: { name: string } | null;
+      };
+      const typedTransactions = (transactions ||
+        []) as TransactionWithCategory[];
+
+      // Generate all expected period bins
+      const bins = generatePeriodBins(fromDate, toDate, granularity);
+
+      // Helper function to get period start for a date
+      const getPeriodStart = (dateStr: string): string => {
+        const date = new Date(dateStr);
+        switch (granularity) {
+          case "week":
+            // Start of week (Sunday)
+            const dayOfWeek = date.getUTCDay();
+            const weekStart = new Date(date);
+            weekStart.setUTCDate(date.getUTCDate() - dayOfWeek);
+            weekStart.setUTCHours(0, 0, 0, 0);
+            return weekStart.toISOString();
+          case "month":
+            return new Date(
+              Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)
+            ).toISOString();
+          case "quarter":
+            const quarterStart = Math.floor(date.getUTCMonth() / 3) * 3;
+            return new Date(
+              Date.UTC(date.getUTCFullYear(), quarterStart, 1)
+            ).toISOString();
+          default:
+            return dateStr;
+        }
+      };
+
+      // Aggregate transactions by period
+      const periodMap = new Map<
+        string,
+        {
+          period: string;
+          incomeCents: number;
+          expensesCents: number;
+        }
+      >();
+
+      for (const tx of typedTransactions) {
+        const periodStart = getPeriodStart(tx.transaction_date);
+
+        // Convert to target currency
+        const amountInTarget = convertCurrencyFromMinorUnits(
+          Math.abs(tx.amount_cents), // Always use absolute value
+          tx.currency as Currency,
+          currency,
+          rates
+        );
+
+        if (!periodMap.has(periodStart)) {
+          periodMap.set(periodStart, {
+            period: periodStart,
+            incomeCents: 0,
+            expensesCents: 0,
+          });
+        }
+
+        const existing = periodMap.get(periodStart)!;
+
+        // Classify transaction as income or expense
+        const categoryName = tx.categories?.name;
+        const classification = classifyTransaction(
+          { ...tx, currency: tx.currency as Currency },
+          categoryName
+        );
+
+        if (classification === "income") {
+          existing.incomeCents += amountInTarget;
+        } else {
+          existing.expensesCents += amountInTarget;
+        }
+      }
+
+      // Build result with income, expenses, and net
+      const periodData = Array.from(periodMap.values()).map((p) => {
+        const income = fromMinorUnits(p.incomeCents);
+        const expenses = fromMinorUnits(p.expensesCents);
+        const net = income - expenses;
+
+        return {
+          period: p.period,
+          periodLabel: formatPeriodLabel(p.period, granularity, bins),
+          income: roundToTwoDecimals(income),
+          expenses: roundToTwoDecimals(expenses),
+          net: roundToTwoDecimals(net),
+        };
+      });
+
+      // Fill gaps with zeros
+      const completeData = fillTimeSeriesGaps(periodData, bins, {
+        periodLabel: "",
+        income: 0,
+        expenses: 0,
+        net: 0,
+      }).map((item) => ({
+        ...item,
+        periodLabel:
+          item.periodLabel || formatPeriodLabel(item.period, granularity, bins),
+      }));
+
+      return completeData;
+    };
+
+    const data = await withCache(cacheKey, 60_000, compute);
+
+    return NextResponse.json(
+      { success: true, data },
+      { headers: { "Cache-Control": "private, max-age=60" } }
+    );
+  } catch (err) {
+    logger.error("Income vs expenses API error", { err });
     return NextResponse.json(
       { error: true, message: "Internal server error" },
       { status: 500 }

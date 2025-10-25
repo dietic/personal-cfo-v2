@@ -97,8 +97,7 @@ export function getSparklineGranularity(from: Date, to: Date): "day" | "week" {
 export function generatePeriodBins(
   from: Date,
   to: Date,
-  granularity: "day" | "week" | "month" | "quarter",
-  _timezone: string = "UTC" // Prefix with underscore to mark as intentionally unused
+  granularity: "day" | "week" | "month" | "quarter"
 ): string[] {
   const bins: string[] = [];
 

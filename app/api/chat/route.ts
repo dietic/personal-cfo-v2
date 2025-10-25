@@ -3,6 +3,7 @@
 import { sendChatQuery } from "@/lib/ai/chat";
 import { sanitizeAIResponse, sanitizeUserInput } from "@/lib/ai/chat-prompt";
 import { requireAuth } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 import { canSendChatQuery, getRemainingChatQueries } from "@/lib/plan";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { chatQuerySchema } from "@/lib/validators/chat";
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
     let sanitizedQuery: string;
     try {
       sanitizedQuery = sanitizeUserInput(query);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: "Invalid input detected" },
         { status: 400 }
@@ -143,8 +144,8 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         query: sanitizedQuery,
       });
-    } catch (error) {
-      console.error("OpenAI API error:", error);
+    } catch (err) {
+      logger.error("OpenAI API error", { err });
       return NextResponse.json(
         {
           error:
@@ -168,7 +169,7 @@ export async function POST(request: NextRequest) {
       } as any);
 
     if (insertError) {
-      console.error("Failed to log chat usage:", insertError);
+      logger.error("Failed to log chat usage", { insertError });
       // Don't fail the request, but log the error
     }
 
@@ -189,12 +190,12 @@ export async function POST(request: NextRequest) {
         remainingQueries,
       },
     });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Unauthorized") {
+  } catch (err) {
+    if (err instanceof Error && err.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.error("Chat API error:", error);
+    logger.error("Chat API error", { err });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -36,6 +36,22 @@ export function IncomeVsExpensesTile({
 }: IncomeVsExpensesTileProps) {
   const { data, isLoading, error } = useIncomeVsExpenses(filters);
 
+  // Derived values (lightweight computation)
+  const totals = (data ?? []).reduce(
+    (acc, d) => ({
+      income: acc.income + d.income,
+      expenses: acc.expenses + d.expenses,
+      net: acc.net + d.net,
+    }),
+    { income: 0, expenses: 0, net: 0 }
+  );
+  const chartData = (data ?? []).map((d) => ({
+    period: d.periodLabel,
+    income: d.income,
+    expenses: d.expenses,
+    net: d.net,
+  }));
+
   if (error) {
     return (
       <Card className="overflow-hidden">
@@ -90,21 +106,7 @@ export function IncomeVsExpensesTile({
     );
   }
 
-  const totals = data.reduce(
-    (acc, d) => ({
-      income: acc.income + d.income,
-      expenses: acc.expenses + d.expenses,
-      net: acc.net + d.net,
-    }),
-    { income: 0, expenses: 0, net: 0 }
-  );
-
-  const chartData = data.map((d) => ({
-    period: d.periodLabel,
-    income: d.income,
-    expenses: d.expenses,
-    net: d.net,
-  }));
+  // values computed above
 
   return (
     <Card className="overflow-hidden">

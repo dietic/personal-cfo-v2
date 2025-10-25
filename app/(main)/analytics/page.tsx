@@ -8,14 +8,39 @@
 import { AccountFilter } from "@/components/analytics/account-filter";
 import { CurrencyToggle } from "@/components/analytics/currency-toggle";
 import { DateRangePicker } from "@/components/analytics/date-range-picker";
-import { IncomeVsExpensesTile } from "@/components/analytics/income-vs-expenses";
-import { NetCashflowTile } from "@/components/analytics/net-cashflow";
-import { SpendByCategoryTile } from "@/components/analytics/spend-by-category";
-import { SpendOverTimeTile } from "@/components/analytics/spend-over-time";
 import type { AnalyticsFilters } from "@/hooks/use-analytics";
 import type { Currency } from "@/lib/currency";
+import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+const SpendByCategoryTile = dynamic(
+  () =>
+    import("@/components/analytics/spend-by-category").then(
+      (m) => m.SpendByCategoryTile
+    ),
+  { ssr: false }
+);
+const SpendOverTimeTile = dynamic(
+  () =>
+    import("@/components/analytics/spend-over-time").then(
+      (m) => m.SpendOverTimeTile
+    ),
+  { ssr: false }
+);
+const IncomeVsExpensesTile = dynamic(
+  () =>
+    import("@/components/analytics/income-vs-expenses").then(
+      (m) => m.IncomeVsExpensesTile
+    ),
+  { ssr: false }
+);
+const NetCashflowTile = dynamic(
+  () =>
+    import("@/components/analytics/net-cashflow").then(
+      (m) => m.NetCashflowTile
+    ),
+  { ssr: false }
+);
 
 export default function AnalyticsPage() {
   const router = useRouter();

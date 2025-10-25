@@ -6,7 +6,7 @@
 "use client";
 
 import type { Currency } from "@/lib/currency";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export interface AnalyticsFilters {
   from: string;
@@ -81,6 +81,10 @@ export function useSpendByCategory(filters: AnalyticsFilters) {
       return json.data as SpendByCategoryData[];
     },
     enabled: !!(filters.from && filters.to && filters.currency),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -109,6 +113,10 @@ export function useSpendOverTime(filters: AnalyticsFilters) {
       return json.data as SpendOverTimeData[];
     },
     enabled: !!(filters.from && filters.to && filters.currency),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -137,6 +145,10 @@ export function useIncomeVsExpenses(filters: AnalyticsFilters) {
       return json.data as IncomeVsExpensesData[];
     },
     enabled: !!(filters.from && filters.to && filters.currency),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -164,5 +176,9 @@ export function useNetCashflow(filters: AnalyticsFilters) {
       return json.data as NetCashflowData;
     },
     enabled: !!(filters.from && filters.to && filters.currency),
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 }
