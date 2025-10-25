@@ -1,6 +1,10 @@
 "use client";
 
+import { useAuth } from "@/hooks/use-auth";
+import { createClient } from "@/lib/supabase-browser";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef } from "react";
+import { toast } from "sonner";
 
 export type Statement = {
   id: string;
@@ -21,6 +25,8 @@ export type StatementFilters = {
 
 export function useStatements() {
   const qc = useQueryClient();
+  const { user } = useAuth();
+  const supabase = useMemo(() => createClient(), []);
 
   function useList({
     filters,
@@ -39,7 +45,9 @@ export function useStatements() {
     params.set("page", String(page));
     params.set("pageSize", String(pageSize));
 
-    return useQuery<
+    const notifiedRef = useRef<Set<string>>(new Set());
+
+    const query = useQuery<
       { success: true; data: Statement[]; total: number } | undefined
     >({
       queryKey: ["statements", Object.fromEntries(params)],
@@ -48,19 +56,94 @@ export function useStatements() {
         if (!res.ok) throw new Error("Failed to fetch statements");
         return res.json();
       },
-      // Always refetch fresh data on mount so newly inserted statements appear immediately
+      // One-time fetch on mount; no periodic polling
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      // While any item in the current page is processing, poll for updates to auto-refresh status
-      refetchInterval: (query) => {
-        const hasProcessing = (
-          query.state.data as
-            | { success: true; data: Statement[]; total: number }
-            | undefined
-        )?.data?.some((s) => s.status === "processing");
-        return hasProcessing ? 2000 : false;
-      },
+      refetchInterval: false,
     });
+
+    // Conditional polling: every 10s only if there are processing statements in the current list
+    useEffect(() => {
+      const hasProcessing = query.data?.data?.some(
+        (s) => s.status === "processing"
+      );
+      if (!hasProcessing) return;
+      const id = setInterval(() => {
+        query.refetch();
+      }, 10_000);
+      return () => clearInterval(id);
+      // Intentionally depend on query.data to toggle polling as status changes
+    }, [query.data, query.refetch]);
+
+    // Realtime updates via Supabase instead of polling
+    useEffect(() => {
+      // Need user id for RLS-safe filtering
+      if (!user?.id) return;
+
+      const channel = supabase
+        .channel(`statements-updates-${user.id}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "statements",
+            filter: `user_id=eq.${user.id}`,
+          },
+          (payload) => {
+            // payload.new and payload.old are row snapshots
+            type Status = "completed" | "failed" | "processing";
+            type Row = {
+              id: string;
+              user_id: string;
+              file_name: string;
+              status: Status;
+              failure_reason: string | null;
+            };
+
+            const newRow = payload.new as Partial<Row> | null;
+            const nextStatus =
+              (newRow?.status as Status | undefined) ?? undefined;
+            const id = newRow?.id;
+
+            if (
+              id &&
+              nextStatus &&
+              (nextStatus === "completed" || nextStatus === "failed")
+            ) {
+              // De-duplicate toasts per statement id
+              if (!notifiedRef.current.has(id)) {
+                notifiedRef.current.add(id);
+                if (nextStatus === "completed") {
+                  toast.success("Statement processed", {
+                    description:
+                      newRow?.file_name || "Your statement has been processed.",
+                  });
+                } else {
+                  const reason = newRow?.failure_reason || "Processing failed";
+                  toast.error("Statement failed", {
+                    description: `${
+                      newRow?.file_name || "Statement"
+                    }: ${reason}`,
+                  });
+                }
+              }
+            }
+
+            // Invalidate list to reflect latest status
+            qc.invalidateQueries({ queryKey: ["statements"] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        try {
+          supabase.removeChannel(channel);
+        } catch {}
+      };
+    }, [supabase, user?.id, qc]);
+
+    return query;
   }
 
   const { mutateAsync: deleteStatement, isPending: isDeletingOne } =
