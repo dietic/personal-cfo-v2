@@ -1316,3 +1316,26 @@ This document is the **single source of truth** for all features, tasks, and mil
 - 🟢 Chore(i18n): Added dashboard translations
   - Added `dashboard.transactions.seeAll` in en.json and es.json
   - All dashboard components now fully translated
+
+### Delta – 2025-10-24 (auth & chat fixes)
+
+- 🟢 Fix(auth): Profile persistence on refresh
+  - Created `/api/me` server endpoint to fetch session+profile using cookie-based auth
+  - Updated `useAuth` to prefer server endpoint on initial load (avoids client RLS race)
+  - Added profile fetch retry with auto-recovery (forced logout after 3 failures)
+  - Removed console.error logs; added structured logging via `lib/logger.ts`
+- 🟢 Fix(chat): Chat bubble visibility for Plus/Pro/Admin users
+  - Hardened `ChatProvider` to double-check plan from server via `/api/me` on refresh
+  - Fixed React hooks order violation (removed conditional `useMemo`)
+  - Bubble now reliably appears for non-free plans after page refresh
+- 🟢 Fix(chat): Chat drawer UX improvements
+  - Hidden default Sheet close button (added `[&>button]:hidden` to SheetContent)
+  - Removed duplicate close button (kept only header X button)
+  - Removed extra border above input (kept only header border-b)
+  - Changed bubble z-index from `z-[9999]` to `z-40` (below drawer at `z-50`)
+  - Bubble stays visible when drawer opens (layered behind overlay)
+- 🟢 Chore(layout): Fixed z-index stacking
+  - Added `relative z-10` to Sidebar
+  - Added `relative z-0` to main layout container
+  - Chat bubble (`z-40`) now properly floats above all content
+  - Chat drawer (`z-50`) appears on top when open
