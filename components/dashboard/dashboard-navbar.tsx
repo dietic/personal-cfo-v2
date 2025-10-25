@@ -76,10 +76,19 @@ export function DashboardNavbar() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={signOut} className="cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              {t("dashboard.navbar.signOut")}
-            </DropdownMenuItem>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                signOut();
+              }}
+            >
+              <DropdownMenuItem asChild>
+                <button type="submit" className="w-full cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  {t("dashboard.navbar.signOut")}
+                </button>
+              </DropdownMenuItem>
+            </form>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

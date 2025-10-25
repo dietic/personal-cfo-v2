@@ -9,10 +9,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useLocale } from "@/contexts/locale-context";
+import { useAuth } from "@/hooks/use-auth";
 import { useTranslation } from "@/hooks/use-translation";
 import {
   BarChart3,
-  Bell,
   CreditCard,
   FileText,
   Globe,
@@ -34,7 +34,6 @@ const navItems = [
   { href: "/statements", label: "statements", icon: FileText },
   { href: "/analytics", label: "analytics", icon: BarChart3 },
   { href: "/budgets", label: "budgets", icon: Target },
-  { href: "/alerts", label: "alerts", icon: Bell },
 ];
 
 const bottomNavItems = [
@@ -46,6 +45,7 @@ export function MobileMenu() {
   const pathname = usePathname();
   const { locale, setLocale } = useLocale();
   const { t } = useTranslation();
+  const { signOut } = useAuth();
   const [open, setOpen] = useState(false);
 
   // Close menu when viewport becomes desktop size
@@ -116,6 +116,20 @@ export function MobileMenu() {
               <span className="text-sm">
                 {locale === "en" ? "Español" : "English"}
               </span>
+            </Button>
+
+            {/* Sign out */}
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3 px-3"
+              onClick={() => {
+                setOpen(false);
+                signOut();
+              }}
+            >
+              {/* Reuse Settings icon size for consistency */}
+              <Settings className="h-4 w-4" />
+              <span className="text-sm">{t("dashboard.navbar.signOut")}</span>
             </Button>
 
             {bottomNavItems.map((item) => {
