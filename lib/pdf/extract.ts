@@ -2,28 +2,27 @@
  * PDF Extraction Utilities
  *
  * Robust PDF text extraction with password unlock support and text normalization.
- * Based on Python PDFService patterns for handling encrypted PDFs and text artifacts.
+ * Production-ready implementation using fixed child process approach for reliable password support.
  */
 
 import { logger } from "@/lib/logger";
 import { spawn } from "node:child_process";
 import path from "node:path";
-// import { fileURLToPath } from "node:url";
 import { PDFDocument } from "pdf-lib";
 
-// Server-safe: delegate extraction to a Node child process script to avoid Next bundler resolution
-async function extractUsingChild(
+// Production-safe: fixed child process approach with proper module resolution
+async function extractUsingFixedChild(
   buffer: Buffer,
   password?: string
 ): Promise<string> {
-  // const __dirname = path.dirname(fileURLToPath(import.meta.url)); // unused
   const scriptPath = path.resolve(process.cwd(), "scripts", "extract-pdf.mjs");
+
+  // Check if script exists
   await new Promise<void>((resolve, reject) => {
-    // Quick existence check
     import("node:fs")
       .then((fs) => {
         fs.access(scriptPath, fs.constants.R_OK, (err) =>
-          err ? reject(err) : resolve()
+          err ? reject(new Error(`Script not found: ${scriptPath}`)) : resolve()
         );
       })
       .catch(reject);
@@ -32,25 +31,44 @@ async function extractUsingChild(
   return new Promise<string>((resolve, reject) => {
     const args: string[] = [];
     if (password) args.push(`--password=${password}`);
-    const child = spawn(process.execPath, [scriptPath, ...args], {
+
+    // Use simpler node args that work with file execution
+    const nodeArgs = [scriptPath, ...args];
+
+    const child = spawn(process.execPath, nodeArgs, {
       stdio: ["pipe", "pipe", "pipe"],
+      env: {
+        ...process.env,
+        NODE_PATH: path.join(process.cwd(), "node_modules"),
+      },
     });
+
     let out = "";
     let err = "";
-    child.stdout.on("data", (d) => {
+
+    child.stdout.on("data", (d: Buffer) => {
       out += d.toString("utf8");
     });
-    child.stderr.on("data", (d) => {
+
+    child.stderr.on("data", (d: Buffer) => {
       err += d.toString("utf8");
     });
-    child.on("error", (e) => reject(e));
-    child.on("close", () => {
+
+    child.on("error", (e: Error) => reject(e));
+
+    child.on("close", (code: number | null) => {
       try {
+        if (code !== 0) {
+          reject(new Error(`Child process exited with code ${code}: ${err}`));
+          return;
+        }
+
         const parsed = JSON.parse(out || "{}") as {
           success?: boolean;
           text?: string;
           error?: string;
         };
+
         if (!parsed.success) {
           reject(
             new Error(parsed.error || err || "Unknown child extractor error")
@@ -59,9 +77,12 @@ async function extractUsingChild(
           resolve(parsed.text || "");
         }
       } catch (e) {
-        reject(new Error(err || (e as Error).message));
+        reject(
+          new Error(`Failed to parse response: ${err || (e as Error).message}`)
+        );
       }
     });
+
     child.stdin.write(buffer);
     child.stdin.end();
   });
@@ -87,10 +108,10 @@ export async function extractTextFromPDF(
   password?: string
 ): Promise<ExtractionResult> {
   try {
-    // Delegate to child extractor with the ORIGINAL buffer and provided password.
-    // Rationale: pre-processing with pdf-lib (ignoreEncryption) can mangle encrypted PDFs
-    // and cause downstream "Incorrect Password" even with the correct password.
-    const rawText = await extractUsingChild(fileBuffer, password);
+    // Use fixed child process approach for reliable password support in production.
+    // Rationale: pdf-parse doesn't support passwords, pdfjs-dist does but has bundling issues.
+    // This approach fixes module resolution by setting proper NODE_PATH and module flags.
+    const rawText = await extractUsingFixedChild(fileBuffer, password);
 
     if (!rawText || !rawText.trim()) {
       return {
