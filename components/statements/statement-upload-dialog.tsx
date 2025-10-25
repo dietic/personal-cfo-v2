@@ -69,9 +69,10 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
 
   const handleFileSelect = useCallback(
     (selectedFile: File) => {
-      if (validateFile(selectedFile)) {
-        setFile(selectedFile);
-      }
+      if (!validateFile(selectedFile)) return;
+      setFile(selectedFile);
+      setPassword("");
+      setError(null);
     },
     [validateFile]
   );
@@ -111,14 +112,20 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
     setError(null);
   };
 
-  const handleSubmit = async () => {
+  type SubmitResult = { ok: boolean; passwordError: boolean; error?: string };
+
+  const handleSubmit = async (opts?: {
+    fromPasswordAttempt?: boolean;
+  }): Promise<SubmitResult> => {
     if (!file) {
-      setError(t("statements.upload.errorNoFile"));
-      return;
+      const msg = t("statements.upload.errorNoFile");
+      setError(msg);
+      return { ok: false, passwordError: false, error: msg };
     }
     if (!cardId) {
-      setError(t("statements.upload.errorNoCard"));
-      return;
+      const msg = t("statements.upload.errorNoCard");
+      setError(msg);
+      return { ok: false, passwordError: false, error: msg };
     }
 
     setError(null);
@@ -139,32 +146,27 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
         body: formData,
       });
 
-      // Check if response is JSON
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
+      const contentType = response.headers.get("content-type") || "";
+      let result: any = {};
+      if (contentType.includes("application/json")) {
+        result = await response.json();
+      } else {
         const text = await response.text();
-        // Silent: server returned non-JSON; message surfaced to user
-        throw new Error(
-          `Server error: ${response.status} - ${text.substring(0, 100)}`
-        );
+        result = { error: text };
       }
 
-      const result = await response.json();
-
       if (!response.ok) {
-        // Check if PDF is encrypted and needs password
-        if (
-          result.error?.includes("password protected") ||
-          result.error?.includes("encrypted")
-        ) {
+        const errMsg = String(result.error || result.message || "");
+        const isPasswordErr = /password|encrypted|incorrect_password/i.test(
+          errMsg
+        );
+
+        // If this wasn't a password attempt, prompt for password when server indicates encryption
+        if (isPasswordErr && !opts?.fromPasswordAttempt) {
           setShowPasswordPrompt(true);
-          setIsUploading(false);
-          return;
         }
 
-        throw new Error(
-          result.error || t("statements.upload.errorUploadFailed")
-        );
+        return { ok: false, passwordError: isPasswordErr, error: errMsg };
       }
 
       // Success!
@@ -181,9 +183,18 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
 
       // Reset and close
       handleClose();
+      return { ok: true, passwordError: false };
     } catch (err: unknown) {
-      const error = err as Error;
-      setError(error.message || t("statements.upload.errorUploadFailed"));
+      const message =
+        (err as Error)?.message || t("statements.upload.errorUploadFailed");
+      setError(message);
+      const isPasswordErr = /password|encrypted|incorrect_password/i.test(
+        message
+      );
+      if (isPasswordErr && !opts?.fromPasswordAttempt) {
+        setShowPasswordPrompt(true);
+      }
+      return { ok: false, passwordError: isPasswordErr, error: message };
     } finally {
       setIsUploading(false);
     }
@@ -194,10 +205,20 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
       setError(t("statements.upload.errorNoPassword"));
       return;
     }
+    if (!file) {
+      setError(t("statements.upload.errorNoFile"));
+      return;
+    }
 
-    // Close password prompt and retry upload with password
+    // Defer validation to server; then alert based on result
     setShowPasswordPrompt(false);
-    await handleSubmit();
+    const res = await handleSubmit({ fromPasswordAttempt: true });
+    if (res.ok) {
+      alert("PDF unlocked");
+    } else if (res.passwordError) {
+      alert("Incorrect password");
+      setShowPasswordPrompt(true);
+    }
   };
 
   const handleCancelPassword = () => {
@@ -217,7 +238,7 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
     onClose();
   };
 
-  // Render password prompt dialog
+  // Render password prompt dialog only when needed
   if (showPasswordPrompt) {
     return (
       <Dialog open={true} onOpenChange={handleCancelPassword}>
@@ -400,7 +421,7 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
             {t("common.cancel")}
           </Button>
           <Button
-            onClick={handleSubmit}
+            onClick={() => void handleSubmit()}
             disabled={!file || !cardId || isUploading}
           >
             {isUploading ? (
