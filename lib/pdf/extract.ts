@@ -114,7 +114,7 @@ export async function extractTextFromPDF(
 }
 
 // Validate PDF password using system qpdf
-async function validateWithQpdf(
+async function _validateWithQpdf(
   buffer: Buffer,
   password?: string
 ): Promise<"ok" | "need_password" | "incorrect_password" | "unknown"> {
