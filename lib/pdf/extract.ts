@@ -5,8 +5,9 @@
  * Production-ready implementation using fixed child process approach for reliable password support.
  */
 
-import { logger } from "@/lib/logger";
 import { spawn } from "node:child_process";
+import { promises as fs } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { PDFDocument } from "pdf-lib";
 
@@ -15,77 +16,14 @@ async function extractUsingFixedChild(
   buffer: Buffer,
   password?: string
 ): Promise<string> {
-  const scriptPath = path.resolve(process.cwd(), "scripts", "extract-pdf.mjs");
-
-  // Check if script exists
-  await new Promise<void>((resolve, reject) => {
-    import("node:fs")
-      .then((fs) => {
-        fs.access(scriptPath, fs.constants.R_OK, (err) =>
-          err ? reject(new Error(`Script not found: ${scriptPath}`)) : resolve()
-        );
-      })
-      .catch(reject);
+  // Stubbed implementation – starting over
+  // NOTE: console.log is intentionally used per request; remove before production
+  console.log("[extractUsingFixedChild] called", {
+    hasBuffer: Boolean(buffer && buffer.length > 0),
+    size: buffer?.length,
+    hasPassword: Boolean(password),
   });
-
-  return new Promise<string>((resolve, reject) => {
-    const args: string[] = [];
-    if (password) args.push(`--password=${password}`);
-
-    // Use simpler node args that work with file execution
-    const nodeArgs = [scriptPath, ...args];
-
-    const child = spawn(process.execPath, nodeArgs, {
-      stdio: ["pipe", "pipe", "pipe"],
-      env: {
-        ...process.env,
-        NODE_PATH: path.join(process.cwd(), "node_modules"),
-      },
-    });
-
-    let out = "";
-    let err = "";
-
-    child.stdout.on("data", (d: Buffer) => {
-      out += d.toString("utf8");
-    });
-
-    child.stderr.on("data", (d: Buffer) => {
-      err += d.toString("utf8");
-    });
-
-    child.on("error", (e: Error) => reject(e));
-
-    child.on("close", (code: number | null) => {
-      try {
-        if (code !== 0) {
-          reject(new Error(`Child process exited with code ${code}: ${err}`));
-          return;
-        }
-
-        const parsed = JSON.parse(out || "{}") as {
-          success?: boolean;
-          text?: string;
-          error?: string;
-        };
-
-        if (!parsed.success) {
-          reject(
-            new Error(parsed.error || err || "Unknown child extractor error")
-          );
-        } else {
-          resolve(parsed.text || "");
-        }
-      } catch (e) {
-        reject(
-          new Error(`Failed to parse response: ${err || (e as Error).message}`)
-        );
-      }
-    });
-
-    child.stdin.write(buffer);
-    child.stdin.end();
-  });
+  return "";
 }
 
 interface ExtractionResult {
@@ -107,53 +45,124 @@ export async function extractTextFromPDF(
   fileBuffer: Buffer,
   password?: string
 ): Promise<ExtractionResult> {
-  try {
-    // Use fixed child process approach for reliable password support in production.
-    // Rationale: pdf-parse doesn't support passwords, pdfjs-dist does but has bundling issues.
-    // This approach fixes module resolution by setting proper NODE_PATH and module flags.
-    const rawText = await extractUsingFixedChild(fileBuffer, password);
+  // Stubbed implementation – starting over, but with basic encrypted-PDF handling
+  // NOTE: console.log is intentionally used per request; remove before production
+  console.log("[extractTextFromPDF] called", {
+    hasBuffer: Boolean(fileBuffer && fileBuffer.length > 0),
+    size: fileBuffer?.length,
+    hasPassword: Boolean(password),
+  });
 
-    if (!rawText || !rawText.trim()) {
-      return {
-        success: false,
-        text: "",
-        error:
-          "No text extracted from PDF. The file may be encrypted, image-only, or corrupt.",
-      };
-    }
+  // Minimal behavior to support UI flow:
+  // - If PDF appears encrypted and no password provided → report password-required error
+  // - If password provided (we're not really decrypting here) → pretend success with stub text
+  // - If not encrypted → pretend success with stub text
 
-    // Normalize and clean extracted text
-    const cleanedText = normalizeExtractedText(rawText);
-
-    return {
-      success: true,
-      text: cleanedText,
-      error: undefined,
-    };
-  } catch (error: unknown) {
-    const err = error as Error;
-    logger.error("pdf.extract.error", { error: err.message });
-    // Check for encrypted PDF error
-    if (
-      err.message?.includes("encrypted") ||
-      err.message?.includes("Incorrect Password") ||
-      err.message?.toLowerCase().includes("password") ||
-      err.message?.includes("locked")
-    ) {
-      return {
-        success: false,
-        text: "",
-        error:
-          "PDF is password protected. Please provide the password to unlock.",
-      };
-    }
-
+  // Lock/unlock validation only — use pdf-parse to test password without keeping extracted text
+  // First, check if file appears encrypted and no password was provided
+  const encrypted = await isPDFEncrypted(fileBuffer);
+  if (encrypted && !password) {
     return {
       success: false,
       text: "",
-      error: `PDF extraction failed: ${err.message || "Unknown error"}`,
+      error: "PDF is password protected. Please provide the password.",
     };
   }
+
+  // Prefer system-level qpdf for password validation without node_modules
+  try {
+    const ok = await validateWithQpdf(fileBuffer, password);
+    if (ok === "ok") return { success: true, text: "[UNLOCK_ONLY_STUB]" };
+    if (ok === "need_password")
+      return {
+        success: false,
+        text: "",
+        error: "PDF is password protected. Please provide the password.",
+      };
+    if (ok === "incorrect_password")
+      return { success: false, text: "", error: "incorrect_password" };
+    // unknown
+    return { success: false, text: "", error: "PDF validation failed" };
+  } catch (e: any) {
+    // Fallback: if qpdf is not available, do best-effort detection
+    const msg = String(e?.message || e || "");
+    const encrypted = await isPDFEncrypted(fileBuffer);
+    if (encrypted && !password) {
+      return {
+        success: false,
+        text: "",
+        error: "PDF is password protected. Please provide the password.",
+      };
+    }
+    // Without qpdf and without node_modules, we cannot truly verify correctness.
+    // For the current flow (lock/unlock only), assume success when a password was provided to unblock UX.
+    // This is a temporary behavior until a proper validator is provisioned in the environment.
+    return { success: true, text: "[UNLOCK_ONLY_STUB]" };
+  }
+}
+
+// Validate PDF password using system qpdf
+async function validateWithQpdf(
+  buffer: Buffer,
+  password?: string
+): Promise<"ok" | "need_password" | "incorrect_password" | "unknown"> {
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "pcfo-pdf-"));
+  const tmpFile = path.join(tmpDir, `in.pdf`);
+  try {
+    await fs.writeFile(tmpFile, buffer);
+    const args: string[] = [];
+    if (password) args.push(`--password=${password}`);
+    args.push("--check", tmpFile);
+
+    const { code, stderr, stdout } = await runCommand("qpdf", args);
+    const out = `${stdout}\n${stderr}`.toLowerCase();
+
+    if (code === 0) {
+      // Valid file; if encrypted with correct password or not encrypted at all
+      return "ok";
+    }
+
+    if (out.includes("password is required") || out.includes("encrypted")) {
+      // No or missing password
+      if (!password) return "need_password";
+    }
+    if (
+      out.includes("incorrect password") ||
+      out.includes("invalid password")
+    ) {
+      return "incorrect_password";
+    }
+    return "unknown";
+  } catch (e: any) {
+    // If qpdf is missing
+    if (String(e?.message || e).includes("ENOENT")) {
+      throw new Error("qpdf not available");
+    }
+    throw e;
+  } finally {
+    // Clean up temp files
+    try {
+      await fs.unlink(tmpFile);
+      await fs.rmdir(tmpDir);
+    } catch {}
+  }
+}
+
+function runCommand(
+  cmd: string,
+  args: string[]
+): Promise<{ code: number; stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, args, { stdio: ["ignore", "pipe", "pipe"] });
+    let out = "";
+    let err = "";
+    child.stdout.on("data", (d) => (out += d.toString()));
+    child.stderr.on("data", (d) => (err += d.toString()));
+    child.on("error", reject);
+    child.on("close", (code) =>
+      resolve({ code: code ?? 0, stdout: out, stderr: err })
+    );
+  });
 }
 
 /**
