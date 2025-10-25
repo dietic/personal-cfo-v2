@@ -407,6 +407,7 @@
       "errorNoCard": "Por favor selecciona una tarjeta.",
       "errorNoPassword": "Por favor ingresa una contraseña.",
       "errorEncrypted": "Este PDF está protegido con contraseña.",
+      "errorIncorrectPassword": "Contraseña incorrecta. Inténtalo de nuevo.",
       "errorUploadFailed": "La carga falló. Por favor intenta de nuevo.",
       "errorProcessingFailed": "Error al procesar el estado. Por favor intenta de nuevo.",
       "infoTitle": "Qué esperar:",

@@ -217,10 +217,10 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
     // Defer validation to server; then alert based on result
     setShowPasswordPrompt(false);
     const res = await handleSubmit({ fromPasswordAttempt: true });
-    if (res.ok) {
-      alert("PDF unlocked");
-    } else if (res.passwordError) {
-      alert("Incorrect password");
+    if (!res.ok && res.passwordError) {
+      // Reprompt password dialog with error and clear the input
+      setError(t("statements.upload.errorIncorrectPassword"));
+      setPassword("");
       setShowPasswordPrompt(true);
     }
   };

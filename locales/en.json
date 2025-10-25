@@ -408,6 +408,7 @@
       "errorNoCard": "Please select a card.",
       "errorNoPassword": "Please enter a password.",
       "errorEncrypted": "This PDF is password protected.",
+      "errorIncorrectPassword": "Incorrect password. Please try again.",
       "errorUploadFailed": "Upload failed. Please try again.",
       "errorProcessingFailed": "Failed to process statement. Please try again.",
       "infoTitle": "What to expect:",
