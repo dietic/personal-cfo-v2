@@ -12,7 +12,7 @@ import path from "node:path";
 import { PDFDocument } from "pdf-lib";
 
 // Production-safe: fixed child process approach with proper module resolution
-async function extractUsingFixedChild(
+async function _extractUsingFixedChild(
   buffer: Buffer,
   password?: string
 ): Promise<string> {
@@ -83,9 +83,8 @@ export async function extractTextFromPDF(
       return { success: false, text: "", error: "incorrect_password" };
     // unknown
     return { success: false, text: "", error: "PDF validation failed" };
-  } catch (e: any) {
+  } catch (_e: unknown) {
     // Fallback: if qpdf is not available, do best-effort detection
-    const msg = String(e?.message || e || "");
     const encrypted = await isPDFEncrypted(fileBuffer);
     if (encrypted && !password) {
       return {
@@ -133,9 +132,10 @@ async function validateWithQpdf(
       return "incorrect_password";
     }
     return "unknown";
-  } catch (e: any) {
+  } catch (e: unknown) {
     // If qpdf is missing
-    if (String(e?.message || e).includes("ENOENT")) {
+    const message = e instanceof Error ? e.message : String(e);
+    if (message.includes("ENOENT")) {
       throw new Error("qpdf not available");
     }
     throw e;
