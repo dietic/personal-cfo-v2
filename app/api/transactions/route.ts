@@ -24,8 +24,19 @@ export async function GET(request: NextRequest) {
       100,
       Math.max(1, Number(searchParams.get("pageSize") || 25))
     );
+    const sortBy = searchParams.get("sortBy") || "transaction_date";
+    const sortDir = searchParams.get("sortDir") || "desc";
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
+
+    // Validate and map sort column
+    const sortColumnMap: Record<string, string> = {
+      description: "description",
+      transaction_date: "transaction_date",
+      currency: "currency",
+      amount: "amount_cents",
+      // Note: category and card sorting require joining, handled separately
+    };
 
     let query = supabase
       .from("transactions")
@@ -35,8 +46,22 @@ export async function GET(request: NextRequest) {
          categories:category_id(id, name, emoji, color)`,
         { count: "exact" }
       )
-      .eq("user_id", user.id)
-      .order("transaction_date", { ascending: false });
+      .eq("user_id", user.id);
+
+    // Apply sorting based on column
+    const ascending = sortDir === "asc";
+    if (sortBy === "category") {
+      // For category sorting, we need to use a referenced column
+      query = query.order("categories(name)", { ascending, nullsFirst: false });
+    } else if (sortBy === "card") {
+      // For card sorting, use referenced column
+      query = query.order("cards(name)", { ascending, nullsFirst: false });
+    } else if (sortColumnMap[sortBy]) {
+      query = query.order(sortColumnMap[sortBy], { ascending });
+    } else {
+      // Default to transaction_date desc
+      query = query.order("transaction_date", { ascending: false });
+    }
 
     if (startDate) query = query.gte("transaction_date", startDate);
     if (endDate) query = query.lte("transaction_date", endDate);

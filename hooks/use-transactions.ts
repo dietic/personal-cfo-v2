@@ -29,6 +29,8 @@ type FetchOptions = {
   filters?: Filters;
   page?: number;
   pageSize?: number;
+  sortBy?: string;
+  sortDir?: "asc" | "desc";
   signal?: AbortSignal;
 };
 
@@ -36,6 +38,8 @@ async function fetchTransactions({
   filters,
   page = 1,
   pageSize = 25,
+  sortBy = "transaction_date",
+  sortDir = "desc",
   signal,
 }: FetchOptions): Promise<{ data: Transaction[]; total: number }> {
   const params = new URLSearchParams();
@@ -48,6 +52,8 @@ async function fetchTransactions({
   if ((filters as any)?.search) params.set("search", (filters as any).search);
   params.set("page", String(page));
   params.set("pageSize", String(pageSize));
+  params.set("sortBy", sortBy);
+  params.set("sortDir", sortDir);
 
   const res = await fetch(`/api/transactions?${params.toString()}`, { signal });
   if (!res.ok) {
@@ -106,9 +112,15 @@ export function useTransactions() {
   const qc = useQueryClient();
   // Expose a parametrized getter through a wrapper hook
   function useList(options: FetchOptions) {
-    const { filters, page = 1, pageSize = 25 } = options;
+    const {
+      filters,
+      page = 1,
+      pageSize = 25,
+      sortBy = "transaction_date",
+      sortDir = "desc",
+    } = options;
     const query = useQuery({
-      queryKey: ["transactions", { filters, page, pageSize }],
+      queryKey: ["transactions", { filters, page, pageSize, sortBy, sortDir }],
       queryFn: ({ signal }) => fetchTransactions({ ...options, signal }),
       placeholderData: (prev) => prev,
     });

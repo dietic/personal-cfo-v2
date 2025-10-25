@@ -52,42 +52,6 @@ type SortKey =
   | "amount";
 type SortDir = "asc" | "desc";
 
-function applyFilters(data: Transaction[], f: Filters) {
-  return data.filter((tx) => {
-    if (f.startDate && tx.transaction_date < f.startDate) return false;
-    if (f.endDate && tx.transaction_date > f.endDate) return false;
-    if (f.categoryId && tx.categories?.id !== f.categoryId) return false;
-    if (f.cardId && tx.cards?.id !== f.cardId) return false;
-    if (f.currency && f.currency !== "ALL" && tx.currency !== f.currency)
-      return false;
-    return true;
-  });
-}
-
-function sortData(data: Transaction[], key: SortKey, dir: SortDir) {
-  const sorted = [...data].sort((a, b) => {
-    const mult = dir === "asc" ? 1 : -1;
-    switch (key) {
-      case "description":
-        return mult * a.description.localeCompare(b.description);
-      case "transaction_date":
-        return mult * (a.transaction_date < b.transaction_date ? -1 : 1);
-      case "category":
-        return (
-          mult *
-          (a.categories?.name || "").localeCompare(b.categories?.name || "")
-        );
-      case "card":
-        return mult * (a.cards?.name || "").localeCompare(b.cards?.name || "");
-      case "currency":
-        return mult * a.currency.localeCompare(b.currency);
-      case "amount":
-        return mult * (a.amount_cents - b.amount_cents);
-    }
-  });
-  return sorted;
-}
-
 function formatAmountNoCurrency(amountCents: number) {
   const n = Math.abs(amountCents) / 100;
   return new Intl.NumberFormat(undefined, {
@@ -150,26 +114,28 @@ export function TransactionsTable({
 }: Props) {
   const { t } = useTranslation();
   const { useList, bulkDelete, isDeleting } = useTransactions();
-  const { data: listResult, isLoading } = useList({ filters, page, pageSize });
-  const transactions = useMemo(
-    () => listResult?.data ?? [],
-    [listResult?.data]
-  );
-  const total = listResult?.total ?? 0;
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [sortKey, setSortKey] = useState<SortKey>("transaction_date");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [editTx, setEditTx] = useState<Transaction | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const filtered = useMemo(
-    () => applyFilters(transactions, filters),
-    [transactions, filters]
+  // Fetch data from API with server-side sorting
+  const { data: listResult, isLoading } = useList({
+    filters,
+    page,
+    pageSize,
+    sortBy: sortKey,
+    sortDir,
+  });
+  const transactions = useMemo(
+    () => listResult?.data ?? [],
+    [listResult?.data]
   );
-  const rows = useMemo(
-    () => sortData(filtered, sortKey, sortDir),
-    [filtered, sortKey, sortDir]
-  );
+  const total = listResult?.total ?? 0;
+
+  // No need for client-side filtering and sorting anymore - it's all server-side
+  const rows = transactions;
 
   const allSelected = rows.length > 0 && rows.every((d) => selected[d.id]);
   const someSelected = rows.some((d) => selected[d.id]);
