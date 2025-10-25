@@ -147,7 +147,7 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
       });
 
       const contentType = response.headers.get("content-type") || "";
-      let result: any = {};
+      let result: Partial<{ error: unknown; message: unknown }> = {};
       if (contentType.includes("application/json")) {
         result = await response.json();
       } else {
@@ -156,7 +156,11 @@ export function StatementUploadDialog({ open, onClose, onSuccess }: Props) {
       }
 
       if (!response.ok) {
-        const errMsg = String(result.error || result.message || "");
+        const errMsg = String(
+          (result.error as unknown as string | undefined) ??
+            (result.message as unknown as string | undefined) ??
+            ""
+        );
         const isPasswordErr = /password|encrypted|incorrect_password/i.test(
           errMsg
         );
